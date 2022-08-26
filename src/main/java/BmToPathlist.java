@@ -13,7 +13,7 @@ public class BmToPathlist {
     }
 
     public Point findNext(Point point) {
-        int i = bm1.getWidth() * point.y + point.x;
+        int i = bm1.getWidth() * point.getY() + point.getX();
         int[] data = bm1.getData();
         while (i < data.length && data[i] != 1) {
             i++;
@@ -43,10 +43,10 @@ public class BmToPathlist {
 
     public Path findPath(Point point) {
         Path path = new Path();
-        path.sign = bm1.at(point.x, point.y) ? "+" : "-";
+        path.sign = bm1.at(point.getX(), point.getY()) ? "+" : "-";
 
-        int x = point.x;
-        int y = point.y;
+        int x = point.getX();
+        int y = point.getY();
 
         int dirx = 0, diry = 1, tmp;
 
@@ -66,7 +66,7 @@ public class BmToPathlist {
             y += diry;
             path.area -= x * diry;
 
-            if (x == point.x && y == point.y)
+            if (x == point.getX() && y == point.getY())
                 break;
 
             boolean l = bm1.at(x + (dirx + diry - 1 ) / 2, y + (diry - dirx - 1) / 2);
@@ -100,11 +100,11 @@ public class BmToPathlist {
     }
 
     public void xorPath(Path path) {
-        int y1 = path.pt.get(0).y;
+        int y1 = path.pt.get(0).getY();
         int len = path.len;
         for (int i = 1; i < len; i++) {
-            int x = path.pt.get(i).x;
-            int y = path.pt.get(i).y;
+            int x = path.pt.get(i).getX();
+            int y = path.pt.get(i).getY();
 
             if (y != y1) {
                 int minY = y1 < y ? y1 : y;

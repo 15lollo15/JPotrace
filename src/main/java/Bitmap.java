@@ -18,8 +18,8 @@ public class Bitmap {
 
     public Point index(int i) {
         Point point = new Point();
-        point.y = i / this.w;
-        point.x = i - point.y * this.w;
+        point.setY(i / this.w);
+        point.setX(i - point.getY() * this.w);
         return point;
     }
 

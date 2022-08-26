@@ -159,15 +159,15 @@ public class ProcessPath {
     }
 
     public void calcSums(Path path) {
-        path.x0 = path.pt.get(0).x;
-        path.y0 = path.pt.get(0).y;
+        path.x0 = path.pt.get(0).getX();
+        path.y0 = path.pt.get(0).getY();
 
         path.sums = new ArrayList<>();
         List<Sum> s = path.sums;
         s.add(new Sum(0, 0, 0, 0, 0));
         for(int i = 0; i < path.len; i++){
-            int x = path.pt.get(i).x - path.x0;
-            int y = path.pt.get(i).y - path.y0;
+            int x = path.pt.get(i).getX() - path.x0;
+            int y = path.pt.get(i).getY() - path.y0;
             s.add(new Sum(s.get(i).x + x, s.get(i).y + y, s.get(i).xy + x * y,
                     s.get(i).x2 + x * x, s.get(i).y2 + y * y));
         }
@@ -193,7 +193,7 @@ public class ProcessPath {
         int k = 0;
         int k1;
         for(int i = n - 1; i >= 0; i--){
-            if (pt.get(i).x != pt.get(k).x && pt.get(i).y != pt.get(k).y) {
+            if (pt.get(i).getX() != pt.get(k).getX() && pt.get(i).getY() != pt.get(k).getY()) {
                 k = i + 1;
             }
             nc[i] = k;
@@ -201,8 +201,8 @@ public class ProcessPath {
 
         for (int i = n - 1; i >= 0; i--) {
             ct[0] = ct[1] = ct[2] = ct[3] = 0;
-            dir = (3 + 3 * (pt.get(mod(i + 1, n)).x - pt.get(i).x) +
-                    (pt.get(mod(i + 1, n)).y - pt.get(i).y)) / 2;
+            dir = (3 + 3 * (pt.get(mod(i + 1, n)).getX() - pt.get(i).getX()) +
+                    (pt.get(mod(i + 1, n)).getY() - pt.get(i).getY())) / 2;
             ct[dir]++;
 
             constraint[0].x = 0;
@@ -214,8 +214,8 @@ public class ProcessPath {
             k1 = i;
             while (true) {
                 foundk = 0;
-                dir =  (3 + 3 * sign(pt.get(k).x - pt.get(k1).x) +
-                        sign(pt.get(k).y - pt.get(k1).y)) / 2;
+                dir =  (3 + 3 * sign(pt.get(k).getX() - pt.get(k1).getX()) +
+                        sign(pt.get(k).getY() - pt.get(k1).getY())) / 2;
                 ct[dir]++;
 
                 if (ct[0] != 0 && ct[1] != 0 && ct[2] != 0 && ct[3] != 0 ) {
@@ -224,8 +224,8 @@ public class ProcessPath {
                     break;
                 }
 
-                cur.x = pt.get(k).x - pt.get(i).x;
-                cur.y = pt.get(k).y - pt.get(i).y;
+                cur.x = pt.get(k).getX() - pt.get(i).getX();
+                cur.y = pt.get(k).getY() - pt.get(i).getY();
 
                 if (xprod(constraint[0], cur) < 0 || xprod(constraint[1], cur) > 0) {
                     break;
@@ -254,10 +254,10 @@ public class ProcessPath {
                 }
             }
             if (foundk == 0) {
-                dk.x = sign(pt.get(k).x-pt.get(k1).x);
-                dk.y = sign(pt.get(k).y-pt.get(k1).y);
-                cur.x = pt.get(k1).x - pt.get(i).x;
-                cur.y = pt.get(k1).y - pt.get(i).y;
+                dk.x = sign(pt.get(k).getX()-pt.get(k1).getX());
+                dk.y = sign(pt.get(k).getY()-pt.get(k1).getY());
+                cur.x = pt.get(k1).getX() - pt.get(i).getX();
+                cur.y = pt.get(k1).getY() - pt.get(i).getY();
 
                 a = xprod(constraint[0], cur);
                 b = xprod(constraint[0], dk);

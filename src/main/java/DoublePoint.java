@@ -10,8 +10,8 @@ public class DoublePoint {
     }
 
     public DoublePoint(Point point) {
-        this.x = point.x;
-        this.y = point.y;
+        this.x = point.getX();
+        this.y = point.getY();
     }
 
     public DoublePoint copy() {

@@ -118,8 +118,8 @@ public class AdjustVertices {
             Quad Q = new Quad();
             DoublePoint w = new DoublePoint();
 
-            s.x = pt.get(po[i]).x-x0;
-            s.y = pt.get(po[i]).y-y0;
+            s.x = pt.get(po[i]).getX()-x0;
+            s.y = pt.get(po[i]).getY()-y0;
 
             int j = ProcessPath.mod(i-1,m);
 

@@ -32,10 +32,10 @@ public class BestPolygon {
             k = j+1 - i + n;
         }
 
-        px = (pt.get(i).x + pt.get(j).x) / 2.0 - pt.get(0).x;
-        py = (pt.get(i).y + pt.get(j).y) / 2.0 - pt.get(0).y;
-        ey = (pt.get(j).x - pt.get(i).x);
-        ex = -(pt.get(j).y - pt.get(i).y);
+        px = (pt.get(i).getX() + pt.get(j).getX()) / 2.0 - pt.get(0).getX();
+        py = (pt.get(i).getY() + pt.get(j).getY()) / 2.0 - pt.get(0).getY();
+        ey = (pt.get(j).getX() - pt.get(i).getX());
+        ex = -(pt.get(j).getY() - pt.get(i).getY());
 
         a = ((x2 - 2*x*px) / k + px*px);
         b = ((xy - x*py - y*px) / k + px*py);
