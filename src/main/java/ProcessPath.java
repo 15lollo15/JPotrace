@@ -11,7 +11,11 @@ public class ProcessPath {
     }
 
     public static int mod(int a, int n) {
-        return a >= n ? a % n : a>=0 ? a : n-1-(-1-a) % n;
+        if (a >= n)
+            return a % n;
+        if (a >= 0)
+            return a;
+        return n-1-(-1-a) % n;
     }
 
     public double xprod(DoublePoint p1, DoublePoint p2) {
@@ -27,7 +31,11 @@ public class ProcessPath {
     }
 
     public static int sign(double i) {
-        return i > 0 ? 1 : i < 0 ? -1 : 0;
+        if (i > 0)
+            return 1;
+        if (i < 0)
+            return -1;
+        return 0;
     }
 
     public static double quadform(Quad Q, DoublePoint w) {
@@ -231,9 +239,7 @@ public class ProcessPath {
                     break;
                 }
 
-                if (Math.abs(cur.x) <= 1 && Math.abs(cur.y) <= 1) {
-
-                } else {
+                if (Math.abs(cur.x) > 1 || Math.abs(cur.y) > 1) {
                     off.x = cur.x + ((cur.y >= 0 && (cur.y > 0 || cur.x < 0)) ? 1 : -1);
                     off.y = cur.y + ((cur.x <= 0 && (cur.x < 0 || cur.y < 0)) ? 1 : -1);
                     if (xprod(constraint[0], off) >= 0) {

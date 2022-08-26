@@ -1,4 +1,3 @@
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 public class BmToPathlist {
@@ -12,6 +11,11 @@ public class BmToPathlist {
         this.pathlist = pathList;
     }
 
+    /**
+     * Find the next black pixel/point
+     * @param point Start point
+     * @return The position of the first black pixel, or null if there's not
+     */
     public Point findNext(Point point) {
         int i = bm1.getWidth() * point.getY() + point.getX();
         int[] data = bm1.getData();
@@ -23,22 +27,40 @@ public class BmToPathlist {
         return null;
     }
 
-    public int majority(int x, int y) {
-        for (int i = 2; i < 5; i++) {
-            int ct = 0;
-            for (int a = -i + 1; a <= i - 1; a++) {
-                ct += bm1.at(x + a, y + i - 1) ? 1 : -1;
-                ct += bm1.at(x + i - 1, y + a - 1) ? 1 : -1;
-                ct += bm1.at(x + a - 1, y - i) ? 1 : -1;
-                ct += bm1.at(x - i, y + a) ? 1 : -1;
-            }
+    /**
+     * Verify there is a majority of black pixels near point(x,y)
+     * @param x X of the point
+     * @param y Y of the point
+     * @return True if there is a majority of black pixels, false otherwise
+     */
+    public boolean majority(int x, int y) {
+        for (int ray = 2; ray < 5; ray++) {
+            int ct = isBalanced(x, y, ray);
             if (ct > 0) {
-                return 1;
+                return true;
             } else if (ct < 0) {
-                return 0;
+                return false;
             }
         }
-        return 0;
+        return false;
+    }
+
+    /**
+     * Verify if image is balanced near point(x,y)
+     * @param x X of the point
+     * @param y Y of the point
+     * @param ray Ray to analize
+     * @return 0 if is balanced, > 0 if there is more black or < 0 if is more white
+     */
+    private int isBalanced(int x, int y, int ray) {
+        int ct = 0;
+        for (int a = -ray + 1; a <= ray - 1; a++) {
+            ct += bm1.at(x + a, y + ray - 1) ? 1 : -1;
+            ct += bm1.at(x + ray - 1, y + a - 1) ? 1 : -1;
+            ct += bm1.at(x + a - 1, y - ray) ? 1 : -1;
+            ct += bm1.at(x - ray, y + a) ? 1 : -1;
+        }
+        return ct;
     }
 
     public Path findPath(Point point) {
@@ -48,7 +70,8 @@ public class BmToPathlist {
         int x = point.getX();
         int y = point.getY();
 
-        int dirx = 0, diry = 1, tmp;
+        int dirx = 0;
+        int diry = 1;
 
         while (true) {
             path.pt.add(new Point(x, y));
@@ -76,22 +99,22 @@ public class BmToPathlist {
                 if (info.turnpolicy.equals("right") ||
                         (info.turnpolicy.equals("black") && path.sign.equals("+")) ||
                         (info.turnpolicy.equals("white") && path.sign.equals("-")) ||
-                        (info.turnpolicy.equals("majority") && majority(x, y) == 1) ||
-                        (info.turnpolicy.equals("minority") && majority(x, y) == 0)) {
-                    tmp = dirx;
+                        (info.turnpolicy.equals("majority") && majority(x, y)) ||
+                        (info.turnpolicy.equals("minority") && !majority(x, y))) {
+                    int tmp = dirx;
                     dirx = -diry;
                     diry = tmp;
                 } else {
-                    tmp = dirx;
+                    int tmp = dirx;
                     dirx = diry;
                     diry = -tmp;
                 }
             } else if (r) {
-                tmp = dirx;
+                int tmp = dirx;
                 dirx = -diry;
                 diry = tmp;
             } else if (!l) {
-                tmp = dirx;
+                int tmp = dirx;
                 dirx = diry;
                 diry = -tmp;
             }

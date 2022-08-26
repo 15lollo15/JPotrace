@@ -19,17 +19,16 @@ public class Main {
 
         BufferedImage img = ImageIO.read(new File(srcImg));
 
-        Potrace potrace = new Potrace();
-        potrace.loadBm(img);
+        Bitmap bm = new Bitmap(img);
 
         List<Path> pathList = new ArrayList<>();
-        BmToPathlist bmToPathlist = new BmToPathlist(potrace.bm, new Info(), pathList);
+        BmToPathlist bmToPathlist = new BmToPathlist(bm, new Info(), pathList);
         bmToPathlist.bmToPathlist();
 
         ProcessPath processPath = new ProcessPath(new Info(), pathList);
         processPath.processPath();
 
-        GetSVG getSVG = new GetSVG(1, "ciao", potrace.bm, pathList);
+        GetSVG getSVG = new GetSVG(1, "ciao", bm, pathList);
         String svg = getSVG.getSVG();
 
         FileWriter fw = new FileWriter(desSvg);
