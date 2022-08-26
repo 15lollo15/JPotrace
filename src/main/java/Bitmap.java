@@ -1,8 +1,27 @@
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 public class Bitmap {
     private int w;
     private int h;
     private int size;
     private int[] data;
+
+    public Bitmap(BufferedImage img) {
+        this(img.getWidth(), img.getHeight());
+
+        int k = 0;
+        for (int i = 0; i < img.getHeight(); i++) {
+            for (int j = 0; j < img.getWidth(); j++) {
+                int rgb = img.getRGB(j, i);
+                Color c = new Color(rgb);
+                double color = 0.2126 * c.getRed() + 0.7153 * c.getGreen() +
+                        0.0721 * c.getBlue();
+
+                data[k++] = (color < 128 ? 1 : 0);
+            }
+        }
+    }
 
     public Bitmap(int w, int h) {
         this.w = w;
