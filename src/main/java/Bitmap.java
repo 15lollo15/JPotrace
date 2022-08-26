@@ -1,8 +1,8 @@
 public class Bitmap {
-    public int w;
-    public int h;
-    public int size;
-    public int[] data;
+    private int w;
+    private int h;
+    private int size;
+    private int[] data;
 
     public Bitmap(int w, int h) {
         this.w = w;
@@ -33,10 +33,25 @@ public class Bitmap {
 
     public Bitmap copy() {
         Bitmap bm = new Bitmap(this.w, this.h);
-        for (int i = 0; i < this.size; i++) {
-            bm.data[i] = this.data[i];
-        }
+        if (this.size >= 0)
+            System.arraycopy(this.data, 0, bm.data, 0, this.size);
         return bm;
+    }
+
+    public int[] getData() {
+        return data;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getWidth() {
+        return w;
+    }
+
+    public int getHeight() {
+        return h;
     }
 
 }

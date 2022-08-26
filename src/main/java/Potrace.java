@@ -7,6 +7,7 @@ public class Potrace {
 
     public void loadBm(BufferedImage img) {
         bm = new Bitmap(img.getWidth(), img.getHeight());
+        int[] data = bm.getData();
 
         int k = 0;
         for (int i = 0; i < img.getHeight(); i++) {
@@ -16,7 +17,7 @@ public class Potrace {
                 double color = 0.2126 * c.getRed() + 0.7153 * c.getGreen() +
                         0.0721 * c.getBlue();
 
-                bm.data[k++] = (color < 128 ? 1 : 0);
+                data[k++] = (color < 128 ? 1 : 0);
             }
         }
     }

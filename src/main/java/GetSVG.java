@@ -52,8 +52,8 @@ public class GetSVG {
     }
 
     public String getSVG() {
-        int w = bm.w * size;
-        int h = bm.h * size;
+        int w = bm.getWidth() * size;
+        int h = bm.getHeight() * size;
         int len = pathlist.size();
         String strokec, fillc, fillrule;
 

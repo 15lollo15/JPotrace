@@ -13,11 +13,12 @@ public class BmToPathlist {
     }
 
     public Point findNext(Point point) {
-        int i = bm1.w * point.y + point.x;
-        while (i < bm1.size && bm1.data[i] != 1) {
+        int i = bm1.getWidth() * point.y + point.x;
+        int[] data = bm1.getData();
+        while (i < data.length && data[i] != 1) {
             i++;
         }
-        if (i < bm1.size)
+        if (i < bm1.getSize())
             return bm1.index(i);
         return null;
     }
