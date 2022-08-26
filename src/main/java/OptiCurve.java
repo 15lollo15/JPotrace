@@ -149,7 +149,7 @@ public class OptiCurve {
         double[] areac = new double[m + 1];
 
         for (int i=0; i<m; i++) {
-            if (curve.tag[i] == "CURVE") {
+            if (curve.tag[i].equals("CURVE")) {
                 convc[i] = ProcessPath.sign(ProcessPath.dpara(vert[ProcessPath.mod(i-1,m)], vert[i], vert[ProcessPath.mod(i+1,m)]));
             } else {
                 convc[i] = 0;
@@ -161,7 +161,7 @@ public class OptiCurve {
         DoublePoint p0 = curve.vertex[0];
         for (int i=0; i<m; i++) {
             int i1 = ProcessPath.mod(i+1, m);
-            if (curve.tag[i1] == "CURVE") {
+            if (curve.tag[i1].equals("CURVE")) {
                 double alpha = curve.alpha[i1];
                 area += 0.3 * alpha * (4-alpha) *
                         ProcessPath.dpara(curve.c[i * 3 + 2], vert[i1], curve.c[i1 * 3 + 2])/2;

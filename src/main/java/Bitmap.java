@@ -2,14 +2,12 @@ public class Bitmap {
     public int w;
     public int h;
     public int size;
-    //public byte[] arraybuffer;
     public int[] data;
 
     public Bitmap(int w, int h) {
         this.w = w;
         this.h = h;
         this.size = w * h;
-        //this.arraybuffer = new byte[this.size];
         this.data = new int[this.size];
     }
 
@@ -20,7 +18,7 @@ public class Bitmap {
 
     public Point index(int i) {
         Point point = new Point();
-        point.y = (int)Math.floor(i / this.w);
+        point.y = i / this.w;
         point.x = i - point.y * this.w;
         return point;
     }

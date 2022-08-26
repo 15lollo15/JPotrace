@@ -21,9 +21,4 @@ public class Potrace {
         }
     }
 
-    public void process() {
-
-    }
-
-
 }

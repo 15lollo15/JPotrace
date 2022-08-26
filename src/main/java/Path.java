@@ -4,8 +4,7 @@ import java.util.List;
 public class Path {
     public double area = 0;
     public int len = 0;
-    //public int curve = {}; //TODO
-    public List<Point> pt = new ArrayList<>(); //TODO
+    public List<Point> pt = new ArrayList<>();
     public int minX = 100000;
     public int minY = 100000;
     public int maxX= -1;

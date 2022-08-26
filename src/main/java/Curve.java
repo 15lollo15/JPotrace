@@ -1,9 +1,4 @@
 public class Curve {
-    //TODO
-//    this.n = n;
-//    this.tag = new Array(n);
-//    this.c = new Array(n * 3);
-//    this.alphaCurve = 0;
     public DoublePoint[] c;
     public String[] tag;
     public DoublePoint[] vertex;
@@ -11,9 +6,6 @@ public class Curve {
     public double[] alpha;
     public double[] beta;
     public int alphaCurve;
-//    this.alpha = new Array(n);
-//    this.alpha0 = new Array(n);
-//    this.beta = new Array(n);
 
     public int n;
 

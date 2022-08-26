@@ -72,11 +72,11 @@ public class BmToPathlist {
             boolean r = bm1.at(x + (dirx - diry - 1) / 2, y + (diry + dirx - 1) / 2);
 
             if (r && !l) {
-                if (info.turnpolicy == "right" ||
-                        (info.turnpolicy == "black" && path.sign == "+") ||
-                        (info.turnpolicy == "white" && path.sign == "-") ||
-                        (info.turnpolicy == "majority" && majority(x, y) == 1) ||
-                        (info.turnpolicy == "minority" && majority(x, y) == 0)) {
+                if (info.turnpolicy.equals("right") ||
+                        (info.turnpolicy.equals("black") && path.sign.equals("+")) ||
+                        (info.turnpolicy.equals("white") && path.sign.equals("-")) ||
+                        (info.turnpolicy.equals("majority") && majority(x, y) == 1) ||
+                        (info.turnpolicy.equals("minority") && majority(x, y) == 0)) {
                     tmp = dirx;
                     dirx = -diry;
                     diry = tmp;

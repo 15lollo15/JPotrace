@@ -359,7 +359,7 @@ public class ProcessPath {
             AdjustVertices adjustVertices = new AdjustVertices(path);
             adjustVertices.adjustVertices();
 
-            if (path.sign == "-") {
+            if (path.sign.equals("-")) {
                 reverse(path);
             }
 

@@ -42,9 +42,9 @@ public class GetSVG {
         var p = 'M' + format(curve.c[(n - 1) * 3 + 2].x * size) +
                 ' ' + format(curve.c[(n - 1) * 3 + 2].y * size) + ' ';
         for (int i = 0; i < n; i++) {
-            if (curve.tag[i] == "CURVE") {
+            if (curve.tag[i].equals("CURVE")) {
                 p += bezier(curve, i);
-            } else if (curve.tag[i] == "CORNER") {
+            } else if (curve.tag[i].equals("CORNER")) {
                 p += segment(curve, i);
             }
         }
@@ -64,7 +64,7 @@ public class GetSVG {
             Curve c = pathlist.get(i).curve;
             svg += path(c);
         }
-        if (opt_type == "curve") {
+        if (opt_type.equals("curve")) {
             strokec = "black";
             fillc = "none";
             fillrule = "";
