@@ -1,3 +1,7 @@
+package image;
+
+import geometry.Point;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -6,22 +10,6 @@ public class Bitmap {
     private int h;
     private int size;
     private int[] data;
-
-    public Bitmap(BufferedImage img) {
-        this(img.getWidth(), img.getHeight());
-
-        int k = 0;
-        for (int i = 0; i < img.getHeight(); i++) {
-            for (int j = 0; j < img.getWidth(); j++) {
-                int rgb = img.getRGB(j, i);
-                Color c = new Color(rgb);
-                double color = 0.2126 * c.getRed() + 0.7153 * c.getGreen() +
-                        0.0721 * c.getBlue();
-
-                data[k++] = (color < 128 ? 1 : 0);
-            }
-        }
-    }
 
     public Bitmap(int w, int h) {
         this.w = w;
@@ -33,6 +21,10 @@ public class Bitmap {
     public boolean at(int x, int y) {
         return (x >= 0 && x < this.w && y >=0 && y < this.h) &&
                 this.data[this.w * y + x] == 1;
+    }
+
+    public void set(int x, int y, boolean value) {
+        this.data[this.w * y + x] = value ? 1 : 0;
     }
 
     public Point index(int i) {
@@ -73,4 +65,33 @@ public class Bitmap {
         return h;
     }
 
+    public BufferedImage toBufferedImage() {
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_BINARY);
+
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                if (at(x, y))
+                    img.setRGB(x, y, Color.BLACK.getRGB());
+                else
+                    img.setRGB(x, y, Color.WHITE.getRGB());
+            }
+        }
+
+        return img;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (at(x, y))
+                    builder.append("##");
+                else
+                    builder.append("  ");
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
 }

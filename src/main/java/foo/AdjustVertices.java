@@ -1,3 +1,10 @@
+package foo;
+
+import geometry.Curve;
+import geometry.DoublePoint;
+import geometry.Path;
+import geometry.Point;
+
 import java.util.List;
 
 public class AdjustVertices {

@@ -1,3 +1,5 @@
+package foo;
+
 public class Info {
     public boolean isReady = false;
     public String turnpolicy = "minority";

@@ -1,3 +1,5 @@
+package geometry;
+
 public class Curve {
     public DoublePoint[] c;
     public String[] tag;

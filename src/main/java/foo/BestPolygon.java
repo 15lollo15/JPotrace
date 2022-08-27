@@ -1,3 +1,8 @@
+package foo;
+
+import geometry.Path;
+import geometry.Point;
+
 import java.util.List;
 
 public class BestPolygon {

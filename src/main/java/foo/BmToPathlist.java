@@ -1,3 +1,9 @@
+package foo;
+
+import geometry.Path;
+import geometry.Point;
+import image.Bitmap;
+
 import java.util.List;
 
 public class BmToPathlist {

@@ -1,3 +1,5 @@
+package foo;
+
 public class Sum {
     public double x;
     public double y;

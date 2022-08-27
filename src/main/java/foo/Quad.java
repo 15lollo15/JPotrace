@@ -1,3 +1,5 @@
+package foo;
+
 public class Quad {
     public double[] data = {0,0,0,0,0,0,0,0,0};
 

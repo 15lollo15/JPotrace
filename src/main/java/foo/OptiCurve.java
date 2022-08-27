@@ -1,3 +1,9 @@
+package foo;
+
+import geometry.Curve;
+import geometry.DoublePoint;
+import geometry.Path;
+
 public class OptiCurve {
     private Path path;
     private Info info;

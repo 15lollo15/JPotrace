@@ -1,3 +1,5 @@
+package geometry;
+
 public class DoublePoint {
     public double x;
     public double y;

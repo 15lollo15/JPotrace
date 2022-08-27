@@ -1,5 +1,10 @@
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+package foo;
+
+import geometry.Curve;
+import geometry.Path;
+import image.Bitmap;
+
+import java.awt.*;
 import java.util.List;
 
 public class GetSVG {
@@ -52,10 +57,17 @@ public class GetSVG {
     }
 
     public String getSVG() {
+        return getSVG(Color.BLACK);
+    }
+
+    public String getSVG(Color color) {
         int w = bm.getWidth() * size;
         int h = bm.getHeight() * size;
         int len = pathlist.size();
         String strokec, fillc, fillrule;
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
 
         String svg = "<svg id=\"svg\" version=\"1.1\" width=\"" + w + "\" height=\"" + h +
                 "\" xmlns=\"http://www.w3.org/2000/svg\">";
@@ -65,15 +77,41 @@ public class GetSVG {
             svg += path(c);
         }
         if (opt_type.equals("curve")) {
-            strokec = "black";
+            strokec = String.format("rgb(%d,%d,%d)", r, g, b);
             fillc = "none";
             fillrule = "";
         } else {
             strokec = "none";
-            fillc = "black";
+            fillc = String.format("rgb(%d,%d,%d)", r, g, b);
             fillrule = " fill-rule=\"evenodd\"";
         }
         svg += "\" stroke=\"" + strokec + "\" fill=\"" + fillc + "\"" + fillrule + "/></svg>";
+        return svg;
+    }
+
+    public String getPath(Color color) {
+        int len = pathlist.size();
+        String svg = "<path d=\"";
+        String strokec, fillc, fillrule;
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+
+        for (int i = 0; i < len; i++) {
+            Curve c = pathlist.get(i).curve;
+            svg += path(c);
+        }
+        if (opt_type.equals("curve")) {
+            strokec = String.format("rgb(%d,%d,%d)", r, g, b);
+            fillc = "none";
+            fillrule = "";
+        } else {
+            strokec = "none";
+            fillc = String.format("rgb(%d,%d,%d)", r, g, b);
+            fillrule = " fill-rule=\"evenodd\"";
+        }
+        svg += "\" stroke=\"" + strokec + "\" fill=\"" + fillc + "\"" + fillrule + "/>";
+
         return svg;
     }
 }
