@@ -30,7 +30,7 @@ public class Main {
         Color[] pixels = getPixels(img);
 
 
-        PaletteExtractor paletteExtractor = new HistogramExtractor(2);
+        PaletteExtractor paletteExtractor = new KMeansExtractor(11);
 
         Set<Color> palette = paletteExtractor.extract(pixels);
         pixels = simplify(pixels, palette);
