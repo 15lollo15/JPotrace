@@ -5,28 +5,32 @@ import geometry.Path;
 import image.Bitmap;
 
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class GetSVG {
-    private int size;
-    private String opt_type;
-    private Bitmap bm;
-    private List<Path> pathlist;
+    public static final String RGB_STRING_FORMAT = "rgb(%d,%d,%d)";
 
-    public GetSVG(int size, String opt_type, Bitmap bm, List<Path> pathList) {
+    private final int size;
+    private final String optType;
+    private final Bitmap bm;
+    private final List<Path> pathlist;
+
+    public GetSVG(int size, String optType, Bitmap bm, List<Path> pathList) {
         this.size = size;
-        this.opt_type = opt_type;
+        this.optType = optType;
         this.bm = bm;
         this.pathlist = pathList;
     }
 
     private String format(double d) {
-        return String.format("%.3f", d).replace(',', '.');
+        return BigDecimal.valueOf(d).setScale(3, RoundingMode.HALF_UP).toString();
     }
 
     public String  bezier(Curve curve, int i) {
-        var b = "C " + format(curve.c[i * 3 + 0].x * size) + " " +
-                format(curve.c[i * 3 + 0].y * size) + ",";
+        var b = "C " + format(curve.c[i * 3].x * size) + " " +
+                format(curve.c[i * 3].y * size) + ",";
         b += format(curve.c[i * 3 + 1].x * size) + ' ' +
                 format(curve.c[i * 3 + 1].y * size)+ ',';
         b += format(curve.c[i * 3 + 2].x * size)+ ' ' +
@@ -43,17 +47,18 @@ public class GetSVG {
     }
 
     public String path(Curve curve) {
+        StringBuilder sb = new StringBuilder();
         int n = curve.n;
-        var p = 'M' + format(curve.c[(n - 1) * 3 + 2].x * size) +
-                ' ' + format(curve.c[(n - 1) * 3 + 2].y * size) + ' ';
+        sb.append("M").append(format(curve.c[(n - 1) * 3 + 2].x * size));
+        sb.append(" ").append(format(curve.c[(n - 1) * 3 + 2].y * size)).append(" ");
         for (int i = 0; i < n; i++) {
             if (curve.tag[i].equals("CURVE")) {
-                p += bezier(curve, i);
+                sb.append(bezier(curve, i));
             } else if (curve.tag[i].equals("CORNER")) {
-                p += segment(curve, i);
+                sb.append(segment(curve, i));
             }
         }
-        return p;
+        return sb.toString();
     }
 
     public String getSVG() {
@@ -63,55 +68,61 @@ public class GetSVG {
     public String getSVG(Color color) {
         int w = bm.getWidth() * size;
         int h = bm.getHeight() * size;
-        int len = pathlist.size();
-        String strokec, fillc, fillrule;
+        String strokec;
+        String fillc;
+        String fillrule;
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
 
-        String svg = "<svg id=\"svg\" version=\"1.1\" width=\"" + w + "\" height=\"" + h +
-                "\" xmlns=\"http://www.w3.org/2000/svg\">";
-        svg += "<path d=\"";
-        for (int i = 0; i < len; i++) {
-            Curve c = pathlist.get(i).curve;
-            svg += path(c);
+        StringBuilder sb = new StringBuilder();
+        sb.append("<svg id=\"svg\" version=\"1.1\" width=\"").append(w).append("\" height=\"").append(h);
+        sb.append("\" xmlns=\"http://www.w3.org/2000/svg\">");
+        sb.append("<path d=\"");
+        for (Path path : pathlist) {
+            Curve c = path.curve;
+            sb.append(path(c));
         }
-        if (opt_type.equals("curve")) {
-            strokec = String.format("rgb(%d,%d,%d)", r, g, b);
+        if (optType.equals("curve")) {
+            strokec = String.format(RGB_STRING_FORMAT, r, g, b);
             fillc = "none";
             fillrule = "";
         } else {
             strokec = "none";
-            fillc = String.format("rgb(%d,%d,%d)", r, g, b);
+            fillc = String.format(RGB_STRING_FORMAT, r, g, b);
             fillrule = " fill-rule=\"evenodd\"";
         }
-        svg += "\" stroke=\"" + strokec + "\" fill=\"" + fillc + "\"" + fillrule + "/></svg>";
-        return svg;
+        sb.append("\" stroke=\"").append(strokec);
+        sb.append("\" fill=\"").append(fillc).append("\"").append(fillrule).append("/></svg>");
+        return sb.toString();
     }
 
     public String getPath(Color color) {
-        int len = pathlist.size();
-        String svg = "<path d=\"";
-        String strokec, fillc, fillrule;
+        StringBuilder sb = new StringBuilder();
+        sb.append("<path d=\"");
+        String strokec;
+        String fillc;
+        String fillrule;
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
 
-        for (int i = 0; i < len; i++) {
-            Curve c = pathlist.get(i).curve;
-            svg += path(c);
+        for (Path path : pathlist) {
+            Curve c = path.curve;
+            sb.append(path(c));
         }
-        if (opt_type.equals("curve")) {
-            strokec = String.format("rgb(%d,%d,%d)", r, g, b);
+        if (optType.equals("curve")) {
+            strokec = String.format(RGB_STRING_FORMAT, r, g, b);
             fillc = "none";
             fillrule = "";
         } else {
             strokec = "none";
-            fillc = String.format("rgb(%d,%d,%d)", r, g, b);
+            fillc = String.format(RGB_STRING_FORMAT, r, g, b);
             fillrule = " fill-rule=\"evenodd\"";
         }
-        svg += "\" stroke=\"" + strokec + "\" fill=\"" + fillc + "\"" + fillrule + "/>";
+        sb.append("\" stroke=\"").append(strokec);
+        sb.append("\" fill=\"").append(fillc).append("\"").append(fillrule).append("/>");
 
-        return svg;
+        return sb.toString();
     }
 }
