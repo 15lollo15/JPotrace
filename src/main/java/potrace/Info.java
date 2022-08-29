@@ -1,8 +1,7 @@
-package foo;
+package potrace;
 
 public class Info {
-    public boolean isReady = false;
-    public String turnpolicy = "minority";
+    public TurnPolicy turnpolicy = TurnPolicy.MINORITY;
     public int turdsize =  2;
     public boolean optcurve = true;
     public int alphamax = 1;

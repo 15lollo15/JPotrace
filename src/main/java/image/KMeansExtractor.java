@@ -154,7 +154,6 @@ public class KMeansExtractor implements PaletteExtractor{
 
     private void computeWeights(double[] distances, double[] distancesSums) {
         double max = square(Arrays.stream(distances).max().getAsDouble());
-        System.out.println(max);
         for (int i = 0; i < distances.length; i++) {
             double distance = square(distances[i]) / max;
             distancesSums[i] = distance;

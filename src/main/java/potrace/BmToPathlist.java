@@ -1,4 +1,4 @@
-package foo;
+package potrace;
 
 import geometry.Path;
 import geometry.Point;
@@ -102,11 +102,11 @@ public class BmToPathlist {
             boolean r = bm1.at(x + (dirx - diry - 1) / 2, y + (diry + dirx - 1) / 2);
 
             if (r && !l) {
-                if (info.turnpolicy.equals("right") ||
-                        (info.turnpolicy.equals("black") && path.sign.equals("+")) ||
-                        (info.turnpolicy.equals("white") && path.sign.equals("-")) ||
-                        (info.turnpolicy.equals("majority") && majority(x, y)) ||
-                        (info.turnpolicy.equals("minority") && !majority(x, y))) {
+                if (info.turnpolicy.equals(TurnPolicy.RIGHT) ||
+                        (info.turnpolicy.equals(TurnPolicy.BLACK) && path.sign.equals("+")) ||
+                        (info.turnpolicy.equals(TurnPolicy.WHITE) && path.sign.equals("-")) ||
+                        (info.turnpolicy.equals(TurnPolicy.MAJORITY) && majority(x, y)) ||
+                        (info.turnpolicy.equals(TurnPolicy.MINORITY) && !majority(x, y))) {
                     int tmp = dirx;
                     dirx = -diry;
                     diry = tmp;

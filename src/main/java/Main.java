@@ -1,76 +1,89 @@
-import foo.BmToPathlist;
-import foo.GetSVG;
-import foo.ProcessPath;
+import gui.MainForm;
+import potrace.BmToPathlist;
+import potrace.GetSVG;
+import potrace.Info;
+import potrace.ProcessPath;
+import geometry.Path;
 import image.*;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        if (args.length < 2)
+        if(args.length != 2)
             System.exit(1);
 
-        String srcImg = args[0];
-        String desSvg = args[1];
+        File src = new File(args[0]);
+        File dest = new File(args[1]);
 
-        BufferedImage img = ImageIO.read(new File(srcImg));
-        Bitmap test = new GrayScaleLoader(100).load(img);
-        ImageIO.write(test.toBufferedImage(), "bmp", new File("C:\\Users\\Lorenzo\\Desktop\\binary.bmp"));
-
-
+        BufferedImage img = ImageIO.read(src);
         Color[] pixels = getPixels(img);
 
-
-        PaletteExtractor paletteExtractor = new KMeansExtractor(11);
-
+        PaletteExtractor paletteExtractor = new KMeansExtractor(16);
         Set<Color> palette = paletteExtractor.extract(pixels);
+
         pixels = simplify(pixels, palette);
 
+        Color darkest = darkest(palette);
 
-
-        int w = img.getWidth();
-        int h = img.getHeight();
-        ImageIO.write(toBufferedImage(w, h, pixels), "bmp", new File("C:\\Users\\Lorenzo\\Desktop\\simp.bmp"));
-
-        String svg = "<svg id=\"svg\" version=\"1.1\" width=\"" + w + "\" height=\"" + h +
-                "\" xmlns=\"http://www.w3.org/2000/svg\">";
-
-        //svg += "<rect width=\""+w+"\" height=\""+h+"\" style=\"fill:rgb(0,0,0);stroke-width:3;stroke:rgb(0,0,0)\" />";
-
+        Map<Color, List<Path>> coloredPath = new HashMap<>();
         for (Color c : palette) {
             BitmapLoader loader = new ColorPickerLoader(c);
             Bitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
-            List<geometry.Path> pathList = new ArrayList<>();
 
-            BmToPathlist bmToPathlist = new foo.BmToPathlist(bm, new foo.Info(), pathList);
+            List<Path> pathList = new ArrayList<>();
+            BmToPathlist bmToPathlist = new BmToPathlist(bm, new Info(), pathList);
             bmToPathlist.bmToPathlist();
 
-            ProcessPath processPath = new ProcessPath(new foo.Info(), pathList);
+            ProcessPath processPath = new ProcessPath(new Info(), pathList);
             processPath.processPath();
 
-            GetSVG getSVG = new GetSVG(1, "", bm, pathList);
-            String pathSVG = getSVG.getPath(c);
-            svg += pathSVG;
-
-
+            coloredPath.put(c, pathList);
         }
-        svg += "</svg>";
 
-        FileWriter fw = new FileWriter(new File("C:\\Users\\Lorenzo\\Desktop\\test\\" + "test" + ".svg"));
+        String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), 1, "", coloredPath, darkest);
+
+        FileWriter fw = new FileWriter(dest);
         fw.write(svg);
         fw.close();
 
+    }
 
+    public static Color darkest(Set<Color> palette) {
+        return palette.stream().min((c1, c2) -> compareDarkness(c1, c2)).get();
+    }
 
+    public static int compareDarkness(Color c1, Color c2) {
+        double l1 = luminance(c1);
+        double l2 = luminance(c2);
+        if (l1 < l2)
+            return -1;
+        if (l1 > l2)
+            return 1;
+        return 0;
+    }
+
+    public static double luminance(Color c) {
+        double rNorm = c.getRed() / 255d;
+        double gNorm = c.getGreen() / 255d;
+        double bNorm = c.getBlue() / 255d;
+
+        double r = Math.pow(rNorm, 2.2);
+        double g = Math.pow(gNorm, 2.2);
+        double b = Math.pow(bNorm, 2.2);
+
+        r *= 0.2126;
+        g *= 0.7152;
+        b *= 0.0722;
+
+        return r + g + b;
     }
 
     public static BufferedImage toBufferedImage(int w, int h, Color[] pixels) {

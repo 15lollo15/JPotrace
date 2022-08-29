@@ -1,4 +1,4 @@
-package foo;
+package potrace;
 
 public class Quad {
     public double[] data = {0,0,0,0,0,0,0,0,0};

@@ -1,4 +1,4 @@
-package foo;
+package potrace;
 
 import geometry.DoublePoint;
 

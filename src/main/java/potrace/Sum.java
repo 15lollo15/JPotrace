@@ -1,4 +1,4 @@
-package foo;
+package potrace;
 
 public class Sum {
     public double x;
