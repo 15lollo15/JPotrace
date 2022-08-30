@@ -79,9 +79,9 @@ public class KMeansExtractor implements PaletteExtractor{
     }
 
     public static double distance(Color c1, Color c2) {
-        double rQuad = square(c1.getRed() - c2.getRed());
-        double gQuad = square(c1.getGreen() - c2.getGreen());
-        double bQuad = square(c1.getBlue() - c2.getBlue());
+        double rQuad = square((double) c1.getRed() - c2.getRed());
+        double gQuad = square((double) c1.getGreen() - c2.getGreen());
+        double bQuad = square((double) c1.getBlue() - c2.getBlue());
         return Math.sqrt(rQuad + gQuad + bQuad);
     }
 

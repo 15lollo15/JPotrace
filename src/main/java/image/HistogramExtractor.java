@@ -31,7 +31,7 @@ public class HistogramExtractor implements PaletteExtractor {
             buckets[r][g][b].add(c);
         }
         Color[] avgs = bucketsAvgs(buckets);
-        return Arrays.stream(avgs).filter(c -> c != null).collect(Collectors.toSet());
+        return Arrays.stream(avgs).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
     private Color[] bucketsAvgs(List<Color>[][][] buckets) {
