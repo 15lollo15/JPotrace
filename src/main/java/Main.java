@@ -1,58 +1,54 @@
-import gui.MainForm;
-import potrace.BmToPathlist;
-import potrace.GetSVG;
-import potrace.Info;
-import potrace.ProcessPath;
-import geometry.Path;
-import image.*;
+import com.formdev.flatlaf.FlatLightLaf;
+import gui.Controller;
+import gui.MainFrame;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        if(args.length != 2)
-            System.exit(1);
-
-        File src = new File(args[0]);
-        File dest = new File(args[1]);
-
-        BufferedImage img = ImageIO.read(src);
-        Color[] pixels = getPixels(img);
-
-        PaletteExtractor paletteExtractor = new KMeansExtractor(16);
-        Set<Color> palette = paletteExtractor.extract(pixels);
-
-        pixels = simplify(pixels, palette);
-
-        Color darkest = darkest(palette);
-
-        Map<Color, List<Path>> coloredPath = new HashMap<>();
-        for (Color c : palette) {
-            BitmapLoader loader = new ColorPickerLoader(c);
-            Bitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
-
-            List<Path> pathList = new ArrayList<>();
-            BmToPathlist bmToPathlist = new BmToPathlist(bm, new Info(), pathList);
-            bmToPathlist.bmToPathlist();
-
-            ProcessPath processPath = new ProcessPath(new Info(), pathList);
-            processPath.processPath();
-
-            coloredPath.put(c, pathList);
-        }
-
-        String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), 1, "", coloredPath, darkest);
-
-        FileWriter fw = new FileWriter(dest);
-        fw.write(svg);
-        fw.close();
+        FlatLightLaf.setup();
+        Controller controller = Controller.getInstance();
+        controller.showWindow();
+//        if(args.length != 2)
+//            System.exit(1);
+//
+//        File src = new File(args[0]);
+//        File dest = new File(args[1]);
+//
+//        BufferedImage img = ImageIO.read(src);
+//        Color[] pixels = getPixels(img);
+//
+//        PaletteExtractor paletteExtractor = new KMeansExtractor(16);
+//        Set<Color> palette = paletteExtractor.extract(pixels);
+//
+//        pixels = simplify(pixels, palette);
+//
+//        Color darkest = darkest(palette);
+//
+//        Map<Color, List<Path>> coloredPath = new HashMap<>();
+//        for (Color c : palette) {
+//            BitmapLoader loader = new ColorPickerLoader(c);
+//            Bitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
+//
+//            List<Path> pathList = new ArrayList<>();
+//            BmToPathlist bmToPathlist = new BmToPathlist(bm, new Info(), pathList);
+//            bmToPathlist.bmToPathlist();
+//
+//            ProcessPath processPath = new ProcessPath(new Info(), pathList);
+//            processPath.processPath();
+//
+//            coloredPath.put(c, pathList);
+//        }
+//
+//        String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), 1, "", coloredPath, darkest);
+//
+//        FileWriter fw = new FileWriter(dest);
+//        fw.write(svg);
+//        fw.close();
 
     }
 
