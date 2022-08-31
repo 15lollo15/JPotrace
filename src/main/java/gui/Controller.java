@@ -1,5 +1,6 @@
 package gui;
 
+import potrace.Info;
 import potrace.TurnPolicy;
 import workers.BlackAndWhiteWorker;
 import workers.ColorWorker;
@@ -172,6 +173,13 @@ public class Controller {
 
         int scale = (Integer)mainFrame.getScaleSpinner().getValue();
 
+        Info info = new Info();
+        if (mainFrame.getAdvancePanel().isVisible()) {
+            info.turnpolicy = (TurnPolicy) mainFrame.getTurnPolicyComboBox().getSelectedItem();
+            info.turdsize = (Integer)mainFrame.getMinAreaSpinner().getValue();
+            info.optcurve = mainFrame.getEnableCurveOptimization().isSelected();
+        }
+
         mainFrame.getLogTextArea().setVisible(true);
         mainFrame.pack();
         mainFrame.getLogTextArea().setText("");
@@ -180,14 +188,14 @@ public class Controller {
             BlackAndWhiteWorker blackAndWhiteWorker = new BlackAndWhiteWorker(input,
                     new File(destPath),
                     scale, threshold,
-                    mainFrame.getLogTextArea());
+                    mainFrame.getLogTextArea(), info);
             blackAndWhiteWorker.execute();
         }else {
             int numberOfColors = (Integer)mainFrame.getColorNumberSpinner().getValue();
             ColorWorker colorWorker = new ColorWorker(input,
                     new File(destPath),
                     scale, numberOfColors,
-                    mainFrame.getLogTextArea());
+                    mainFrame.getLogTextArea(), info);
             colorWorker.execute();
         }
     }
