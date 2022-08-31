@@ -60,17 +60,17 @@ public class ColorWorker extends SwingWorker<Void, String> {
             Bitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
 
             List<Path> pathList = new ArrayList<>();
-            BmToPathlist bmToPathlist = new BmToPathlist(bm, new Info(), pathList);
+            BmToPathlist bmToPathlist = new BmToPathlist(bm, info, pathList);
             bmToPathlist.bmToPathlist();
 
-            ProcessPath processPath = new ProcessPath(new Info(), pathList);
+            ProcessPath processPath = new ProcessPath(info, pathList);
             processPath.processPath();
 
             coloredPath.put(c, pathList);
         }
 
         publish("Svg generation...");
-        String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), 1, "", coloredPath, darkest);
+        String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), scale, "", coloredPath, darkest);
 
         FileWriter fw = new FileWriter(svgFile);
         fw.write(svg);
@@ -103,7 +103,8 @@ public class ColorWorker extends SwingWorker<Void, String> {
     }
 
     private Color darkest(Set<Color> palette) {
-        return palette.stream().min((c1, c2) -> compareDarkness(c1, c2)).get();
+        Optional<Color> color = palette.stream().min(this::compareDarkness);
+        return color.isPresent() ? color.get() : Color.BLACK;
     }
 
     private int compareDarkness(Color c1, Color c2) {
@@ -130,16 +131,6 @@ public class ColorWorker extends SwingWorker<Void, String> {
         b *= 0.0722;
 
         return r + g + b;
-    }
-
-    private BufferedImage toBufferedImage(int w, int h, Color[] pixels) {
-        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-        for (int y = 0; y < img.getHeight(); y++) {
-            for (int x = 0; x < img.getWidth(); x++) {
-                img.setRGB(x, y, pixels[w * y + x].getRGB());
-            }
-        }
-        return img;
     }
 
     private int distance(Color c1, Color c2) {

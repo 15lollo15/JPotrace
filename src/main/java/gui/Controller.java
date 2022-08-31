@@ -8,9 +8,6 @@ import workers.ColorWorker;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -105,17 +102,9 @@ public class Controller {
         JMenu menu = mainFrame.getJMenuBar().getMenu(0);
         for (int i = 0; i < menu.getItemCount(); i++) {
             JCheckBoxMenuItem checkBoxMenuItem = (JCheckBoxMenuItem) menu.getItem(i);
-            if (i != modeIndex)
-                checkBoxMenuItem.setState(false);
-            else
-                checkBoxMenuItem.setState(true);
+            checkBoxMenuItem.setState(i == modeIndex);
         }
-
-        if(modeIndex == 0)
-            mainFrame.getAdvancePanel().setVisible(false);
-        else
-            mainFrame.getAdvancePanel().setVisible(true);
-
+        mainFrame.getAdvancePanel().setVisible(modeIndex != 0);
         mainFrame.pack();
     }
 
@@ -184,7 +173,7 @@ public class Controller {
         mainFrame.pack();
         mainFrame.getLogTextArea().setText("");
         if (mainFrame.getConversionModePane().getSelectedIndex() == 0) {
-            int threshold = (Integer)mainFrame.getThresholdSlider().getValue();
+            int threshold = mainFrame.getThresholdSlider().getValue();
             BlackAndWhiteWorker blackAndWhiteWorker = new BlackAndWhiteWorker(input,
                     new File(destPath),
                     scale, threshold,
