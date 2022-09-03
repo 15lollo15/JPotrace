@@ -1,18 +1,22 @@
 package image;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class ColorPickerLoader implements BitmapLoader{
     public static final Color DEFAULT_COLOR = Color.BLACK;
-    private Color colorToPick;
+    private List<Color> colorsToPick;
 
     public ColorPickerLoader() {
         this(DEFAULT_COLOR);
     }
 
     public ColorPickerLoader(Color colorToPick) {
-        this.colorToPick = colorToPick;
+        this.colorsToPick = List.of(colorToPick);
+    }
+    public ColorPickerLoader(List<Color> colorsToPick) {
+        this.colorsToPick = colorsToPick;
     }
 
     @Override
@@ -25,7 +29,7 @@ public class ColorPickerLoader implements BitmapLoader{
             for (int j = 0; j < img.getWidth(); j++) {
                 int rgb = img.getRGB(j, i);
                 Color c = new Color(rgb);
-                data[k++] = (c.equals(colorToPick) ? 1 : 0);
+                data[k++] = (colorsToPick.contains(c) ? 1 : 0);
             }
         }
         return bm;
@@ -38,7 +42,7 @@ public class ColorPickerLoader implements BitmapLoader{
 
         for (int i = 0; i < data.length; i++) {
             Color c = pixels[i];
-            data[i] = (c.equals(colorToPick) ? 1 : 0);
+            data[i] = (colorsToPick.contains(c) ? 1 : 0);
         }
 
         return bm;

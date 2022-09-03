@@ -9,11 +9,12 @@ import potrace.Info;
 import potrace.ProcessPath;
 
 import javax.swing.*;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
+import java.util.List;
 
 public class ColorWorker extends SwingWorker<Void, String> {
     private BufferedImage img;
@@ -50,13 +51,15 @@ public class ColorWorker extends SwingWorker<Void, String> {
         publish("Pixels simplification...");
         pixels = simplify(pixels, palette);
 
-        Color darkest = darkest(palette);
-
         publish("Polygons extraction...");
-        Map<Color, List<Path>> coloredPath = new HashMap<>();
+        Color[] colors = new Color[palette.size()];
+        List<Path>[] paths = new ArrayList[palette.size()];
+        List<Color> colorsToPick = new ArrayList<>();
+        int index = 0;
         for (Color c : palette) {
+            colorsToPick.add(c);
             publish("\t Extracting (" + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + ")...");
-            BitmapLoader loader = new ColorPickerLoader(c);
+            BitmapLoader loader = new ColorPickerLoader(colorsToPick);
             Bitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
 
             List<Path> pathList = new ArrayList<>();
@@ -66,11 +69,13 @@ public class ColorWorker extends SwingWorker<Void, String> {
             ProcessPath processPath = new ProcessPath(info, pathList);
             processPath.processPath();
 
-            coloredPath.put(c, pathList);
+            colors[index] = c;
+            paths[index] = pathList;
+            index++;
         }
 
         publish("Svg generation...");
-        String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), scale, "", coloredPath, darkest);
+        String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), scale, "", colors, paths);
 
         FileWriter fw = new FileWriter(svgFile);
         fw.write(svg);

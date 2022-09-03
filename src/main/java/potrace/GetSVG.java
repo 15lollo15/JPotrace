@@ -2,12 +2,10 @@ package potrace;
 
 import geometry.Curve;
 import geometry.Path;
-import image.Bitmap;
 
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,6 +87,24 @@ public class GetSVG {
         return sb.toString();
     }
 
+    public static String getSVG(int width, int height, int size, String optType, Map<Color, List<Path>> coloredPaths) {
+        int w = width * size;
+        int h = height * size;
+
+        String svg = "<svg id=\"svg\" version=\"1.1\" width=\"" + w + "\" height=\"" + h +
+                "\" xmlns=\"http://www.w3.org/2000/svg\">";
+
+        for (Map.Entry<Color, List<Path>> entry : coloredPaths.entrySet()) {
+            Color color = entry.getKey();
+            List<Path> pathlist = entry.getValue();
+
+            svg += getPath(pathlist, size, optType, color);
+        }
+
+        svg += "</svg>";
+        return svg;
+    }
+
     public static String getSVG(int width, int height, int size, String optType, Map<Color, List<Path>> coloredPaths, Color bgColor) {
         int w = width * size;
         int h = height * size;
@@ -104,6 +120,25 @@ public class GetSVG {
         for (Map.Entry<Color, List<Path>> entry : coloredPaths.entrySet()) {
             Color color = entry.getKey();
             List<Path> pathlist = entry.getValue();
+
+            svg += getPath(pathlist, size, optType, color);
+        }
+
+        svg += "</svg>";
+        return svg;
+    }
+
+    public static String getSVG(int width, int height, int size, String optType, Color[] colors, List<Path>[] paths) {
+        int w = width * size;
+        int h = height * size;
+
+        String svg = "<svg id=\"svg\" version=\"1.1\" width=\"" + w + "\" height=\"" + h +
+                "\" xmlns=\"http://www.w3.org/2000/svg\">";
+
+
+        for (int i = paths.length - 1; i >= 0; i--) {
+            Color color = colors[i];
+            List<Path> pathlist = paths[i];
 
             svg += getPath(pathlist, size, optType, color);
         }
