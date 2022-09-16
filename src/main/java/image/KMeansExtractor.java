@@ -2,13 +2,15 @@ package image;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.OptionalDouble;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class KMeansExtractor implements PaletteExtractor{
     private int k;
-    private Random random;
+    private final Random random;
 
     public KMeansExtractor (int k) {
         this.k = k;
@@ -21,13 +23,13 @@ public class KMeansExtractor implements PaletteExtractor{
         int[] cluster = new int[pixels.length];
         int[] oldCluster;
 
-        boolean needRecenter = false;
+        boolean needRecenter;
         do {
             oldCluster = cluster;
             cluster = new int[pixels.length];
-            for (int i = 0; i < pixels.length; i++) {
-                cluster[i] = minDistance(pixels[i], centroids);
-            }
+            int[] finalCluster = cluster;
+            IntStream.range(0, pixels.length).parallel().forEach(i ->
+                finalCluster[i] = minDistance(pixels[i], centroids));
             needRecenter = !Arrays.equals(oldCluster, cluster);
             if (needRecenter)
                 recenter(centroids, pixels, cluster);
@@ -72,7 +74,9 @@ public class KMeansExtractor implements PaletteExtractor{
         for (int i = 1; i < l; i++) {
             Color minColor = centroids[minIndex];
             Color tmp = centroids[i];
-            if (distance(c, minColor) > distance(c, tmp))
+            double distanceFromMinimum = distance(c, minColor);
+            double distanceFromTmp = distance(c, tmp);
+            if (distanceFromMinimum > distanceFromTmp)
                 minIndex = i;
         }
         return minIndex;
@@ -87,17 +91,6 @@ public class KMeansExtractor implements PaletteExtractor{
 
     public static double square(double x) {
         return x * x;
-    }
-
-    private Color[] generateRandomCentroids() {
-        Color[] centroids = new Color[k];
-        for (int i = 0; i < k; i++) {
-            int r = random.nextInt(256);
-            int g = random.nextInt(256);
-            int b = random.nextInt(256);
-            centroids[i] = new Color(r, g, b);
-        }
-        return centroids;
     }
 
     private Color[] generateCentroids(Color[] pixels) {
@@ -149,10 +142,13 @@ public class KMeansExtractor implements PaletteExtractor{
                 allZero = false;
         }
         if (allZero)
-            throw new RuntimeException("Too many k");
+            throw new TooManyColorsException();
     }
 
     private void computeWeights(double[] distances, double[] distancesSums) {
+        OptionalDouble optMax = Arrays.stream(distances).max();
+        if(optMax.isEmpty())
+            throw new MaxNotFoundException();
         double max = square(Arrays.stream(distances).max().getAsDouble());
         for (int i = 0; i < distances.length; i++) {
             double distance = square(distances[i]) / max;
@@ -161,4 +157,7 @@ public class KMeansExtractor implements PaletteExtractor{
                 distancesSums[i] += distancesSums[i - 1];
         }
     }
+
+    public static class TooManyColorsException extends RuntimeException{}
+    public static class MaxNotFoundException extends RuntimeException{}
 }
