@@ -3,6 +3,7 @@ package potrace;
 import geometry.Curve;
 import geometry.DoublePoint;
 import geometry.Path;
+import geometry.Tag;
 
 public class OptiCurve {
     private Path path;
@@ -13,10 +14,11 @@ public class OptiCurve {
         this.info = info;
     }
 
-    public int opti_penalty(Path path, int i, int j, Opti res, double opttolerance, int[] convc, double[] areac) {
+    public int optiPenalty(Path path, int i, int j, Opti res, double opttolerance, int[] convc, double[] areac) {
         Curve curve = path.curve;
-        DoublePoint[] vertex = curve.vertex;
-        int m = curve.n;
+        DoublePoint[] c = curve.getC();
+        DoublePoint[] vertex = curve.getVertex();
+        int m = curve.getN();
 
         if (i==j) {
             return 1;
@@ -46,37 +48,37 @@ public class OptiCurve {
             }
         }
 
-        DoublePoint p0 = curve.c[ProcessPath.mod(i,m) * 3 + 2].copy();
+        DoublePoint p0 = c[ProcessPath.mod(i,m) * 3 + 2].copy();
         DoublePoint p1 = vertex[ProcessPath.mod(i+1,m)].copy();
         DoublePoint p2 = vertex[ProcessPath.mod(j,m)].copy();
-        DoublePoint p3 = curve.c[ProcessPath.mod(j,m) * 3 + 2].copy();
+        DoublePoint p3 = c[ProcessPath.mod(j,m) * 3 + 2].copy();
 
         double area = areac[j] - areac[i];
-        area -= ProcessPath.dpara(vertex[0], curve.c[i * 3 + 2], curve.c[j * 3 + 2])/2;
+        area -= ProcessPath.dpara(vertex[0], c[i * 3 + 2], c[j * 3 + 2])/2;
         if (i>=j) {
             area += areac[m];
         }
 
-        double A1 = ProcessPath.dpara(p0, p1, p2);
-        double A2 = ProcessPath.dpara(p0, p1, p3);
-        double A3 = ProcessPath.dpara(p0, p2, p3);
+        double a1 = ProcessPath.dpara(p0, p1, p2);
+        double a2 = ProcessPath.dpara(p0, p1, p3);
+        double a3 = ProcessPath.dpara(p0, p2, p3);
 
-        double A4 = A1+A3-A2;
+        double a4 = a1+a3-a2;
 
-        if (A2 == A1) {
+        if (a2 == a1) {
             return 1;
         }
 
-        double t = A3/(A3-A4);
-        double s = A2/(A2-A1);
-        double A = A2 * t / 2.0;
+        double t = a3/(a3-a4);
+        double s = a2/(a2-a1);
+        double a = a2 * t / 2.0;
 
-        if (A == 0.0) {
+        if (a == 0.0) {
             return 1;
         }
 
-        double R = area / A;
-        double alpha = 2 - Math.sqrt(4 - R / 0.3);
+        double r = area / a;
+        double alpha = 2 - Math.sqrt(4 - r / 0.3);
 
         res.c[0] = ProcessPath.interval(t * alpha, p0, p1);
         res.c[1] = ProcessPath.interval(s * alpha, p3, p2);
@@ -113,18 +115,18 @@ public class OptiCurve {
 
         for (k=i; k!=j; k=k1) {
             k1 = ProcessPath.mod(k+1,m);
-            t = ProcessPath.tangent(p0, p1, p2, p3, curve.c[k * 3 + 2], curve.c[k1 * 3 + 2]);
+            t = ProcessPath.tangent(p0, p1, p2, p3, c[k * 3 + 2], c[k1 * 3 + 2]);
             if (t<-0.5) {
                 return 1;
             }
             DoublePoint pt = ProcessPath.bezier(t, p0, p1, p2, p3);
-            d = ProcessPath.ddist(curve.c[k * 3 + 2], curve.c[k1 * 3 + 2]);
+            d = ProcessPath.ddist(c[k * 3 + 2], c[k1 * 3 + 2]);
             if (d == 0.0) {
                 return 1;
             }
-            double d1 = ProcessPath.dpara(curve.c[k * 3 + 2], curve.c[k1 * 3 + 2], pt) / d;
-            double d2 = ProcessPath.dpara(curve.c[k * 3 + 2], curve.c[k1 * 3 + 2], vertex[k1]) / d;
-            d2 *= 0.75 * curve.alpha[k1];
+            double d1 = ProcessPath.dpara(c[k * 3 + 2], c[k1 * 3 + 2], pt) / d;
+            double d2 = ProcessPath.dpara(c[k * 3 + 2], c[k1 * 3 + 2], vertex[k1]) / d;
+            d2 *= 0.75 * curve.getAlpha()[k1];
             if (d2 < 0) {
                 d1 = -d1;
                 d2 = -d2;
@@ -142,8 +144,9 @@ public class OptiCurve {
 
     public void optiCurve() {
         Curve curve = path.curve;
-        int m = curve.n;
-        DoublePoint[] vert = curve.vertex;
+        DoublePoint[] c = curve.getC();
+        int m = curve.getN();
+        DoublePoint[] vert = curve.getVertex();
 
         int[] pt = new int[m + 1];
         double[] pen = new double[m + 1];
@@ -155,7 +158,7 @@ public class OptiCurve {
         double[] areac = new double[m + 1];
 
         for (int i=0; i<m; i++) {
-            if (curve.tag[i].equals("CURVE")) {
+            if (curve.getTag()[i] == Tag.CURVE) {
                 convc[i] = ProcessPath.sign(ProcessPath.dpara(vert[ProcessPath.mod(i-1,m)], vert[i], vert[ProcessPath.mod(i+1,m)]));
             } else {
                 convc[i] = 0;
@@ -164,14 +167,14 @@ public class OptiCurve {
 
         double area = 0.0;
         areac[0] = 0.0;
-        DoublePoint p0 = curve.vertex[0];
+        DoublePoint p0 = curve.getVertex()[0];
         for (int i=0; i<m; i++) {
             int i1 = ProcessPath.mod(i+1, m);
-            if (curve.tag[i1].equals("CURVE")) {
-                double alpha = curve.alpha[i1];
+            if (curve.getTag()[i1] == Tag.CURVE) {
+                double alpha = curve.getAlpha()[i1];
                 area += 0.3 * alpha * (4-alpha) *
-                        ProcessPath.dpara(curve.c[i * 3 + 2], vert[i1], curve.c[i1 * 3 + 2])/2;
-                area += ProcessPath.dpara(p0, curve.c[i * 3 + 2], curve.c[i1 * 3 + 2])/2;
+                        ProcessPath.dpara(c[i * 3 + 2], vert[i1], c[i1 * 3 + 2])/2;
+                area += ProcessPath.dpara(p0, c[i * 3 + 2], c[i1 * 3 + 2])/2;
             }
             areac[i+1] = area;
         }
@@ -187,7 +190,7 @@ public class OptiCurve {
             len[j] = len[j-1]+1;
 
             for (int i=j-2; i>=0; i--) {
-                int r = opti_penalty(path, i, ProcessPath.mod(j,m), o, info.opttolerance, convc,
+                int r = optiPenalty(path, i, ProcessPath.mod(j,m), o, info.opttolerance, convc,
                         areac);
                 if (r != 0) {
                     break;
@@ -208,26 +211,27 @@ public class OptiCurve {
         double[] t = new double[om];
 
         int j = m;
+        DoublePoint[] oc = ocurve.getC();
         for (int i=om-1; i>=0; i--) {
             if (pt[j]==j-1) {
-                ocurve.tag[i]     = curve.tag[ProcessPath.mod(j,m)];
-                ocurve.c[i * 3 + 0]    = curve.c[ProcessPath.mod(j,m) * 3 + 0];
-                ocurve.c[i * 3 + 1]    = curve.c[ProcessPath.mod(j,m) * 3 + 1];
-                ocurve.c[i * 3 + 2]    = curve.c[ProcessPath.mod(j,m) * 3 + 2];
-                ocurve.vertex[i]  = curve.vertex[ProcessPath.mod(j,m)];
-                ocurve.alpha[i]   = curve.alpha[ProcessPath.mod(j,m)];
-                ocurve.alpha0[i]  = curve.alpha0[ProcessPath.mod(j,m)];
-                ocurve.beta[i]    = curve.beta[ProcessPath.mod(j,m)];
+                ocurve.getTag()[i]     = curve.getTag()[ProcessPath.mod(j,m)];
+                oc[i * 3 + 0]    = c[ProcessPath.mod(j,m) * 3 + 0];
+                oc[i * 3 + 1]    = c[ProcessPath.mod(j,m) * 3 + 1];
+                oc[i * 3 + 2]    = c[ProcessPath.mod(j,m) * 3 + 2];
+                ocurve.getVertex()[i]  = curve.getVertex()[ProcessPath.mod(j,m)];
+                ocurve.getAlpha()[i]   = curve.getAlpha()[ProcessPath.mod(j,m)];
+                ocurve.getAlpha0()[i]  = curve.getAlpha0()[ProcessPath.mod(j,m)];
+                ocurve.getBeta()[i]    = curve.getBeta()[ProcessPath.mod(j,m)];
                 s[i] = t[i] = 1.0;
             } else {
-                ocurve.tag[i] = "CURVE";
-                ocurve.c[i * 3 + 0] = opt[j].c[0];
-                ocurve.c[i * 3 + 1] = opt[j].c[1];
-                ocurve.c[i * 3 + 2] = curve.c[ProcessPath.mod(j,m) * 3 + 2];
-                ocurve.vertex[i] = ProcessPath.interval(opt[j].s, curve.c[ProcessPath.mod(j,m) * 3 + 2],
+                ocurve.getTag()[i] = Tag.CURVE;
+                oc[i * 3 + 0] = opt[j].c[0];
+                oc[i * 3 + 1] = opt[j].c[1];
+                oc[i * 3 + 2] = c[ProcessPath.mod(j,m) * 3 + 2];
+                ocurve.getVertex()[i] = ProcessPath.interval(opt[j].s, c[ProcessPath.mod(j,m) * 3 + 2],
                         vert[ProcessPath.mod(j,m)]);
-                ocurve.alpha[i] = opt[j].alpha;
-                ocurve.alpha0[i] = opt[j].alpha;
+                ocurve.getAlpha()[i] = opt[j].alpha;
+                ocurve.getAlpha0()[i] = opt[j].alpha;
                 s[i] = opt[j].s;
                 t[i] = opt[j].t;
             }
@@ -236,9 +240,9 @@ public class OptiCurve {
 
         for (int i=0; i<om; i++) {
             int i1 = ProcessPath.mod(i+1,om);
-            ocurve.beta[i] = s[i] / (s[i] + t[i1]);
+            ocurve.getBeta()[i] = s[i] / (s[i] + t[i1]);
         }
-        ocurve.alphaCurve = 1;
+        ocurve.setAlphaCurve(1);
         path.curve = ocurve;
     }
 }

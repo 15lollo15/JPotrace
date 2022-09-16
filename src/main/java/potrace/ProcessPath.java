@@ -1,9 +1,6 @@
 package potrace;
 
-import geometry.Curve;
-import geometry.DoublePoint;
-import geometry.Path;
-import geometry.Point;
+import geometry.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +23,7 @@ public class ProcessPath {
     }
 
     public double xprod(DoublePoint p1, DoublePoint p2) {
-        return p1.x * p2.y - p1.y * p2.x;
+        return p1.getX() * p2.getY() - p1.getY() * p2.getX();
     }
 
     public boolean cyclic(double a, double b, double c) {
@@ -45,17 +42,17 @@ public class ProcessPath {
         return 0;
     }
 
-    public static double quadform(Quad Q, DoublePoint w) {
+    public static double quadform(Quad quad, DoublePoint w) {
         double[] v = new double[3];
 
-        v[0] = w.x;
-        v[1] = w.y;
+        v[0] = w.getX();
+        v[1] = w.getY();
         v[2] = 1;
         double sum = 0.0;
 
         for (int i=0; i<3; i++) {
             for (int j=0; j<3; j++) {
-                sum += v[i] * Q.at(i, j) * v[j];
+                sum += v[i] * quad.at(i, j) * v[j];
             }
         }
         return sum;
@@ -64,33 +61,33 @@ public class ProcessPath {
     public static DoublePoint interval(double lambda, DoublePoint a, DoublePoint b) {
         DoublePoint res = new DoublePoint();
 
-        res.x = a.x + lambda * (b.x - a.x);
-        res.y = a.y + lambda * (b.y - a.y);
+        res.setX(a.getX() + lambda * (b.getX() - a.getX()));
+        res.setY(a.getY() + lambda * (b.getY() - a.getY()));
         return res;
     }
 
-    public DoublePoint dorth_infty(DoublePoint p0, DoublePoint p2) {
+    public DoublePoint dorthInfty(DoublePoint p0, DoublePoint p2) {
         DoublePoint r = new DoublePoint();
 
-        r.y = sign(p2.x - p0.x);
-        r.x = -sign(p2.y - p0.y);
+        r.setY(sign(p2.getX() - p0.getX()));
+        r.setX(-sign(p2.getY() - p0.getY()));
 
         return r;
     }
 
     public double ddenom(DoublePoint p0, DoublePoint p2) {
-        DoublePoint r = dorth_infty(p0, p2);
+        DoublePoint r = dorthInfty(p0, p2);
 
-        return r.y * (p2.x - p0.x) - r.x * (p2.y - p0.y);
+        return r.getY() * (p2.getX() - p0.getX()) - r.getX() * (p2.getY() - p0.getY());
     }
 
     public static double dpara(DoublePoint p0, DoublePoint p1, DoublePoint p2) {
         double x1, y1, x2, y2;
 
-        x1 = p1.x - p0.x;
-        y1 = p1.y - p0.y;
-        x2 = p2.x - p0.x;
-        y2 = p2.y - p0.y;
+        x1 = p1.getX() - p0.getX();
+        y1 = p1.getY() - p0.getY();
+        x2 = p2.getX() - p0.getX();
+        y2 = p2.getY() - p0.getY();
 
         return x1 * y2 - x2 * y1;
     }
@@ -98,10 +95,10 @@ public class ProcessPath {
     public static double cprod(DoublePoint p0, DoublePoint p1, DoublePoint p2, DoublePoint p3) {
         double x1, y1, x2, y2;
 
-        x1 = p1.x - p0.x;
-        y1 = p1.y - p0.y;
-        x2 = p3.x - p2.x;
-        y2 = p3.y - p2.y;
+        x1 = p1.getX() - p0.getX();
+        y1 = p1.getY() - p0.getY();
+        x2 = p3.getX() - p2.getX();
+        y2 = p3.getY() - p2.getY();
 
         return x1 * y2 - x2 * y1;
     }
@@ -109,10 +106,10 @@ public class ProcessPath {
     public static double iprod(DoublePoint p0, DoublePoint p1, DoublePoint p2) {
         double x1, y1, x2, y2;
 
-        x1 = p1.x - p0.x;
-        y1 = p1.y - p0.y;
-        x2 = p2.x - p0.x;
-        y2 = p2.y - p0.y;
+        x1 = p1.getX() - p0.getX();
+        y1 = p1.getY() - p0.getY();
+        x2 = p2.getX() - p0.getX();
+        y2 = p2.getY() - p0.getY();
 
         return x1*x2 + y1*y2;
     }
@@ -120,24 +117,24 @@ public class ProcessPath {
     public static double iprod1(DoublePoint p0, DoublePoint p1, DoublePoint p2, DoublePoint p3) {
         double x1, y1, x2, y2;
 
-        x1 = p1.x - p0.x;
-        y1 = p1.y - p0.y;
-        x2 = p3.x - p2.x;
-        y2 = p3.y - p2.y;
+        x1 = p1.getX() - p0.getX();
+        y1 = p1.getY() - p0.getY();
+        x2 = p3.getX() - p2.getX();
+        y2 = p3.getY() - p2.getY();
 
         return x1 * x2 + y1 * y2;
     }
 
     public static double ddist(DoublePoint p, DoublePoint q) {
-        return Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y));
+        return Math.sqrt((p.getX() - q.getX()) * (p.getX() - q.getX()) + (p.getY() - q.getY()) * (p.getY() - q.getY()));
     }
 
     public static DoublePoint bezier(double t, DoublePoint p0, DoublePoint p1, DoublePoint p2, DoublePoint p3) {
         double s = 1 - t;
         DoublePoint res = new DoublePoint();
 
-        res.x = s*s*s*p0.x + 3*(s*s*t)*p1.x + 3*(t*t*s)*p2.x + t*t*t*p3.x;
-        res.y = s*s*s*p0.y + 3*(s*s*t)*p1.y + 3*(t*t*s)*p2.y + t*t*t*p3.y;
+        res.setX(s*s*s*p0.getX() + 3*(s*s*t)*p1.getX() + 3*(t*t*s)*p2.getX() + t*t*t*p3.getX());
+        res.setY(s*s*s*p0.getY() + 3*(s*s*t)*p1.getY() + 3*(t*t*s)*p2.getY() + t*t*t*p3.getY());
 
         return res;
     }
@@ -220,10 +217,10 @@ public class ProcessPath {
                     (pt.get(mod(i + 1, n)).getY() - pt.get(i).getY())) / 2;
             ct[dir]++;
 
-            constraint[0].x = 0;
-            constraint[0].y = 0;
-            constraint[1].x = 0;
-            constraint[1].y = 0;
+            constraint[0].setX(0);
+            constraint[0].setY(0);
+            constraint[1].setX(0);
+            constraint[1].setY(0);
 
             k = nc[i];
             k1 = i;
@@ -239,25 +236,25 @@ public class ProcessPath {
                     break;
                 }
 
-                cur.x = pt.get(k).getX() - pt.get(i).getX();
-                cur.y = pt.get(k).getY() - pt.get(i).getY();
+                cur.setX(pt.get(k).getX() - pt.get(i).getX());
+                cur.setY(pt.get(k).getY() - pt.get(i).getY());
 
                 if (xprod(constraint[0], cur) < 0 || xprod(constraint[1], cur) > 0) {
                     break;
                 }
 
-                if (Math.abs(cur.x) > 1 || Math.abs(cur.y) > 1) {
-                    off.x = cur.x + ((cur.y >= 0 && (cur.y > 0 || cur.x < 0)) ? 1 : -1);
-                    off.y = cur.y + ((cur.x <= 0 && (cur.x < 0 || cur.y < 0)) ? 1 : -1);
+                if (Math.abs(cur.getX()) > 1 || Math.abs(cur.getY()) > 1) {
+                    off.setX(cur.getX() + ((cur.getY() >= 0 && (cur.getY() > 0 || cur.getX() < 0)) ? 1 : -1));
+                    off.setY(cur.getY() + ((cur.getX() <= 0 && (cur.getX() < 0 || cur.getY() < 0)) ? 1 : -1));
                     if (xprod(constraint[0], off) >= 0) {
-                        constraint[0].x = off.x;
-                        constraint[0].y = off.y;
+                        constraint[0].setX(off.getX());
+                        constraint[0].setY(off.getY());
                     }
-                    off.x = cur.x + ((cur.y <= 0 && (cur.y < 0 || cur.x < 0)) ? 1 : -1);
-                    off.y = cur.y + ((cur.x >= 0 && (cur.x > 0 || cur.y < 0)) ? 1 : -1);
+                    off.setX(cur.getX() + ((cur.getY() <= 0 && (cur.getY() < 0 || cur.getX() < 0)) ? 1 : -1));
+                    off.setY(cur.getY() + ((cur.getX() >= 0 && (cur.getX() > 0 || cur.getY() < 0)) ? 1 : -1));
                     if (xprod(constraint[1], off) <= 0) {
-                        constraint[1].x = off.x;
-                        constraint[1].y = off.y;
+                        constraint[1].setX(off.getX());
+                        constraint[1].setY(off.getY());
                     }
                 }
                 k1 = k;
@@ -267,10 +264,10 @@ public class ProcessPath {
                 }
             }
             if (foundk == 0) {
-                dk.x = sign(pt.get(k).getX()-pt.get(k1).getX());
-                dk.y = sign(pt.get(k).getY()-pt.get(k1).getY());
-                cur.x = pt.get(k1).getX() - pt.get(i).getX();
-                cur.y = pt.get(k1).getY() - pt.get(i).getY();
+                dk.setX(sign(pt.get(k).getX()-pt.get(k1).getX()));
+                dk.setY(sign(pt.get(k).getY()-pt.get(k1).getY()));
+                cur.setX(pt.get(k1).getX() - pt.get(i).getX());
+                cur.setY(pt.get(k1).getY() - pt.get(i).getY());
 
                 a = xprod(constraint[0], cur);
                 b = xprod(constraint[0], dk);
@@ -304,8 +301,8 @@ public class ProcessPath {
 
     public void reverse(Path path) {
         Curve curve = path.curve;
-        int m = curve.n;
-        DoublePoint[] v = curve.vertex;
+        int m = curve.getN();
+        DoublePoint[] v = curve.getVertex();
 
         for (int i=0, j=m-1; i<j; i++, j--) {
             DoublePoint tmp = v[i];
@@ -316,7 +313,7 @@ public class ProcessPath {
 
     public void smooth(Path path) {
         Curve curve = path.curve;
-        var m = path.curve.n;
+        var m = path.curve.getN();
 
         double alpha;
         DoublePoint p2, p3, p4;
@@ -324,40 +321,40 @@ public class ProcessPath {
         for (int i=0; i<m; i++) {
             int j = mod(i+1, m);
             int k = mod(i+2, m);
-            p4 = interval(1/2.0, curve.vertex[k], curve.vertex[j]);
+            p4 = interval(1/2.0, curve.getVertex()[k], curve.getVertex()[j]);
 
-            double denom = ddenom(curve.vertex[i], curve.vertex[k]);
+            double denom = ddenom(curve.getVertex()[i], curve.getVertex()[k]);
             if (denom != 0.0) {
-                double dd = dpara(curve.vertex[i], curve.vertex[j], curve.vertex[k]) / denom;
+                double dd = dpara(curve.getVertex()[i], curve.getVertex()[j], curve.getVertex()[k]) / denom;
                 dd = Math.abs(dd);
                 alpha = dd>1 ? (1 - 1.0/dd) : 0;
                 alpha = alpha / 0.75;
             } else {
                 alpha = 4/3.0;
             }
-            curve.alpha0[j] = alpha;
+            curve.getAlpha0()[j] = alpha;
 
             if (alpha >= info.alphamax) {
-                curve.tag[j] = "CORNER";
-                curve.c[3 * j + 1] = curve.vertex[j];
-                curve.c[3 * j + 2] = p4;
+                curve.getTag()[j] = Tag.CORNER;
+                curve.getC()[3 * j + 1] = curve.getVertex()[j];
+                curve.getC()[3 * j + 2] = p4;
             } else {
                 if (alpha < 0.55) {
                     alpha = 0.55;
                 } else if (alpha > 1) {
                     alpha = 1;
                 }
-                p2 = interval(0.5+0.5*alpha, curve.vertex[i], curve.vertex[j]);
-                p3 = interval(0.5+0.5*alpha, curve.vertex[k], curve.vertex[j]);
-                curve.tag[j] = "CURVE";
-                curve.c[3 * j + 0] = p2;
-                curve.c[3 * j + 1] = p3;
-                curve.c[3 * j + 2] = p4;
+                p2 = interval(0.5+0.5*alpha, curve.getVertex()[i], curve.getVertex()[j]);
+                p3 = interval(0.5+0.5*alpha, curve.getVertex()[k], curve.getVertex()[j]);
+                curve.getTag()[j] = Tag.CURVE;
+                curve.getC()[3 * j + 0] = p2;
+                curve.getC()[3 * j + 1] = p3;
+                curve.getC()[3 * j + 2] = p4;
             }
-            curve.alpha[j] = alpha;
-            curve.beta[j] = 0.5;
+            curve.getAlpha()[j] = alpha;
+            curve.getBeta()[j] = 0.5;
         }
-        curve.alphaCurve = 1;
+        curve.setAlphaCurve(1);
     }
 
     public void processPath() {

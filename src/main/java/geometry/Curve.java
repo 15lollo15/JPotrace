@@ -1,21 +1,21 @@
 package geometry;
 
 public class Curve {
-    public DoublePoint[] c;
-    public String[] tag;
-    public DoublePoint[] vertex;
-    public double[] alpha0;
-    public double[] alpha;
-    public double[] beta;
-    public int alphaCurve;
+    private DoublePoint[] c;
+    private Tag[] tag;
+    private DoublePoint[] vertex;
+    private double[] alpha0;
+    private double[] alpha;
+    private double[] beta;
+    private int alphaCurve;
 
-    public int n;
+    private int n;
 
     public Curve(int n) {
         this.n = n;
         vertex = new DoublePoint[n];
         alpha0 = new double[n];
-        tag = new String[n];
+        tag = new Tag[n];
         c = new DoublePoint[n * 3];
         alpha = new double[n];
         beta = new double[n];
@@ -49,7 +49,7 @@ public class Curve {
 
         sb.append("\n Tag");
         sb.append("[");
-        for (String t : tag)
+        for (Tag t : tag)
             sb.append(t + ", ");
         sb.append("]");
 
@@ -60,5 +60,45 @@ public class Curve {
         sb.append("]");
 
         return sb.toString();
+    }
+
+    public DoublePoint[] getC() {
+        return c;
+    }
+
+    public Tag[] getTag() {
+        return tag;
+    }
+
+    public DoublePoint[] getVertex() {
+        return vertex;
+    }
+
+    public double[] getAlpha0() {
+        return alpha0;
+    }
+
+    public double[] getAlpha() {
+        return alpha;
+    }
+
+    public double[] getBeta() {
+        return beta;
+    }
+
+    public int getAlphaCurve() {
+        return alphaCurve;
+    }
+
+    public void setAlphaCurve(int alphaCurve) {
+        this.alphaCurve = alphaCurve;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public void setN(int n) {
+        this.n = n;
     }
 }

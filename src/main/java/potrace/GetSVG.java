@@ -1,7 +1,9 @@
 package potrace;
 
 import geometry.Curve;
+import geometry.DoublePoint;
 import geometry.Path;
+import geometry.Tag;
 
 import java.awt.*;
 import java.math.BigDecimal;
@@ -19,32 +21,35 @@ public class GetSVG {
     }
 
     private static String  bezier(Curve curve, int i, int size) {
-        var b = "C " + format(curve.c[i * 3].x * size) + " " +
-                format(curve.c[i * 3].y * size) + ",";
-        b += format(curve.c[i * 3 + 1].x * size) + ' ' +
-                format(curve.c[i * 3 + 1].y * size)+ ',';
-        b += format(curve.c[i * 3 + 2].x * size)+ ' ' +
-                format(curve.c[i * 3 + 2].y * size) + ' ';
+        DoublePoint[] c = curve.getC();
+        var b = "C " + format(c[i * 3].getX() * size) + " " +
+                format(c[i * 3].getY() * size) + ",";
+        b += format(c[i * 3 + 1].getX() * size) + ' ' +
+                format(c[i * 3 + 1].getY() * size)+ ',';
+        b += format(c[i * 3 + 2].getX() * size)+ ' ' +
+                format(c[i * 3 + 2].getY() * size) + ' ';
         return b;
     }
 
     private static String  segment(Curve curve, int i, int size) {
-        var s = "L " + format(curve.c[i * 3 + 1].x * size) + ' ' +
-                format(curve.c[i * 3 + 1].y * size) + ' ';
-        s += format(curve.c[i * 3 + 2].x * size) + ' ' +
-                format(curve.c[i * 3 + 2].y * size) + ' ';
+        DoublePoint[] c = curve.getC();
+        var s = "L " + format(c[i * 3 + 1].getX() * size) + ' ' +
+                format(c[i * 3 + 1].getY() * size) + ' ';
+        s += format(c[i * 3 + 2].getX() * size) + ' ' +
+                format(c[i * 3 + 2].getY() * size) + ' ';
         return s;
     }
 
     private static String path(Curve curve, int size) {
         StringBuilder sb = new StringBuilder();
-        int n = curve.n;
-        sb.append("M").append(format(curve.c[(n - 1) * 3 + 2].x * size));
-        sb.append(" ").append(format(curve.c[(n - 1) * 3 + 2].y * size)).append(" ");
+        int n = curve.getN();
+        DoublePoint[] c = curve.getC();
+        sb.append("M").append(format(c[(n - 1) * 3 + 2].getX() * size));
+        sb.append(" ").append(format(c[(n - 1) * 3 + 2].getY() * size)).append(" ");
         for (int i = 0; i < n; i++) {
-            if (curve.tag[i].equals("CURVE")) {
+            if (curve.getTag()[i] == Tag.CURVE) {
                 sb.append(bezier(curve, i, size));
-            } else if (curve.tag[i].equals("CORNER")) {
+            } else if (curve.getTag()[i] == Tag.CORNER) {
                 sb.append(segment(curve, i, size));
             }
         }

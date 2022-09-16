@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,9 +60,11 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
         publish("Svg generation...");
         String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), scale, pathList, "");
 
-        FileWriter fileWriter = new FileWriter(svgFile);
-        fileWriter.append(svg);
-        fileWriter.close();
+        try (FileWriter fileWriter = new FileWriter(svgFile)){
+            fileWriter.append(svg);
+        }catch (IOException e) {
+            throw new SVGCreationException();
+        }
         long end = System.currentTimeMillis();
 
         double time = (end - start) / 1000d;

@@ -43,10 +43,10 @@ public class AdjustVertices {
         double x2 = sums.get(j+1).x2-sums.get(i).x2+r*sums.get(n).x2;
         double xy = sums.get(j+1).xy-sums.get(i).xy+r*sums.get(n).xy;
         double y2 = sums.get(j+1).y2-sums.get(i).y2+r*sums.get(n).y2;
-        double k = j+1-i+r*n;
+        double k = j+1.0-i+r*n;
 
-        ctr.x = x/k;
-        ctr.y = y/k;
+        ctr.setX(x/k);
+        ctr.setY(y/k);
 
         double a = (x2-x*x/k)/k;
         double b = (xy-x*y/k)/k;
@@ -60,18 +60,19 @@ public class AdjustVertices {
         if (Math.abs(a) >= Math.abs(c)) {
             l = Math.sqrt(a*a+b*b);
             if (l!=0) {
-                dir.x = -b/l;
-                dir.y = a/l;
+                dir.setX(-b/l);
+                dir.setY(a/l);
             }
         } else {
             l = Math.sqrt(c*c+b*b);
             if (l!=0) {
-                dir.x = -c/l;
-                dir.y = b/l;
+                dir.setX(-c/l);
+                dir.setY(b/l);
             }
         }
         if (l==0) {
-            dir.x = dir.y = 0;
+            dir.setX(0);
+            dir.setY(0);
         }
     }
 
@@ -100,7 +101,7 @@ public class AdjustVertices {
 
         for (int i=0; i<m; i++) {
             q[i] = new Quad();
-            double d = dir[i].x * dir[i].x + dir[i].y * dir[i].y;
+            double d = dir[i].getX() * dir[i].getX() + dir[i].getY() * dir[i].getY();
             if (d == 0.0) {
                 for (int j=0; j<3; j++) {
                     for (int k=0; k<3; k++) {
@@ -108,9 +109,9 @@ public class AdjustVertices {
                     }
                 }
             } else {
-                v[0] = dir[i].y;
-                v[1] = -dir[i].x;
-                v[2] = - v[1] * ctr[i].y - v[0] * ctr[i].x;
+                v[0] = dir[i].getY();
+                v[1] = -dir[i].getX();
+                v[2] = - v[1] * ctr[i].getY() - v[0] * ctr[i].getX();
                 for (int l=0; l<3; l++) {
                     for (int k=0; k<3; k++) {
                         q[i].data[l * 3 + k] = v[l] * v[k] / d;
@@ -119,103 +120,101 @@ public class AdjustVertices {
             }
         }
 
-        double dx, dy;
-        double min, cand, xmin, ymin, z;
         for (int i=0; i<m; i++) {
-            Quad Q = new Quad();
+            Quad quad = new Quad();
             DoublePoint w = new DoublePoint();
 
-            s.x = pt.get(po[i]).getX()-x0;
-            s.y = pt.get(po[i]).getY()-y0;
+            s.setX(pt.get(po[i]).getX()-(double)x0);
+            s.setY(pt.get(po[i]).getY()-(double)y0);
 
             int j = ProcessPath.mod(i-1,m);
 
             for (int l=0; l<3; l++) {
                 for (int k=0; k<3; k++) {
-                    Q.data[l * 3 + k] = q[j].at(l, k) + q[i].at(l, k);
+                    quad.data[l * 3 + k] = q[j].at(l, k) + q[i].at(l, k);
                 }
             }
 
             while(true) {
 
-                double det = Q.at(0, 0)*Q.at(1, 1) - Q.at(0, 1)*Q.at(1, 0);
+                double det = quad.at(0, 0)*quad.at(1, 1) - quad.at(0, 1)*quad.at(1, 0);
                 if (det != 0.0) {
-                    w.x = (-Q.at(0, 2)*Q.at(1, 1) + Q.at(1, 2)*Q.at(0, 1)) / det;
-                    w.y = ( Q.at(0, 2)*Q.at(1, 0) - Q.at(1, 2)*Q.at(0, 0)) / det;
+                    w.setX((-quad.at(0, 2)*quad.at(1, 1) + quad.at(1, 2)*quad.at(0, 1)) / det);
+                    w.setY(( quad.at(0, 2)*quad.at(1, 0) - quad.at(1, 2)*quad.at(0, 0)) / det);
                     break;
                 }
 
-                if (Q.at(0, 0)>Q.at(1, 1)) {
-                    v[0] = -Q.at(0, 1);
-                    v[1] = Q.at(0, 0);
-                } else if (Q.at(1, 1) != 0) {
-                    v[0] = -Q.at(1, 1);
-                    v[1] = Q.at(1, 0);
+                if (quad.at(0, 0)>quad.at(1, 1)) {
+                    v[0] = -quad.at(0, 1);
+                    v[1] = quad.at(0, 0);
+                } else if (quad.at(1, 1) != 0) {
+                    v[0] = -quad.at(1, 1);
+                    v[1] = quad.at(1, 0);
                 } else {
                     v[0] = 1;
                     v[1] = 0;
                 }
                 double d = v[0] * v[0] + v[1] * v[1];
-                v[2] = - v[1] * s.y - v[0] * s.x;
+                v[2] = - v[1] * s.getY() - v[0] * s.getX();
                 for (int l=0; l<3; l++) {
                     for (int k=0; k<3; k++) {
-                        Q.data[l * 3 + k] += v[l] * v[k] / d;
+                        quad.data[l * 3 + k] += v[l] * v[k] / d;
                     }
                 }
             }
-            dx = Math.abs(w.x-s.x);
-            dy = Math.abs(w.y-s.y);
+            double dx = Math.abs(w.getX()-s.getX());
+            double dy = Math.abs(w.getY()-s.getY());
             if (dx <= 0.5 && dy <= 0.5) {
-                path.curve.vertex[i] = new DoublePoint(w.x+x0, w.y+y0);
+                path.curve.getVertex()[i] = new DoublePoint(w.getX()+x0, w.getY()+y0);
                 continue;
             }
 
-            min = ProcessPath.quadform(Q, s);
-            xmin = s.x;
-            ymin = s.y;
+            double min = ProcessPath.quadform(quad, s);
+            double xmin = s.getX();
+            double ymin = s.getY();
 
-            if (Q.at(0, 0) != 0.0) {
-                for (z=0; z<2; z++) {
-                    w.y = s.y-0.5+z;
-                    w.x = - (Q.at(0, 1) * w.y + Q.at(0, 2)) / Q.at(0, 0);
-                    dx = Math.abs(w.x-s.x);
-                    cand = ProcessPath.quadform(Q, w);
+            if (quad.at(0, 0) != 0.0) {
+                for (int z=0; z<2; z++) {
+                    w.setY(s.getY()-0.5+z);
+                    w.setX(- (quad.at(0, 1) * w.getY() + quad.at(0, 2)) / quad.at(0, 0));
+                    dx = Math.abs(w.getX()-s.getX());
+                    double cand = ProcessPath.quadform(quad, w);
                     if (dx <= 0.5 && cand < min) {
                         min = cand;
-                        xmin = w.x;
-                        ymin = w.y;
+                        xmin = w.getX();
+                        ymin = w.getY();
                     }
                 }
             }
 
-            if (Q.at(1, 1) != 0.0) {
-                for (z=0; z<2; z++) {
-                    w.x = s.x-0.5+z;
-                    w.y = - (Q.at(1, 0) * w.x + Q.at(1, 2)) / Q.at(1, 1);
-                    dy = Math.abs(w.y-s.y);
-                    cand = ProcessPath.quadform(Q, w);
+            if (quad.at(1, 1) != 0.0) {
+                for (int z=0; z<2; z++) {
+                    w.setX(s.getX()-0.5+z);
+                    w.setY(- (quad.at(1, 0) * w.getX() + quad.at(1, 2)) / quad.at(1, 1));
+                    dy = Math.abs(w.getY()-s.getY());
+                    double cand = ProcessPath.quadform(quad, w);
                     if (dy <= 0.5 && cand < min) {
                         min = cand;
-                        xmin = w.x;
-                        ymin = w.y;
+                        xmin = w.getX();
+                        ymin = w.getY();
                     }
                 }
             }
 
             for (int l=0; l<2; l++) {
                 for (int k=0; k<2; k++) {
-                    w.x = s.x-0.5+l;
-                    w.y = s.y-0.5+k;
-                    cand = ProcessPath.quadform(Q, w);
+                    w.setX(s.getX()-0.5+l);
+                    w.setY(s.getY()-0.5+k);
+                    double cand = ProcessPath.quadform(quad, w);
                     if (cand < min) {
                         min = cand;
-                        xmin = w.x;
-                        ymin = w.y;
+                        xmin = w.getX();
+                        ymin = w.getY();
                     }
                 }
             }
 
-            path.curve.vertex[i] = new DoublePoint(xmin + x0, ymin + y0);
+            path.curve.getVertex()[i] = new DoublePoint(xmin + x0, ymin + y0);
         }
     }
 

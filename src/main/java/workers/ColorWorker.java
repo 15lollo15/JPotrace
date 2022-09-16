@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -77,9 +78,11 @@ public class ColorWorker extends SwingWorker<Void, String> {
         publish("Svg generation...");
         String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), scale, "", colors, paths);
 
-        FileWriter fw = new FileWriter(svgFile);
-        fw.write(svg);
-        fw.close();
+        try (FileWriter fileWriter = new FileWriter(svgFile)){
+            fileWriter.append(svg);
+        }catch (IOException e) {
+            throw new SVGCreationException();
+        }
         long end = System.currentTimeMillis();
 
         double time = (end - start) / 1000d;
@@ -105,37 +108,6 @@ public class ColorWorker extends SwingWorker<Void, String> {
         super.done();
         Controller.getInstance().disableAll(false);
         JOptionPane.showMessageDialog(Controller.getInstance().getMainFrame(), "Conversion completed");
-    }
-
-    private Color darkest(Set<Color> palette) {
-        Optional<Color> color = palette.stream().min(this::compareDarkness);
-        return color.isPresent() ? color.get() : Color.BLACK;
-    }
-
-    private int compareDarkness(Color c1, Color c2) {
-        double l1 = luminance(c1);
-        double l2 = luminance(c2);
-        if (l1 < l2)
-            return -1;
-        if (l1 > l2)
-            return 1;
-        return 0;
-    }
-
-    private double luminance(Color c) {
-        double rNorm = c.getRed() / 255d;
-        double gNorm = c.getGreen() / 255d;
-        double bNorm = c.getBlue() / 255d;
-
-        double r = Math.pow(rNorm, 2.2);
-        double g = Math.pow(gNorm, 2.2);
-        double b = Math.pow(bNorm, 2.2);
-
-        r *= 0.2126;
-        g *= 0.7152;
-        b *= 0.0722;
-
-        return r + g + b;
     }
 
     private int distance(Color c1, Color c2) {

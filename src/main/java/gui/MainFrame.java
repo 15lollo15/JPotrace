@@ -1,5 +1,7 @@
 package gui;
 
+import potrace.TurnPolicy;
+
 import javax.swing.*;
 
 public class MainFrame extends JFrame{
@@ -15,7 +17,7 @@ public class MainFrame extends JFrame{
     private JSpinner colorNumberSpinner;
     private JTextArea logTextArea;
     private JButton startConversionButton;
-    private JComboBox turnPolicyComboBox;
+    private JComboBox<TurnPolicy> turnPolicyComboBox;
     private JSpinner minAreaSpinner;
     private JRadioButton enableCurveOptimization;
     private JRadioButton disableCurveOptimization;
@@ -26,6 +28,7 @@ public class MainFrame extends JFrame{
 
     private MainFrame() {
         super();
+        createUIComponents();
         setContentPane(mainPanel);
         pack();
         setLocationRelativeTo(null);
@@ -71,7 +74,7 @@ public class MainFrame extends JFrame{
         return destinationSvgField;
     }
 
-    public JComboBox getTurnPolicyComboBox() {
+    public JComboBox<TurnPolicy> getTurnPolicyComboBox() {
         return turnPolicyComboBox;
     }
 
@@ -115,7 +118,5 @@ public class MainFrame extends JFrame{
         return logAreaScrollPane;
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
+    private void createUIComponents() {}
 }

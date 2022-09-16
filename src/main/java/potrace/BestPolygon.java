@@ -12,9 +12,12 @@ public class BestPolygon {
         int n = path.len;
         List<Point> pt = path.pt;
         List<Sum> sums = path.sums;
-        double x, y, xy, x2, y2,
-                k, a, b, c, s,
-                px, py, ex, ey;
+        double x;
+        double y;
+        double xy;
+        double x2;
+        double y2;
+        double k;
         int r = 0;
         if (j>=n) {
             j -= n;
@@ -27,26 +30,26 @@ public class BestPolygon {
             x2 = sums.get(j+1).x2 - sums.get(i).x2;
             xy = sums.get(j+1).xy - sums.get(i).xy;
             y2 = sums.get(j+1).y2 - sums.get(i).y2;
-            k = j+1 - i;
+            k = j+1.0 - i;
         } else {
             x = sums.get(j+1).x - sums.get(i).x + sums.get(n).x;
             y = sums.get(j+1).y - sums.get(i).y + sums.get(n).y;
             x2 = sums.get(j+1).x2 - sums.get(i).x2 + sums.get(n).x2;
             xy = sums.get(j+1).xy - sums.get(i).xy + sums.get(n).xy;
             y2 = sums.get(j+1).y2 - sums.get(i).y2 + sums.get(n).y2;
-            k = j+1 - i + n;
+            k = j+1.0 - i + n;
         }
 
-        px = (pt.get(i).getX() + pt.get(j).getX()) / 2.0 - pt.get(0).getX();
-        py = (pt.get(i).getY() + pt.get(j).getY()) / 2.0 - pt.get(0).getY();
-        ey = (pt.get(j).getX() - pt.get(i).getX());
-        ex = -(pt.get(j).getY() - pt.get(i).getY());
+        double px = (pt.get(i).getX() + pt.get(j).getX()) / 2.0 - pt.get(0).getX();
+        double py = (pt.get(i).getY() + pt.get(j).getY()) / 2.0 - pt.get(0).getY();
+        double ey = (pt.get(j).getX() - pt.get(i).getX());
+        double ex = -(pt.get(j).getY() - pt.get(i).getY());
 
-        a = ((x2 - 2*x*px) / k + px*px);
-        b = ((xy - x*py - y*px) / k + px*py);
-        c = ((y2 - 2*y*py) / k + py*py);
+        double a = ((x2 - 2*x*px) / k + px*px);
+        double b = ((xy - x*py - y*px) / k + px*py);
+        double c = ((y2 - 2*y*py) / k + py*py);
 
-        s = ex*ex*a + 2*ex*ey*b + ey*ey*c;
+        double s = ex*ex*a + 2*ex*ey*b + ey*ey*c;
 
         return Math.sqrt(s);
     }
