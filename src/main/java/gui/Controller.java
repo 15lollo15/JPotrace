@@ -16,7 +16,7 @@ public class Controller {
     public static final String MAIN_FRAME_TITLE = "JPotrace";
     private static Controller controller;
 
-    private MainFrame mainFrame;
+    private final MainFrame mainFrame;
 
     private Controller() {
         mainFrame = MainFrame.getInstance();

@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
-    private BufferedImage img;
-    private File svgFile;
-    private int scale;
-    private int threshold;
-    private JTextArea logArea;
-    private Info info;
+    private final BufferedImage img;
+    private final File svgFile;
+    private final int scale;
+    private final int threshold;
+    private final JTextArea logArea;
+    private final Info info;
 
     public BlackAndWhiteWorker(BufferedImage img, File svgFile, int scale, int threshold, JTextArea logArea, Info info) {
         this.img = img;

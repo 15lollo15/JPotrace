@@ -18,12 +18,12 @@ import java.util.*;
 import java.util.List;
 
 public class ColorWorker extends SwingWorker<Void, String> {
-    private BufferedImage img;
-    private File svgFile;
-    private int scale;
-    private int numberOfColors;
-    private JTextArea logArea;
-    private Info info;
+    private final BufferedImage img;
+    private final File svgFile;
+    private final int scale;
+    private final int numberOfColors;
+    private final JTextArea logArea;
+    private final Info info;
 
     public ColorWorker(BufferedImage img, File svgFile, int scale, int numberOfColors, JTextArea logArea) {
         this(img, svgFile, scale, numberOfColors, logArea, new Info());
@@ -39,7 +39,7 @@ public class ColorWorker extends SwingWorker<Void, String> {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
         Controller.getInstance().disableAll(true);
         long start = System.currentTimeMillis();
         publish("Extract pixels...");

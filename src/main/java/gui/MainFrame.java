@@ -23,7 +23,6 @@ public class MainFrame extends JFrame{
     private JRadioButton disableCurveOptimization;
     private JPanel advancePanel;
     private JScrollPane logAreaScrollPane;
-    private JToolBar toolBar;
     private static MainFrame mainFrame;
 
     private MainFrame() {
@@ -44,10 +43,6 @@ public class MainFrame extends JFrame{
         if (mainFrame == null)
             mainFrame = new MainFrame();
         return mainFrame;
-    }
-
-    public JToolBar getToolBar() {
-        return toolBar;
     }
 
     public JPanel getAdvancePanel() {
