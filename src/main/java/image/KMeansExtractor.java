@@ -74,23 +74,12 @@ public class KMeansExtractor implements PaletteExtractor{
         for (int i = 1; i < l; i++) {
             Color minColor = centroids[minIndex];
             Color tmp = centroids[i];
-            double distanceFromMinimum = distance(c, minColor);
-            double distanceFromTmp = distance(c, tmp);
+            double distanceFromMinimum = ColorsUtils.distance(c, minColor);
+            double distanceFromTmp = ColorsUtils.distance(c, tmp);
             if (distanceFromMinimum > distanceFromTmp)
                 minIndex = i;
         }
         return minIndex;
-    }
-
-    public static double distance(Color c1, Color c2) {
-        double rQuad = square((double) c1.getRed() - c2.getRed());
-        double gQuad = square((double) c1.getGreen() - c2.getGreen());
-        double bQuad = square((double) c1.getBlue() - c2.getBlue());
-        return Math.sqrt(rQuad + gQuad + bQuad);
-    }
-
-    public static double square(double x) {
-        return x * x;
     }
 
     private Color[] generateCentroids(Color[] pixels) {
@@ -129,7 +118,7 @@ public class KMeansExtractor implements PaletteExtractor{
 
     private void computeDistancesFromFirstCentroid(double[] distances, Color[] centroids, Color[] pixels) {
         for (int i = 0; i < distances.length; i++) {
-            distances[i] = distance(centroids[0], pixels[i]);
+            distances[i] = ColorsUtils.distance(centroids[0], pixels[i]);
         }
     }
 
@@ -137,7 +126,7 @@ public class KMeansExtractor implements PaletteExtractor{
         boolean allZero = true;
         for (int l = 0; l < distances.length; l++) {
             int minDistanceIndex = minDistance(pixels[l], centroids, centroidNumbers);
-            distances[l] = distance(pixels[l], centroids[minDistanceIndex]);
+            distances[l] = ColorsUtils.distance(pixels[l], centroids[minDistanceIndex]);
             if (allZero && distances[l] != 0)
                 allZero = false;
         }
@@ -149,9 +138,9 @@ public class KMeansExtractor implements PaletteExtractor{
         OptionalDouble optMax = Arrays.stream(distances).max();
         if(optMax.isEmpty())
             throw new MaxNotFoundException();
-        double max = square(Arrays.stream(distances).max().getAsDouble());
+        double max = MathUtils.square(Arrays.stream(distances).max().getAsDouble());
         for (int i = 0; i < distances.length; i++) {
-            double distance = square(distances[i]) / max;
+            double distance = MathUtils.square(distances[i]) / max;
             distancesSums[i] = distance;
             if (i != 0)
                 distancesSums[i] += distancesSums[i - 1];
