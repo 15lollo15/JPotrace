@@ -30,10 +30,6 @@ public class ColorWorker extends SwingWorker<Void, String> {
     private final int blur;
     private final Info info;
 
-    public ColorWorker(BufferedImage img, File svgFile, int scale, int numberOfColors, JTextArea logArea, int blur) {
-        this(img, svgFile, scale, numberOfColors, logArea, blur, new Info());
-    }
-
     public ColorWorker(BufferedImage img, File svgFile, int scale,
                        int numberOfColors, JTextArea logArea, int blur, Info info) {
         this.img = img;
