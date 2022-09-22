@@ -2,9 +2,8 @@ package workers;
 
 import geometry.Path;
 import gui.Controller;
-import image.Bitmap;
-import image.BitmapLoader;
-import image.GrayScaleLoader;
+import image.BooleanBitmap;
+import image.bitmap.loaders.BooleanGrayScaleLoader;
 import potrace.BmToPathlist;
 import potrace.GetSVG;
 import potrace.Info;
@@ -45,8 +44,8 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
 
         long start = System.currentTimeMillis();
         publish("Image loading...");
-        BitmapLoader loader = new GrayScaleLoader(threshold);
-        Bitmap bm = loader.load(img);
+        BooleanGrayScaleLoader loader = new BooleanGrayScaleLoader(threshold);
+        BooleanBitmap bm = loader.load(img);
 
         publish("Paths extractions...");
         List<Path> pathList = new ArrayList<>();

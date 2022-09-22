@@ -2,16 +2,16 @@ package potrace;
 
 import geometry.Path;
 import geometry.Point;
-import image.Bitmap;
+import image.BooleanBitmap;
 
 import java.util.List;
 
 public class BmToPathlist {
-    private Bitmap bm1;
+    private BooleanBitmap bm1;
     private Info info;
     private List<Path> pathlist;
 
-    public BmToPathlist(Bitmap bm, Info info, List<Path> pathList) {
+    public BmToPathlist(BooleanBitmap bm, Info info, List<Path> pathList) {
         bm1 = bm.copy();
         this.info = info;
         this.pathlist = pathList;

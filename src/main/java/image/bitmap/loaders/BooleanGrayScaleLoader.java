@@ -1,23 +1,25 @@
-package image;
+package image.bitmap.loaders;
+
+import image.BooleanBitmap;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class GrayScaleLoader implements BitmapLoader{
+public class BooleanGrayScaleLoader implements BitmapLoader<BooleanBitmap>{
     public static final int DEFAULT_THRESHOLD = 128;
     private int threshold;
 
-    public GrayScaleLoader() {
+    public BooleanGrayScaleLoader() {
         threshold = DEFAULT_THRESHOLD;
     }
 
-    public GrayScaleLoader(int threshold) {
+    public BooleanGrayScaleLoader(int threshold) {
         this.threshold = threshold;
     }
 
     @Override
-    public Bitmap load(BufferedImage img) {
-        Bitmap bm = new Bitmap(img.getWidth(), img.getHeight());
+    public BooleanBitmap load(BufferedImage img) {
+        BooleanBitmap bm = new BooleanBitmap(img.getWidth(), img.getHeight());
         int[] data = bm.getData();
 
         int k = 0;
@@ -35,8 +37,8 @@ public class GrayScaleLoader implements BitmapLoader{
     }
 
     @Override
-    public Bitmap load(int w, int h, Color[] pixels) {
-        Bitmap bm = new Bitmap(w, h);
+    public BooleanBitmap load(int w, int h, Color[] pixels) {
+        BooleanBitmap bm = new BooleanBitmap(w, h);
         int[] data = bm.getData();
 
         for (int i = 0; i < data.length; i++) {

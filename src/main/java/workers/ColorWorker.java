@@ -3,6 +3,7 @@ package workers;
 import geometry.Path;
 import gui.Controller;
 import image.*;
+import image.bitmap.loaders.BooleanColorPickerLoader;
 import potrace.BmToPathlist;
 import potrace.GetSVG;
 import potrace.Info;
@@ -48,6 +49,7 @@ public class ColorWorker extends SwingWorker<Void, String> {
         publish("Palette extractions...");
         PaletteExtractor pe = new KMeansExtractor(numberOfColors);
         Set<Color> palette = pe.extract(pixels);
+        System.out.println(((KMeansExtractor)pe).getInertia());
 
         publish("Pixels simplification...");
         pixels = simplify(pixels, palette);
@@ -60,8 +62,8 @@ public class ColorWorker extends SwingWorker<Void, String> {
         for (Color c : palette) {
             colorsToPick.add(c);
             publish("\t Extracting (" + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + ")...");
-            BitmapLoader loader = new ColorPickerLoader(colorsToPick);
-            Bitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
+            BooleanColorPickerLoader loader = new BooleanColorPickerLoader(colorsToPick);
+            BooleanBitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
 
             List<Path> pathList = new ArrayList<>();
             BmToPathlist bmToPathlist = new BmToPathlist(bm, info, pathList);
