@@ -45,7 +45,7 @@ public class KMeansExtractor implements PaletteExtractor{
     private void generateUniquePixels(Color[] pixels) {
         Map<Color, Integer> pixelAndColor = new HashMap<>();
         for (Color color : pixels) {
-            pixelAndColor.computeIfAbsent(color, color1 -> pixelAndColor.put(color, 0));
+            pixelAndColor.putIfAbsent(color, 0);
             int prevValue = pixelAndColor.get(color);
             pixelAndColor.put(color, prevValue + 1);
         }
