@@ -1,44 +1,65 @@
 package image;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.OptionalDouble;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class KMeansExtractor implements PaletteExtractor{
     private int k;
     private final Random random;
+    private Color[] uniquePixels;
+    private int[] numPixels;
+    private double inertia;
 
     public KMeansExtractor (int k) {
         this.k = k;
-        random = new Random();
+        random = new Random(15);
     }
 
     @Override
     public Set<Color> extract(Color[] pixels) {
-        Color[] centroids = generateCentroids(pixels);
-        int[] cluster = new int[pixels.length];
+        generateUniquePixels(pixels);
+        Color[] centroids = generateCentroids(uniquePixels);
+        int[] cluster = new int[uniquePixels.length];
         int[] oldCluster;
 
         boolean needRecenter;
         do {
+            inertia = 0;
             oldCluster = cluster;
-            cluster = new int[pixels.length];
+            cluster = new int[uniquePixels.length];
             int[] finalCluster = cluster;
-            IntStream.range(0, pixels.length).parallel().forEach(i ->
-                finalCluster[i] = minDistance(pixels[i], centroids));
+            for (int i = 0; i < uniquePixels.length; i++) {
+                finalCluster[i] = minDistance(uniquePixels[i], centroids);
+                inertia += ColorsUtils.distance(uniquePixels[i], centroids[finalCluster[i]]) * numPixels[i];
+            }
             needRecenter = !Arrays.equals(oldCluster, cluster);
             if (needRecenter)
-                recenter(centroids, pixels, cluster);
+                recenter(centroids, uniquePixels, cluster, numPixels);
         }while (needRecenter);
+        inertia /= pixels.length;
 
         return Arrays.stream(centroids).collect(Collectors.toSet());
     }
 
-    private void recenter(Color[] centroids, Color[] pixels, int[] clusters) {
+    private void generateUniquePixels(Color[] pixels) {
+        Map<Color, Integer> pixelAndColor = new HashMap<>();
+        for (Color color : pixels) {
+            pixelAndColor.computeIfAbsent(color, color1 -> pixelAndColor.put(color, 0));
+            int prevValue = pixelAndColor.get(color);
+            pixelAndColor.put(color, prevValue + 1);
+        }
+        uniquePixels = pixelAndColor.keySet().toArray(new Color[0]);
+        numPixels = new int[uniquePixels.length];
+        for (int i = 0; i < uniquePixels.length; i++)
+            numPixels[i] = pixelAndColor.get(uniquePixels[i]);
+    }
+
+    public double getInertia() {
+        return inertia;
+    }
+
+    private void recenter(Color[] centroids, Color[] pixels, int[] clusters, int[] numPixels) {
         int[] sumsR = new int[k];
         int[] sumsG = new int[k];
         int[] sumsB = new int[k];
@@ -46,10 +67,10 @@ public class KMeansExtractor implements PaletteExtractor{
 
         for (int i = 0; i < clusters.length; i++) {
             int cluster = clusters[i];
-            sumsR[cluster] += pixels[i].getRed();
-            sumsG[cluster] += pixels[i].getGreen();
-            sumsB[cluster] += pixels[i].getBlue();
-            counts[cluster]++;
+            sumsR[cluster] += pixels[i].getRed() * numPixels[i];
+            sumsG[cluster] += pixels[i].getGreen() * numPixels[i];
+            sumsB[cluster] += pixels[i].getBlue() * numPixels[i];
+            counts[cluster] += numPixels[i];
         }
 
         for (int i = 0; i < centroids.length; i++) {
@@ -65,11 +86,11 @@ public class KMeansExtractor implements PaletteExtractor{
         }
     }
 
-    public static int minDistance(Color c, Color[] centroids) {
+    private int minDistance(Color c, Color[] centroids) {
         return minDistance(c, centroids, centroids.length);
     }
 
-    public static int minDistance(Color c, Color[] centroids, int l) {
+    private int minDistance(Color c, Color[] centroids, int l) {
         int minIndex = 0;
         for (int i = 1; i < l; i++) {
             Color minColor = centroids[minIndex];
@@ -122,7 +143,7 @@ public class KMeansExtractor implements PaletteExtractor{
         }
     }
 
-    public static void computeDistances(double[] distances, Color[] centroids, Color[] pixels, int centroidNumbers) {
+    private void computeDistances(double[] distances, Color[] centroids, Color[] pixels, int centroidNumbers) {
         boolean allZero = true;
         for (int l = 0; l < distances.length; l++) {
             int minDistanceIndex = minDistance(pixels[l], centroids, centroidNumbers);
