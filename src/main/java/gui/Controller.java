@@ -63,6 +63,8 @@ public class Controller {
         mainFrame.getEnableCurveOptimization().setSelected(true);
         mainFrame.getColorNumberSpinner().setModel(new SpinnerNumberModel(10, 1, 256*256*256, 1));
 
+        mainFrame.getBlurSpinner().setModel(new SpinnerNumberModel(1, 1, 13, 2));
+
         mainFrame.getLogTextArea().setEnabled(false);
         mainFrame.getLogAreaScrollPane().setEnabled(false);
     }
@@ -95,7 +97,12 @@ public class Controller {
         mainFrame.getChooseDestinationSvgButton().addActionListener(e -> chooseDestinationSVG());
 
         mainFrame.getStartConversionButton().addActionListener(e -> startConversion());
+        mainFrame.getBlurSpinner().addChangeListener(e -> checkIfOdd());
+    }
 
+    private void checkIfOdd(){
+        int value = (Integer)mainFrame.getBlurSpinner().getValue();
+        mainFrame.getBlurSpinner().setValue(value % 2 == 0 ? value + 1 : value);
     }
 
     private void setMode(int modeIndex) {
@@ -162,6 +169,7 @@ public class Controller {
 
         int scale = (Integer)mainFrame.getScaleSpinner().getValue();
 
+
         Info info = new Info();
         if (mainFrame.getAdvancePanel().isVisible()) {
             info.turnpolicy = (TurnPolicy) mainFrame.getTurnPolicyComboBox().getSelectedItem();
@@ -181,10 +189,11 @@ public class Controller {
             blackAndWhiteWorker.execute();
         }else {
             int numberOfColors = (Integer)mainFrame.getColorNumberSpinner().getValue();
+            int blur = (Integer)mainFrame.getBlurSpinner().getValue();
             ColorWorker colorWorker = new ColorWorker(input,
                     new File(destPath),
                     scale, numberOfColors,
-                    mainFrame.getLogTextArea(), info);
+                    mainFrame.getLogTextArea(), blur, info);
             colorWorker.execute();
         }
     }

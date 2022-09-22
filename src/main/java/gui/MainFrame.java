@@ -23,6 +23,7 @@ public class MainFrame extends JFrame{
     private JRadioButton disableCurveOptimization;
     private JPanel advancePanel;
     private JScrollPane logAreaScrollPane;
+    private JSpinner blurSpinner;
     private static MainFrame mainFrame;
 
     private MainFrame() {
@@ -85,10 +86,6 @@ public class MainFrame extends JFrame{
         return enableCurveOptimization;
     }
 
-    public JRadioButton getDisableCurveOptimization() {
-        return disableCurveOptimization;
-    }
-
     public JSpinner getColorNumberSpinner() {
         return colorNumberSpinner;
     }
@@ -113,5 +110,9 @@ public class MainFrame extends JFrame{
         return logAreaScrollPane;
     }
 
-    private void createUIComponents() {}
+    public JSpinner getBlurSpinner() { return blurSpinner; }
+
+    private void createUIComponents() {
+        // Do nothing
+    }
 }

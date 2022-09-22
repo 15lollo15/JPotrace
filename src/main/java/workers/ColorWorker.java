@@ -4,6 +4,7 @@ import geometry.Path;
 import gui.Controller;
 import image.*;
 import image.bitmap.loaders.BooleanColorPickerLoader;
+import image.bitmap.loaders.ColorBitmapLoader;
 import potrace.BmToPathlist;
 import potrace.GetSVG;
 import potrace.Info;
@@ -24,18 +25,21 @@ public class ColorWorker extends SwingWorker<Void, String> {
     private final int scale;
     private final int numberOfColors;
     private final JTextArea logArea;
+    private final int blur;
     private final Info info;
 
-    public ColorWorker(BufferedImage img, File svgFile, int scale, int numberOfColors, JTextArea logArea) {
-        this(img, svgFile, scale, numberOfColors, logArea, new Info());
+    public ColorWorker(BufferedImage img, File svgFile, int scale, int numberOfColors, JTextArea logArea, int blur) {
+        this(img, svgFile, scale, numberOfColors, logArea, blur, new Info());
     }
 
-    public ColorWorker(BufferedImage img, File svgFile, int scale, int numberOfColors, JTextArea logArea, Info info) {
+    public ColorWorker(BufferedImage img, File svgFile, int scale,
+                       int numberOfColors, JTextArea logArea, int blur, Info info) {
         this.img = img;
         this.svgFile = svgFile;
         this.scale = scale;
         this.numberOfColors = numberOfColors;
         this.logArea = logArea;
+        this.blur = blur;
         this.info = info;
     }
 
@@ -43,13 +47,17 @@ public class ColorWorker extends SwingWorker<Void, String> {
     protected Void doInBackground() {
         Controller.getInstance().disableAll(true);
         long start = System.currentTimeMillis();
+        ColorBitmap bitmap = new ColorBitmapLoader().load(img);
+
+        publish("Blurring...");
+        bitmap = Filters.blur(bitmap, blur);
+
         publish("Extract pixels...");
-        Color[] pixels = getPixels(img);
+        Color[] pixels = bitmap.getData();
 
         publish("Palette extractions...");
         PaletteExtractor pe = new KMeansExtractor(numberOfColors);
         Set<Color> palette = pe.extract(pixels);
-        System.out.println(((KMeansExtractor)pe).getInertia());
 
         publish("Pixels simplification...");
         pixels = simplify(pixels, palette);
@@ -139,15 +147,4 @@ public class ColorWorker extends SwingWorker<Void, String> {
         return simplifiedColors;
     }
 
-    private Color[] getPixels(BufferedImage img) {
-        Color[] pixels = new Color[img.getWidth() * img.getHeight()];
-        int k = 0;
-        for (int y = 0; y < img.getHeight(); y++)
-            for (int x = 0; x < img.getWidth(); x++) {
-                int rgb = img.getRGB(x, y);
-                Color color = new Color(rgb);
-                pixels[k++] = color;
-            }
-        return pixels;
-    }
 }

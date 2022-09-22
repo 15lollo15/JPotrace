@@ -25,7 +25,8 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
     private final JTextArea logArea;
     private final Info info;
 
-    public BlackAndWhiteWorker(BufferedImage img, File svgFile, int scale, int threshold, JTextArea logArea, Info info) {
+    public BlackAndWhiteWorker(BufferedImage img, File svgFile, int scale,
+                               int threshold, JTextArea logArea, Info info) {
         this.img = img;
         this.svgFile = svgFile;
         this.scale = scale;
@@ -34,7 +35,7 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
         this.info = info;
     }
 
-    public BlackAndWhiteWorker(BufferedImage img, File svgFile, int scale, int threshold, JTextArea logArea) {
+    public BlackAndWhiteWorker(BufferedImage img, File svgFile, int scale, int threshold,JTextArea logArea) {
         this(img, svgFile, scale, threshold, logArea, new Info());
     }
 
