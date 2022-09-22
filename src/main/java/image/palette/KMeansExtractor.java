@@ -1,4 +1,7 @@
-package image;
+package image.palette;
+
+import utils.ColorsUtils;
+import utils.MathUtils;
 
 import java.awt.*;
 import java.util.*;

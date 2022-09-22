@@ -1,5 +1,7 @@
 package image;
 
+import utils.MathUtils;
+
 import java.awt.*;
 
 public class Filters {

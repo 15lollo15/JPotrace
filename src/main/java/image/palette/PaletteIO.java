@@ -1,4 +1,4 @@
-package image;
+package image.palette;
 
 import java.awt.*;
 import java.io.File;

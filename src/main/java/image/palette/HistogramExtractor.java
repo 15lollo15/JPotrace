@@ -1,4 +1,4 @@
-package image;
+package image.palette;
 
 import java.awt.Color;
 import java.util.*;

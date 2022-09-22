@@ -1,4 +1,4 @@
-package image;
+package image.palette;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

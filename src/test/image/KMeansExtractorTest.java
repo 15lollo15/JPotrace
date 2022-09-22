@@ -1,6 +1,7 @@
 package image;
 
 import org.junit.jupiter.api.Test;
+import utils.ColorsUtils;
 
 import java.awt.*;
 

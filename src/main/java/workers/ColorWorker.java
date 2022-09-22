@@ -5,6 +5,8 @@ import gui.Controller;
 import image.*;
 import image.bitmap.loaders.BooleanColorPickerLoader;
 import image.bitmap.loaders.ColorBitmapLoader;
+import image.palette.KMeansExtractor;
+import image.palette.PaletteExtractor;
 import potrace.BmToPathlist;
 import potrace.GetSVG;
 import potrace.Info;

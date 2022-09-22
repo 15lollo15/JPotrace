@@ -1,5 +1,7 @@
 package image;
 
+import image.palette.JSONPaletteIO;
+import image.palette.PaletteIO;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;

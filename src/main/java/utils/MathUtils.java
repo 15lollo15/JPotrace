@@ -1,4 +1,4 @@
-package image;
+package utils;
 
 public class MathUtils {
     private MathUtils() {}
