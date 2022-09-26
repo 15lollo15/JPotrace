@@ -9,33 +9,34 @@ public class BooleanBitmap implements Bitmap<Boolean>{
     private int w;
     private int h;
     private int size;
-    private int[] data;
+    private boolean[] data;
 
     public BooleanBitmap(int w, int h) {
         this.w = w;
         this.h = h;
         this.size = w * h;
-        this.data = new int[this.size];
+        this.data = new boolean[this.size];
     }
 
     @Override
     public Boolean at(int x, int y) {
         return (x >= 0 && x < this.w && y >=0 && y < this.h) &&
-                this.data[this.w * y + x] == 1;
+                this.data[this.w * y + x];
     }
 
     @Override
     public Boolean at(int i) {
-        return (i >= 0 && i < data.length) && data[i] == 1;
+        return (i >= 0 && i < data.length) && data[i];
     }
 
+    @Override
     public void set(int x, int y, Boolean value) {
-        this.data[this.w * y + x] = value ? 1 : 0;
+        this.data[this.w * y + x] = value;
     }
 
     @Override
     public void set(int i, Boolean value) {
-        data[i] = value ? 1 : 0;
+        data[i] = value;
     }
 
     public Point index(int i) {
@@ -47,9 +48,9 @@ public class BooleanBitmap implements Bitmap<Boolean>{
 
     public void flip(int x, int y) {
         if (this.at(x, y)) {
-            this.data[this.w * y + x] = 0;
+            this.data[this.w * y + x] = false;
         } else {
-            this.data[this.w * y + x] = 1;
+            this.data[this.w * y + x] = true;
         }
     }
 
@@ -60,22 +61,22 @@ public class BooleanBitmap implements Bitmap<Boolean>{
         return bm;
     }
 
-    public int[] getData() {
-        return data;
-    }
-
+    @Override
     public int getSize() {
         return size;
     }
 
+    @Override
     public int getWidth() {
         return w;
     }
 
+    @Override
     public int getHeight() {
         return h;
     }
 
+    @Override
     public BufferedImage toBufferedImage() {
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_BINARY);
 

@@ -4,7 +4,7 @@ import geometry.Path;
 import gui.Controller;
 import image.BooleanBitmap;
 import image.bitmap.loaders.BooleanGrayScaleLoader;
-import potrace.BmToPathlist;
+import potrace.BooleanBitmapToPathList;
 import potrace.GetSVG;
 import potrace.Info;
 import potrace.ProcessPath;
@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
@@ -49,9 +48,8 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
         BooleanBitmap bm = loader.load(img);
 
         publish("Paths extractions...");
-        List<Path> pathList = new ArrayList<>();
-        BmToPathlist bmToPathlist = new BmToPathlist(bm, info, pathList);
-        bmToPathlist.bmToPathlist();
+        BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, info);
+        List<Path> pathList = booleanBitmapToPathlist.toPathList();
 
         publish("Paths processing...");
         ProcessPath processPath = new ProcessPath(info, pathList);

@@ -4,17 +4,16 @@ import geometry.Path;
 import geometry.Point;
 import image.BooleanBitmap;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class BmToPathlist {
-    private BooleanBitmap bm1;
+public class BooleanBitmapToPathList {
+    private BooleanBitmap bitmap;
     private Info info;
-    private List<Path> pathlist;
 
-    public BmToPathlist(BooleanBitmap bm, Info info, List<Path> pathList) {
-        bm1 = bm.copy();
+    public BooleanBitmapToPathList(BooleanBitmap bitmap, Info info) {
+        this.bitmap = bitmap.copy();
         this.info = info;
-        this.pathlist = pathList;
     }
 
     /**
@@ -22,14 +21,13 @@ public class BmToPathlist {
      * @param point Start point
      * @return The position of the first black pixel, or null if there's not
      */
-    public Point findNext(Point point) {
-        int i = bm1.getWidth() * point.getY() + point.getX();
-        int[] data = bm1.getData();
-        while (i < data.length && data[i] != 1) {
+    private Point findNext(Point point) {
+        int i = bitmap.getWidth() * point.getY() + point.getX();
+        while (i < bitmap.getSize() && !bitmap.at(i)) {
             i++;
         }
-        if (i < bm1.getSize())
-            return bm1.index(i);
+        if (i < bitmap.getSize())
+            return bitmap.index(i);
         return null;
     }
 
@@ -39,12 +37,12 @@ public class BmToPathlist {
      * @param y Y of the point
      * @return True if there is a majority of black pixels, false otherwise
      */
-    public boolean majority(int x, int y) {
+    private boolean majority(int x, int y) {
         for (int ray = 2; ray < 5; ray++) {
-            int ct = isBalanced(x, y, ray);
-            if (ct > 0) {
+            BalanceStatus bs = checkBalanceStatus(x, y, ray);
+            if (bs.equals(BalanceStatus.MORE_BLACK)) {
                 return true;
-            } else if (ct < 0) {
+            } else if (bs.equals(BalanceStatus.MORE_WHITE)) {
                 return false;
             }
         }
@@ -58,23 +56,27 @@ public class BmToPathlist {
      * @param ray Ray to analize
      * @return 0 if is balanced, > 0 if there is more black or < 0 if is more white
      */
-    private int isBalanced(int x, int y, int ray) {
+    private BalanceStatus checkBalanceStatus(int x, int y, int ray) {
         int ct = 0;
         for (int a = -ray + 1; a <= ray - 1; a++) {
-            ct += bm1.at(x + a, y + ray - 1) ? 1 : -1;
-            ct += bm1.at(x + ray - 1, y + a - 1) ? 1 : -1;
-            ct += bm1.at(x + a - 1, y - ray) ? 1 : -1;
-            ct += bm1.at(x - ray, y + a) ? 1 : -1;
+            ct += bitmap.at(x + a, y + ray - 1) ? 1 : -1;
+            ct += bitmap.at(x + ray - 1, y + a - 1) ? 1 : -1;
+            ct += bitmap.at(x + a - 1, y - ray) ? 1 : -1;
+            ct += bitmap.at(x - ray, y + a) ? 1 : -1;
         }
-        return ct;
+        if (ct > 0)
+            return BalanceStatus.MORE_BLACK;
+        else if (ct < 0)
+            return BalanceStatus.MORE_WHITE;
+        return BalanceStatus.BALANCED;
     }
 
-    public Path findPath(Point point) {
+    private Path findPath(Point integerPoint) {
         Path path = new Path();
-        path.sign = bm1.at(point.getX(), point.getY()) ? "+" : "-";
+        path.sign = bitmap.at(integerPoint.getX(), integerPoint.getY()) ? "+" : "-";
 
-        int x = point.getX();
-        int y = point.getY();
+        int x = integerPoint.getX();
+        int y = integerPoint.getY();
 
         int dirx = 0;
         int diry = 1;
@@ -95,11 +97,11 @@ public class BmToPathlist {
             y += diry;
             path.area -= x * diry;
 
-            if (x == point.getX() && y == point.getY())
+            if (x == integerPoint.getX() && y == integerPoint.getY())
                 break;
 
-            boolean l = bm1.at(x + (dirx + diry - 1 ) / 2, y + (diry - dirx - 1) / 2);
-            boolean r = bm1.at(x + (dirx - diry - 1) / 2, y + (diry + dirx - 1) / 2);
+            boolean l = bitmap.at(x + (dirx + diry - 1 ) / 2, y + (diry - dirx - 1) / 2);
+            boolean r = bitmap.at(x + (dirx - diry - 1) / 2, y + (diry + dirx - 1) / 2);
 
             if (r && !l) {
                 if (info.turnpolicy.equals(TurnPolicy.RIGHT) ||
@@ -128,7 +130,7 @@ public class BmToPathlist {
         return path;
     }
 
-    public void xorPath(Path path) {
+    private void xorPath(Path path) {
         int y1 = path.pt.get(0).getY();
         int len = path.len;
         for (int i = 1; i < len; i++) {
@@ -139,14 +141,15 @@ public class BmToPathlist {
                 int minY = y1 < y ? y1 : y;
                 int maxX = path.maxX;
                 for (int j = x; j < maxX; j++) {
-                    bm1.flip(j, minY);
+                    bitmap.flip(j, minY);
                 }
                 y1 = y;
             }
         }
     }
 
-    public void bmToPathlist() {
+    public List<Path> toPathList() {
+        List<Path> pathList = new ArrayList<>();
         Point currentPoint = new Point(0, 0);
         while ((currentPoint = findNext(currentPoint)) != null) {
 
@@ -155,9 +158,11 @@ public class BmToPathlist {
             xorPath(path);
 
             if (path.area > info.turdsize) {
-                pathlist.add(path);
+                pathList.add(path);
             }
         }
+        return pathList;
     }
 
+    private enum BalanceStatus {MORE_BLACK, MORE_WHITE, BALANCED}
 }

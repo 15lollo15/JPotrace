@@ -7,10 +7,11 @@ import image.bitmap.loaders.BooleanColorPickerLoader;
 import image.bitmap.loaders.ColorBitmapLoader;
 import image.palette.KMeansExtractor;
 import image.palette.PaletteExtractor;
-import potrace.BmToPathlist;
+import potrace.BooleanBitmapToPathList;
 import potrace.GetSVG;
 import potrace.Info;
 import potrace.ProcessPath;
+import utils.ColorsUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,6 +57,9 @@ public class ColorWorker extends SwingWorker<Void, String> {
         publish("Palette extractions...");
         PaletteExtractor pe = new KMeansExtractor(numberOfColors);
         Set<Color> palette = pe.extract(pixels);
+        pixels = simplify(pixels, palette);
+
+        cleanPalette(palette, pixels, 17);
 
         publish("Pixels simplification...");
         pixels = simplify(pixels, palette);
@@ -71,9 +75,8 @@ public class ColorWorker extends SwingWorker<Void, String> {
             BooleanColorPickerLoader loader = new BooleanColorPickerLoader(colorsToPick);
             BooleanBitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
 
-            List<Path> pathList = new ArrayList<>();
-            BmToPathlist bmToPathlist = new BmToPathlist(bm, info, pathList);
-            bmToPathlist.bmToPathlist();
+            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, info);
+            List<Path> pathList = booleanBitmapToPathlist.toPathList();
 
             ProcessPath processPath = new ProcessPath(info, pathList);
             processPath.processPath();
@@ -118,13 +121,6 @@ public class ColorWorker extends SwingWorker<Void, String> {
         JOptionPane.showMessageDialog(Controller.getInstance().getMainFrame(), "Conversion completed");
     }
 
-    private int distance(Color c1, Color c2) {
-        int dr = Math.abs(c1.getRed() - c2.getRed());
-        int dg = Math.abs(c1.getGreen() - c2.getGreen());
-        int db = Math.abs(c1.getBlue() - c2.getBlue());
-        return dr + dg + db;
-    }
-
     private Color[] simplify(Color[] colors, Set<Color> palette) {
         Color[] simplifiedColors = new Color[colors.length];
 
@@ -136,7 +132,7 @@ public class ColorWorker extends SwingWorker<Void, String> {
                     similar = paletteColor;
                     continue;
                 }
-                if (distance(color, paletteColor) < distance(color, similar))
+                if (ColorsUtils.distance(color, paletteColor) < ColorsUtils.distance(color, similar))
                     similar = paletteColor;
             }
             simplifiedColors[i] = similar;
@@ -145,4 +141,41 @@ public class ColorWorker extends SwingWorker<Void, String> {
         return simplifiedColors;
     }
 
+    private Map<Color, Integer> countPixelsForColor(Color[] pixels) {
+        Map<Color, Integer> pixelsForColor = new HashMap<>();
+
+        for (Color pixel : pixels) {
+            pixelsForColor.computeIfAbsent(pixel, p -> 0);
+            int oldValue = pixelsForColor.get(pixel);
+            pixelsForColor.put(pixel, oldValue + 1);
+        }
+
+        return pixelsForColor;
+    }
+
+    private void cleanPalette(Set<Color> palette, Color[] pixels, double threshold) {
+        Map<Color, Integer> pixelsForColor =  countPixelsForColor(pixels);
+        List<Color> colors = palette.stream().toList();
+        for (int i = 0; i < colors.size(); i++) {
+            Color c1 = colors.get(i);
+            if (!palette.contains(c1)) continue;
+            for (int j = i + 1; j < colors.size(); j++) {
+                Color c2 = colors.get(j);
+                if (palette.contains(c2)) {
+                    double diff = ColorsUtils.distance(c1, c2);
+
+                    if (diff >= threshold)
+                        continue;
+
+                    int numPixels1 = pixelsForColor.get(c1);
+                    int numPixels2 = pixelsForColor.get(c2);
+
+                    if (numPixels1 > numPixels2)
+                        palette.remove(c2);
+                    else
+                        palette.remove(c1);
+                }
+            }
+        }
+    }
 }
