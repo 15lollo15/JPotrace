@@ -11,7 +11,7 @@ public class DoublePoint {
         this.y = y;
     }
 
-    public DoublePoint(Point point) {
+    public DoublePoint(IntegerPoint point) {
         this.x = point.getX();
         this.y = point.getY();
     }

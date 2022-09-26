@@ -1,18 +1,18 @@
 package geometry;
 
-public class Point {
+public class IntegerPoint {
     private int x;
     private int y;
 
-    public Point() {}
+    public IntegerPoint() {}
 
-    public Point(int x, int y) {
+    public IntegerPoint(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public Point copy() {
-        return new Point(x, y);
+    public IntegerPoint copy() {
+        return new IntegerPoint(x, y);
     }
 
     @Override

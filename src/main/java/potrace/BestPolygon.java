@@ -1,7 +1,7 @@
 package potrace;
 
 import geometry.Path;
-import geometry.Point;
+import geometry.IntegerPoint;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public class BestPolygon {
 
     public double penalty3(Path path, int i, int j) {
         int n = path.len;
-        List<Point> pt = path.pt;
+        List<IntegerPoint> pt = path.pt;
         List<Sum> sums = path.sums;
         double x;
         double y;

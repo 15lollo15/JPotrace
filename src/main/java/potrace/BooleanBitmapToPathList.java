@@ -1,7 +1,7 @@
 package potrace;
 
 import geometry.Path;
-import geometry.Point;
+import geometry.IntegerPoint;
 import image.BooleanBitmap;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class BooleanBitmapToPathList {
      * @param point Start point
      * @return The position of the first black pixel, or null if there's not
      */
-    private Point findNext(Point point) {
+    private IntegerPoint findNext(IntegerPoint point) {
         int i = bitmap.getWidth() * point.getY() + point.getX();
         while (i < bitmap.getSize() && !bitmap.at(i)) {
             i++;
@@ -71,7 +71,7 @@ public class BooleanBitmapToPathList {
         return BalanceStatus.BALANCED;
     }
 
-    private Path findPath(Point integerPoint) {
+    private Path findPath(IntegerPoint integerPoint) {
         Path path = new Path();
         path.sign = bitmap.at(integerPoint.getX(), integerPoint.getY()) ? "+" : "-";
 
@@ -82,7 +82,7 @@ public class BooleanBitmapToPathList {
         int diry = 1;
 
         while (true) {
-            path.pt.add(new Point(x, y));
+            path.pt.add(new IntegerPoint(x, y));
             if (x > path.maxX)
                 path.maxX = x;
             if (x < path.minX)
@@ -150,7 +150,7 @@ public class BooleanBitmapToPathList {
 
     public List<Path> toPathList() {
         List<Path> pathList = new ArrayList<>();
-        Point currentPoint = new Point(0, 0);
+        IntegerPoint currentPoint = new IntegerPoint(0, 0);
         while ((currentPoint = findNext(currentPoint)) != null) {
 
             Path path = findPath(currentPoint);

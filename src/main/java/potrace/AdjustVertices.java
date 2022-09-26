@@ -3,7 +3,7 @@ package potrace;
 import geometry.Curve;
 import geometry.DoublePoint;
 import geometry.Path;
-import geometry.Point;
+import geometry.IntegerPoint;
 
 import java.util.List;
 
@@ -83,7 +83,7 @@ public class AdjustVertices {
         double[] v = new double[3];
         Quad[] q = new Quad[m];
         DoublePoint s = new DoublePoint();
-        List<Point> pt = path.pt;
+        List<IntegerPoint> pt = path.pt;
         int x0 = path.x0;
         int y0 = path.y0;
         int n = path.len;

@@ -187,7 +187,7 @@ public class ProcessPath {
 
     public void  calcLon(Path path) {
         int n = path.len;
-        List<Point> pt = path.pt;
+        List<IntegerPoint> pt = path.pt;
         int[] nc = new int[n];
         double[] ct = new double[4];
         int dir;
@@ -236,8 +236,8 @@ public class ProcessPath {
                     break;
                 }
 
-                cur.setX(pt.get(k).getX() - pt.get(i).getX());
-                cur.setY(pt.get(k).getY() - pt.get(i).getY());
+                cur.setX((double) (pt.get(k).getX() - pt.get(i).getX()));
+                cur.setY((double) (pt.get(k).getY() - pt.get(i).getY()));
 
                 if (xprod(constraint[0], cur) < 0 || xprod(constraint[1], cur) > 0) {
                     break;
@@ -264,10 +264,10 @@ public class ProcessPath {
                 }
             }
             if (foundk == 0) {
-                dk.setX(sign(pt.get(k).getX()-pt.get(k1).getX()));
-                dk.setY(sign(pt.get(k).getY()-pt.get(k1).getY()));
-                cur.setX(pt.get(k1).getX() - pt.get(i).getX());
-                cur.setY(pt.get(k1).getY() - pt.get(i).getY());
+                dk.setX((double) sign(pt.get(k).getX()-pt.get(k1).getX()));
+                dk.setY((double) sign(pt.get(k).getY()-pt.get(k1).getY()));
+                cur.setX((double) (pt.get(k1).getX() - pt.get(i).getX()));
+                cur.setY((double) (pt.get(k1).getY() - pt.get(i).getY()));
 
                 a = xprod(constraint[0], cur);
                 b = xprod(constraint[0], dk);

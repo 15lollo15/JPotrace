@@ -1,6 +1,6 @@
 package image;
 
-import geometry.Point;
+import geometry.IntegerPoint;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -39,8 +39,8 @@ public class BooleanBitmap implements Bitmap<Boolean>{
         data[i] = value;
     }
 
-    public Point index(int i) {
-        Point point = new Point();
+    public IntegerPoint index(int i) {
+        IntegerPoint point = new IntegerPoint();
         point.setY(i / this.w);
         point.setX(i - point.getY() * this.w);
         return point;
