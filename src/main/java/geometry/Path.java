@@ -12,8 +12,7 @@ public class Path {
     public IntegerPoint minPoint;
     public IntegerPoint maxPoint;
     public Sign sign;
-    public int x0;
-    public int y0;
+    public IntegerPoint firstPoint;
     public List<Sum> sums;
     public int[] lon;
     public int m;

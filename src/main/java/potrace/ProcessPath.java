@@ -171,15 +171,14 @@ public class ProcessPath {
     }
 
     public void calcSums(Path path) {
-        path.x0 = path.points.get(0).getX();
-        path.y0 = path.points.get(0).getY();
+        path.firstPoint = path.points.get(0);
 
         path.sums = new ArrayList<>();
         List<Sum> s = path.sums;
         s.add(new Sum(0, 0, 0, 0, 0));
         for(int i = 0; i < path.len; i++){
-            int x = path.points.get(i).getX() - path.x0;
-            int y = path.points.get(i).getY() - path.y0;
+            int x = path.points.get(i).getX() - path.firstPoint.getX();
+            int y = path.points.get(i).getY() - path.firstPoint.getY();
             s.add(new Sum(s.get(i).x + x, s.get(i).y + y, s.get(i).xy + x * y,
                     s.get(i).x2 + x * x, s.get(i).y2 + y * y));
         }
