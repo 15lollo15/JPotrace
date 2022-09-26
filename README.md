@@ -1,4 +1,4 @@
-# JPotrace
+# JTracing
 
 A Java porting of Potrace based on JS porting:
 https://github.com/kilobtye/potrace
