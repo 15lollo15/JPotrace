@@ -80,17 +80,20 @@ public class BooleanBitmapToPathList {
 
         int dirx = 0;
         int diry = 1;
-
+        int maxX = x;
+        int maxY = y;
+        int minX = x;
+        int minY = y;
         while (true) {
             path.pt.add(new IntegerPoint(x, y));
-            if (x > path.maxX)
-                path.maxX = x;
-            if (x < path.minX)
-                path.minX = x;
-            if (y > path.maxY)
-                path.maxY = y;
-            if (y < path.minY)
-                path.minY = y;
+            if (x > maxX)
+                maxX = x;
+            if (x < minX)
+                minX = x;
+            if (y > maxY)
+                maxY = y;
+            if (y < minY)
+                minY = y;
             path.len++;
 
             x += dirx;
@@ -127,6 +130,8 @@ public class BooleanBitmapToPathList {
                 diry = -tmp;
             }
         }
+        path.maxPoint = new IntegerPoint(maxX, maxY);
+        path.minPoint = new IntegerPoint(minX, minY);
         return path;
     }
 
@@ -139,7 +144,7 @@ public class BooleanBitmapToPathList {
 
             if (y != y1) {
                 int minY = y1 < y ? y1 : y;
-                int maxX = path.maxX;
+                int maxX = path.maxPoint.getX();
                 for (int j = x; j < maxX; j++) {
                     bitmap.flip(j, minY);
                 }

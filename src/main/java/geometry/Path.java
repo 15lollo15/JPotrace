@@ -9,10 +9,8 @@ public class Path {
     public double area = 0;
     public int len = 0;
     public List<IntegerPoint> pt = new ArrayList<>();
-    public int minX = 100000;
-    public int minY = 100000;
-    public int maxX= -1;
-    public int maxY = -1;
+    public IntegerPoint minPoint;
+    public IntegerPoint maxPoint;
     public Sign sign;
     public int x0;
     public int y0;
