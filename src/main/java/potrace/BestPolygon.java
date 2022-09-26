@@ -10,7 +10,7 @@ public class BestPolygon {
 
     public double penalty3(Path path, int i, int j) {
         int n = path.len;
-        List<IntegerPoint> pt = path.pt;
+        List<IntegerPoint> pt = path.points;
         List<Sum> sums = path.sums;
         double x;
         double y;

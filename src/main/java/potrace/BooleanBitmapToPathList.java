@@ -85,7 +85,7 @@ public class BooleanBitmapToPathList {
         int minX = x;
         int minY = y;
         while (true) {
-            path.pt.add(new IntegerPoint(x, y));
+            path.points.add(new IntegerPoint(x, y));
             if (x > maxX)
                 maxX = x;
             if (x < minX)
@@ -136,11 +136,11 @@ public class BooleanBitmapToPathList {
     }
 
     private void xorPath(Path path) {
-        int y1 = path.pt.get(0).getY();
+        int y1 = path.points.get(0).getY();
         int len = path.len;
         for (int i = 1; i < len; i++) {
-            int x = path.pt.get(i).getX();
-            int y = path.pt.get(i).getY();
+            int x = path.points.get(i).getX();
+            int y = path.points.get(i).getY();
 
             if (y != y1) {
                 int minY = y1 < y ? y1 : y;

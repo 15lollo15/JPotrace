@@ -8,7 +8,7 @@ import java.util.List;
 public class Path {
     public double area = 0;
     public int len = 0;
-    public List<IntegerPoint> pt = new ArrayList<>();
+    public List<IntegerPoint> points = new ArrayList<>();
     public IntegerPoint minPoint;
     public IntegerPoint maxPoint;
     public Sign sign;
@@ -22,7 +22,7 @@ public class Path {
 
     @Override
     public String toString() {
-        return pt.toString();
+        return points.toString();
     }
 
     public enum Sign {PLUS, MINUS}

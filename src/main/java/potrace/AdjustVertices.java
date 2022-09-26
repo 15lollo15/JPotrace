@@ -83,7 +83,7 @@ public class AdjustVertices {
         double[] v = new double[3];
         Quad[] q = new Quad[m];
         DoublePoint s = new DoublePoint();
-        List<IntegerPoint> pt = path.pt;
+        List<IntegerPoint> pt = path.points;
         int x0 = path.x0;
         int y0 = path.y0;
         int n = path.len;
