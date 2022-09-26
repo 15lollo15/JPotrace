@@ -77,7 +77,7 @@ public class AdjustVertices {
     }
 
     public void adjustVertices() {
-        int m = path.m;
+        int m = path.optimalPolygonLenght;
         DoublePoint[] ctr = new DoublePoint[m];
         DoublePoint[] dir = new DoublePoint[m];
         double[] v = new double[3];
@@ -87,7 +87,7 @@ public class AdjustVertices {
         int x0 = path.firstPoint.getX();
         int y0 = path.firstPoint.getY();
         int n = path.len;
-        int[] po = path.po;
+        int[] po = path.optimalPolygon;
 
         path.curve = new Curve(m);
 

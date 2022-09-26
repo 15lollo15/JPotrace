@@ -69,7 +69,7 @@ public class BestPolygon {
         int[] prev = new int[n + 1];
 
         for (int i=0; i<n; i++) {
-            int c = ProcessPath.mod(path.lon[ProcessPath.mod(i-1,n)]-1,n);
+            int c = ProcessPath.mod(path.longestStraightLine[ProcessPath.mod(i-1,n)]-1,n);
             if (c == i) {
                 c = ProcessPath.mod(i+1,n);
             }
@@ -117,12 +117,12 @@ public class BestPolygon {
                 pen[i] = best;
             }
         }
-        path.m = m;
-        path.po = new int[m];
+        path.optimalPolygonLenght = m;
+        path.optimalPolygon = new int[m];
 
         for (i=n, j=m-1; i>0; j--) {
             i = prev[i];
-            path.po[j] = i;
+            path.optimalPolygon[j] = i;
         }
     }
 }

@@ -191,7 +191,7 @@ public class ProcessPath {
         double[] ct = new double[4];
         int dir;
         int[] pivk = new int[n];
-        path.lon = new int[n];
+        path.longestStraightLine = new int[n];
 
         DoublePoint[] constraint = {new DoublePoint(), new DoublePoint()};
         DoublePoint cur = new DoublePoint();
@@ -285,16 +285,16 @@ public class ProcessPath {
         }
 
         j=pivk[n-1];
-        path.lon[n-1]=j;
+        path.longestStraightLine[n-1]=j;
         for (int i=n-2; i>=0; i--) {
             if (cyclic(i+1,pivk[i],j)) {
                 j=pivk[i];
             }
-            path.lon[i]=j;
+            path.longestStraightLine[i]=j;
         }
 
-        for (int i=n-1; cyclic(mod(i+1,n),j,path.lon[i]); i--) {
-            path.lon[i] = j;
+        for (int i = n-1; cyclic(mod(i+1,n),j,path.longestStraightLine[i]); i--) {
+            path.longestStraightLine[i] = j;
         }
     }
 

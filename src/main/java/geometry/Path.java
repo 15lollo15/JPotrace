@@ -14,9 +14,9 @@ public class Path {
     public Sign sign;
     public IntegerPoint firstPoint;
     public List<Sum> sums;
-    public int[] lon;
-    public int m;
-    public int[] po;
+    public int[] longestStraightLine;
+    public int optimalPolygonLenght;
+    public int[] optimalPolygon;
     public Curve curve;
 
     @Override
