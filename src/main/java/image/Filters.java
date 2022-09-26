@@ -7,6 +7,20 @@ import java.awt.*;
 public class Filters {
     private Filters() {}
 
+    public static ColorBitmap increaseContrast(ColorBitmap img, double contrastK, double brightK) {
+        ColorBitmap newImage = new ColorBitmap(img.getWidth(), img.getHeight());
+        for (int x = 0; x < img.getWidth(); x++) {
+            for (int y = 0; y < img.getHeight(); y++) {
+                Color originalColor = img.at(x, y);
+                int r = Math.min((int)(originalColor.getRed() * contrastK + brightK), 255);
+                int g = Math.min((int)(originalColor.getGreen() * contrastK + brightK), 255);
+                int b = Math.min((int)(originalColor.getBlue() * contrastK + brightK), 255);
+                newImage.set(x, y, new Color(r, g, b));
+            }
+        }
+        return newImage;
+    }
+
     public static ColorBitmap blur(ColorBitmap img, int kernelSize) {
         if (kernelSize % 2 == 0) return null;
         if (kernelSize == 1) return img.copy();
@@ -52,7 +66,7 @@ public class Filters {
         int range = size / 2;
         for (int x = -range; x <= range; x++) {
             for (int y = -range; y <=range; y++) {
-                matrix[y+range][x+range] = gauss(x, y, 0.84089642);
+                matrix[y+range][x+range] = gauss(x, y, computeSigma(size));
             }
         }
 

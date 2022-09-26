@@ -74,4 +74,54 @@ public class ColorBitmap implements Bitmap<Color>{
     private int toIndex(int x, int y) {
         return width * y + x;
     }
+
+    public static ColorBitmap overlay(ColorBitmap cb1, ColorBitmap cb2) {
+        ColorBitmap overlay = new ColorBitmap(cb1.getWidth(), cb1.getHeight());
+
+        for (int x = 0; x < cb1.getWidth(); x++) {
+            for (int y = 0; y < cb1.getHeight(); y++) {
+                overlay.set(x, y, overlay(cb1.at(x, y), cb2.at(x, y)));
+            }
+        }
+
+        return overlay;
+    }
+
+    public static Color overlay(Color color1, Color color2) {
+        int r = Math.min(color1.getRed() + color2.getRed(), 255);
+        int g = Math.min(color1.getGreen() + color2.getGreen(), 255);
+        int b = Math.min(color1.getBlue() + color2.getBlue(), 255);
+        return new Color(r, g, b);
+    }
+
+    public static int compute(int a, int b) {
+        double normA = a / 255d;
+        double normB = b / 255d;
+        if (a < 0.5) {
+            return (int)(2 * normA * normB * 255);
+        }else{
+            return (int)((1 - 2 * (1 - normA) * (1 - normB)) * 255);
+        }
+    }
+
+    public static ColorBitmap subtract(ColorBitmap cb1, ColorBitmap cb2) {
+        ColorBitmap sub = new ColorBitmap(cb1.getWidth(), cb1.getHeight());
+
+        for (int x = 0; x < cb1.getWidth(); x++) {
+            for (int y = 0; y < cb1.getHeight(); y++) {
+                sub.set(x, y, subtract(cb1.at(x, y), cb2.at(x, y)));
+            }
+        }
+
+        return sub;
+    }
+
+    public static Color subtract(Color c1, Color c2) {
+        int r = Math.abs(c1.getRed() - c2.getRed());
+        int g = Math.abs(c1.getGreen() - c2.getGreen());
+        int b = Math.abs(c1.getBlue() - c2.getBlue());
+        return new Color(r, g, b);
+    }
+
+
 }
