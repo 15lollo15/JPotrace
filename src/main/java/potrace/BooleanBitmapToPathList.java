@@ -73,7 +73,7 @@ public class BooleanBitmapToPathList {
 
     private Path findPath(IntegerPoint integerPoint) {
         Path path = new Path();
-        path.sign = bitmap.at(integerPoint.getX(), integerPoint.getY()) ? "+" : "-";
+        path.sign = bitmap.at(integerPoint.getX(), integerPoint.getY()) ? Path.Sign.PLUS : Path.Sign.MINUS;
 
         int x = integerPoint.getX();
         int y = integerPoint.getY();
@@ -105,8 +105,8 @@ public class BooleanBitmapToPathList {
 
             if (r && !l) {
                 if (info.turnpolicy.equals(TurnPolicy.RIGHT) ||
-                        (info.turnpolicy.equals(TurnPolicy.BLACK) && path.sign.equals("+")) ||
-                        (info.turnpolicy.equals(TurnPolicy.WHITE) && path.sign.equals("-")) ||
+                        (info.turnpolicy.equals(TurnPolicy.BLACK) && path.sign.equals(Path.Sign.PLUS)) ||
+                        (info.turnpolicy.equals(TurnPolicy.WHITE) && path.sign.equals(Path.Sign.MINUS)) ||
                         (info.turnpolicy.equals(TurnPolicy.MAJORITY) && majority(x, y)) ||
                         (info.turnpolicy.equals(TurnPolicy.MINORITY) && !majority(x, y))) {
                     int tmp = dirx;

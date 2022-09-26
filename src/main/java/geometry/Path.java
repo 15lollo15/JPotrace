@@ -13,7 +13,7 @@ public class Path {
     public int minY = 100000;
     public int maxX= -1;
     public int maxY = -1;
-    public String sign;
+    public Sign sign;
     public int x0;
     public int y0;
     public List<Sum> sums;
@@ -26,4 +26,6 @@ public class Path {
     public String toString() {
         return pt.toString();
     }
+
+    public enum Sign {PLUS, MINUS}
 }
