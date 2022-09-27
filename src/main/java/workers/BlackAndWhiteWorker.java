@@ -6,7 +6,7 @@ import image.BooleanBitmap;
 import image.bitmap.loaders.BooleanGrayScaleLoader;
 import potrace.BooleanBitmapToPathList;
 import potrace.GetSVG;
-import potrace.Info;
+import potrace.Settings;
 import potrace.ProcessPath;
 
 import javax.swing.*;
@@ -22,20 +22,20 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
     private final int scale;
     private final int threshold;
     private final JTextArea logArea;
-    private final Info info;
+    private final Settings settings;
 
     public BlackAndWhiteWorker(BufferedImage img, File svgFile, int scale,
-                               int threshold, JTextArea logArea, Info info) {
+                               int threshold, JTextArea logArea, Settings settings) {
         this.img = img;
         this.svgFile = svgFile;
         this.scale = scale;
         this.threshold = threshold;
         this.logArea = logArea;
-        this.info = info;
+        this.settings = settings;
     }
 
     public BlackAndWhiteWorker(BufferedImage img, File svgFile, int scale, int threshold,JTextArea logArea) {
-        this(img, svgFile, scale, threshold, logArea, new Info());
+        this(img, svgFile, scale, threshold, logArea, new Settings());
     }
 
     @Override
@@ -49,11 +49,11 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
             BooleanBitmap bm = loader.load(img);
 
             publish("Paths extractions...");
-            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, info);
+            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, settings);
             List<Path> pathList = booleanBitmapToPathlist.toPathList();
 
             publish("Paths processing...");
-            ProcessPath processPath = new ProcessPath(info, pathList);
+            ProcessPath processPath = new ProcessPath(settings, pathList);
             processPath.processPath();
 
             publish("Svg generation...");

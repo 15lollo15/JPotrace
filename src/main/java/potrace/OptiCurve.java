@@ -7,11 +7,11 @@ import geometry.Tag;
 
 public class OptiCurve {
     private Path path;
-    private Info info;
+    private Settings settings;
 
-    public OptiCurve(Path path, Info info) {
+    public OptiCurve(Path path, Settings settings) {
         this.path = path;
-        this.info = info;
+        this.settings = settings;
     }
 
     public int optiPenalty(Path path, int i, int j, Opti res, double opttolerance, int[] convc, double[] areac) {
@@ -190,7 +190,7 @@ public class OptiCurve {
             len[j] = len[j-1]+1;
 
             for (int i=j-2; i>=0; i--) {
-                int r = optiPenalty(path, i, ProcessPath.mod(j,m), o, info.opttolerance, convc,
+                int r = optiPenalty(path, i, ProcessPath.mod(j,m), o, settings.getOptimalityTolerance(), convc,
                         areac);
                 if (r != 0) {
                     break;

@@ -2,15 +2,14 @@ package potrace;
 
 import geometry.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessPath {
-    private Info info;
+    private Settings settings;
     private List<Path> pathlist;
 
-    public ProcessPath(Info info, List<Path> pathlist) {
-        this.info = info;
+    public ProcessPath(Settings settings, List<Path> pathlist) {
+        this.settings = settings;
         this.pathlist = pathlist;
     }
 
@@ -331,7 +330,7 @@ public class ProcessPath {
                 alpha = 4/3.0;
             }
 
-            if (alpha >= info.alphamax) {
+            if (alpha >= settings.getAlphaMax()) {
                 curve.getTag()[j] = Tag.CORNER;
                 curve.getC()[3 * j + 1] = curve.getVertex()[j];
                 curve.getC()[3 * j + 2] = p4;
@@ -372,8 +371,8 @@ public class ProcessPath {
 
             smooth(path);
 
-            if (info.optcurve) {
-                OptiCurve optiCurve = new OptiCurve(path, info);
+            if (settings.isOptimizeCurve()) {
+                OptiCurve optiCurve = new OptiCurve(path, settings);
                 optiCurve.optiCurve();
             }
         }

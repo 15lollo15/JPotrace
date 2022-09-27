@@ -9,7 +9,7 @@ import image.palette.KMeansExtractor;
 import image.palette.PaletteExtractor;
 import potrace.BooleanBitmapToPathList;
 import potrace.GetSVG;
-import potrace.Info;
+import potrace.Settings;
 import potrace.ProcessPath;
 import utils.ColorsUtils;
 
@@ -29,17 +29,17 @@ public class ColorWorker extends SwingWorker<Void, String> {
     private final int numberOfColors;
     private final JTextArea logArea;
     private final int blur;
-    private final Info info;
+    private final Settings settings;
 
     public ColorWorker(BufferedImage img, File svgFile, int scale,
-                       int numberOfColors, JTextArea logArea, int blur, Info info) {
+                       int numberOfColors, JTextArea logArea, int blur, Settings settings) {
         this.img = img;
         this.svgFile = svgFile;
         this.scale = scale;
         this.numberOfColors = numberOfColors;
         this.logArea = logArea;
         this.blur = blur;
-        this.info = info;
+        this.settings = settings;
     }
 
     @Override
@@ -75,10 +75,10 @@ public class ColorWorker extends SwingWorker<Void, String> {
             BooleanColorPickerLoader loader = new BooleanColorPickerLoader(colorsToPick);
             BooleanBitmap bm = loader.load(img.getWidth(), img.getHeight(), pixels);
 
-            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, info);
+            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, settings);
             List<Path> pathList = booleanBitmapToPathlist.toPathList();
 
-            ProcessPath processPath = new ProcessPath(info, pathList);
+            ProcessPath processPath = new ProcessPath(settings, pathList);
             processPath.processPath();
 
             colors[index] = c;

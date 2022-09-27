@@ -1,6 +1,6 @@
 package gui;
 
-import potrace.Info;
+import potrace.Settings;
 import potrace.TurnPolicy;
 import workers.BlackAndWhiteWorker;
 import workers.ColorWorker;
@@ -170,11 +170,11 @@ public class Controller {
         int scale = (Integer)mainFrame.getScaleSpinner().getValue();
 
 
-        Info info = new Info();
+        Settings settings = new Settings();
         if (mainFrame.getAdvancePanel().isVisible()) {
-            info.turnpolicy = (TurnPolicy) mainFrame.getTurnPolicyComboBox().getSelectedItem();
-            info.turdsize = (Integer)mainFrame.getMinAreaSpinner().getValue();
-            info.optcurve = mainFrame.getEnableCurveOptimization().isSelected();
+            settings.setTurnPolicy((TurnPolicy) mainFrame.getTurnPolicyComboBox().getSelectedItem());
+            settings.setTurdSize((Integer) mainFrame.getMinAreaSpinner().getValue());
+            settings.setOptimizeCurve(mainFrame.getEnableCurveOptimization().isSelected());
         }
 
         mainFrame.getLogTextArea().setVisible(true);
@@ -185,7 +185,7 @@ public class Controller {
             BlackAndWhiteWorker blackAndWhiteWorker = new BlackAndWhiteWorker(input,
                     new File(destPath),
                     scale, threshold,
-                    mainFrame.getLogTextArea(), info);
+                    mainFrame.getLogTextArea(), settings);
             blackAndWhiteWorker.execute();
         }else {
             int numberOfColors = (Integer)mainFrame.getColorNumberSpinner().getValue();
@@ -193,7 +193,7 @@ public class Controller {
             ColorWorker colorWorker = new ColorWorker(input,
                     new File(destPath),
                     scale, numberOfColors,
-                    mainFrame.getLogTextArea(), blur, info);
+                    mainFrame.getLogTextArea(), blur, settings);
             colorWorker.execute();
         }
     }

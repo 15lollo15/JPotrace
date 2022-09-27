@@ -9,11 +9,11 @@ import java.util.List;
 
 public class BooleanBitmapToPathList {
     private BooleanBitmap bitmap;
-    private Info info;
+    private Settings settings;
 
-    public BooleanBitmapToPathList(BooleanBitmap bitmap, Info info) {
+    public BooleanBitmapToPathList(BooleanBitmap bitmap, Settings settings) {
         this.bitmap = bitmap.copy();
-        this.info = info;
+        this.settings = settings;
     }
 
     /**
@@ -107,11 +107,11 @@ public class BooleanBitmapToPathList {
             boolean r = bitmap.at(x + (dirx - diry - 1) / 2, y + (diry + dirx - 1) / 2);
 
             if (r && !l) {
-                if (info.turnpolicy.equals(TurnPolicy.RIGHT) ||
-                        (info.turnpolicy.equals(TurnPolicy.BLACK) && path.getSign().equals(Path.Sign.PLUS)) ||
-                        (info.turnpolicy.equals(TurnPolicy.WHITE) && path.getSign().equals(Path.Sign.MINUS)) ||
-                        (info.turnpolicy.equals(TurnPolicy.MAJORITY) && majority(x, y)) ||
-                        (info.turnpolicy.equals(TurnPolicy.MINORITY) && !majority(x, y))) {
+                if (settings.getTurnPolicy().equals(TurnPolicy.RIGHT) ||
+                        (settings.getTurnPolicy().equals(TurnPolicy.BLACK) && path.getSign().equals(Path.Sign.PLUS)) ||
+                        (settings.getTurnPolicy().equals(TurnPolicy.WHITE) && path.getSign().equals(Path.Sign.MINUS)) ||
+                        (settings.getTurnPolicy().equals(TurnPolicy.MAJORITY) && majority(x, y)) ||
+                        (settings.getTurnPolicy().equals(TurnPolicy.MINORITY) && !majority(x, y))) {
                     int tmp = dirx;
                     dirx = -diry;
                     diry = tmp;
@@ -163,7 +163,7 @@ public class BooleanBitmapToPathList {
 
             xorPath(path);
 
-            if (path.getArea() > info.turdsize) {
+            if (path.getArea() > settings.getTurdSize()) {
                 pathList.add(path);
             }
         }
