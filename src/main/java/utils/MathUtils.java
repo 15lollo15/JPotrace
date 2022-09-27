@@ -51,13 +51,11 @@ public class MathUtils {
     }
 
 
-    public static double dpara(DoublePoint p0, DoublePoint p1, DoublePoint p2) {
-        double x1, y1, x2, y2;
-
-        x1 = p1.getX() - p0.getX();
-        y1 = p1.getY() - p0.getY();
-        x2 = p2.getX() - p0.getX();
-        y2 = p2.getY() - p0.getY();
+    public static double parallelogramArea(DoublePoint p0, DoublePoint p1, DoublePoint p2) {
+        double x1 = p1.getX() - p0.getX();
+        double y1 = p1.getY() - p0.getY();
+        double x2 = p2.getX() - p0.getX();
+        double y2 = p2.getY() - p0.getY();
 
         return x1 * y2 - x2 * y1;
     }
@@ -138,5 +136,9 @@ public class MathUtils {
         } else {
             return -1.0;
         }
+    }
+
+    public static double crossProduct(DoublePoint p1, DoublePoint p2) {
+        return p1.getX() * p2.getY() - p1.getY() * p2.getX();
     }
 }

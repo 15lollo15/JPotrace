@@ -42,7 +42,7 @@ public class GetSVG {
 
     private static String path(Curve curve, int size) {
         StringBuilder sb = new StringBuilder();
-        int n = curve.getN();
+        int n = curve.getVertex().length;
         DoublePoint[] c = curve.getC();
         sb.append("M").append(format(c[(n - 1) * 3 + 2].getX() * size));
         sb.append(" ").append(format(c[(n - 1) * 3 + 2].getY() * size)).append(" ");

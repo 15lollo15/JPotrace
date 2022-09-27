@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BooleanBitmapToPathList {
-    private BooleanBitmap bitmap;
-    private Settings settings;
+    private final BooleanBitmap bitmap;
+    private final Settings settings;
 
     public BooleanBitmapToPathList(BooleanBitmap bitmap, Settings settings) {
         this.bitmap = bitmap.copy();
@@ -23,7 +23,7 @@ public class BooleanBitmapToPathList {
      */
     private IntegerPoint findNext(IntegerPoint point) {
         int i = bitmap.getWidth() * point.getY() + point.getX();
-        while (i < bitmap.getSize() && !bitmap.at(i)) {
+        while (i < bitmap.getSize() && !bitmap.at(i).booleanValue()) {
             i++;
         }
         if (i < bitmap.getSize())
@@ -53,16 +53,16 @@ public class BooleanBitmapToPathList {
      * Verify if image is balanced near point(x,y)
      * @param x X of the point
      * @param y Y of the point
-     * @param ray Ray to analize
+     * @param ray Ray to analyze
      * @return 0 if is balanced, > 0 if there is more black or < 0 if is more white
      */
     private BalanceStatus checkBalanceStatus(int x, int y, int ray) {
         int ct = 0;
         for (int a = -ray + 1; a <= ray - 1; a++) {
-            ct += bitmap.at(x + a, y + ray - 1) ? 1 : -1;
-            ct += bitmap.at(x + ray - 1, y + a - 1) ? 1 : -1;
-            ct += bitmap.at(x + a - 1, y - ray) ? 1 : -1;
-            ct += bitmap.at(x - ray, y + a) ? 1 : -1;
+            ct += bitmap.at(x + a, y + ray - 1).booleanValue() ? 1 : -1;
+            ct += bitmap.at(x + ray - 1, y + a - 1).booleanValue() ? 1 : -1;
+            ct += bitmap.at(x + a - 1, y - ray).booleanValue() ? 1 : -1;
+            ct += bitmap.at(x - ray, y + a).booleanValue() ? 1 : -1;
         }
         if (ct > 0)
             return BalanceStatus.MORE_BLACK;
@@ -71,21 +71,61 @@ public class BooleanBitmapToPathList {
         return BalanceStatus.BALANCED;
     }
 
-    private Path findPath(IntegerPoint integerPoint) {
+    private Path.Sign computeSign(IntegerPoint point) {
+        return bitmap.at(point.getX(), point.getY()).booleanValue() ? Path.Sign.PLUS : Path.Sign.MINUS;
+    }
+
+    private boolean forceTurnRight(Path path, int x, int y) {
+        return settings.getTurnPolicy().equals(TurnPolicy.RIGHT) ||
+                (settings.getTurnPolicy().equals(TurnPolicy.BLACK) && path.getSign().equals(Path.Sign.PLUS)) ||
+                (settings.getTurnPolicy().equals(TurnPolicy.WHITE) && path.getSign().equals(Path.Sign.MINUS)) ||
+                (settings.getTurnPolicy().equals(TurnPolicy.MAJORITY) && majority(x, y)) ||
+                (settings.getTurnPolicy().equals(TurnPolicy.MINORITY) && !majority(x, y));
+    }
+
+    private IntegerPoint chooseDirection(Path path, boolean r, boolean l, IntegerPoint oldDirection, IntegerPoint position) {
+        int dirX = oldDirection.getX();
+        int dirY = oldDirection.getY();
+        int x = position.getX();
+        int y = position.getY();
+        if (r && !l) {
+            if (forceTurnRight(path, x, y)) {
+                int tmp = dirX;
+                dirX = -dirY;
+                dirY = tmp;
+            } else {
+                int tmp = dirX;
+                dirX = dirY;
+                dirY = -tmp;
+            }
+        } else if (r) {
+            int tmp = dirX;
+            dirX = -dirY;
+            dirY = tmp;
+        } else if (!l) {
+            int tmp = dirX;
+            dirX = dirY;
+            dirY = -tmp;
+        }
+        return new IntegerPoint(dirX, dirY);
+    }
+
+    private Path findPath(IntegerPoint point) {
         Path path = new Path();
-        path.setSign(bitmap.at(integerPoint.getX(), integerPoint.getY()) ? Path.Sign.PLUS : Path.Sign.MINUS);
+        path.setSign(computeSign(point));
 
-        int x = integerPoint.getX();
-        int y = integerPoint.getY();
+        int x = point.getX();
+        int y = point.getY();
 
-        int dirx = 0;
-        int diry = 1;
+        IntegerPoint direction = new IntegerPoint(0, 1);
         int maxX = x;
         int maxY = y;
         int minX = x;
         int minY = y;
         double area = path.getArea();
         while (true) {
+            int dirX = direction.getX();
+            int dirY = direction.getY();
             path.getPoints().add(new IntegerPoint(x, y));
             if (x > maxX)
                 maxX = x;
@@ -96,39 +136,17 @@ public class BooleanBitmapToPathList {
             if (y < minY)
                 minY = y;
 
-            x += dirx;
-            y += diry;
-            area -= x * diry;
+            x += dirX;
+            y += dirY;
+            area -= x * dirY;
 
-            if (x == integerPoint.getX() && y == integerPoint.getY())
+            if (x == point.getX() && y == point.getY())
                 break;
 
-            boolean l = bitmap.at(x + (dirx + diry - 1 ) / 2, y + (diry - dirx - 1) / 2);
-            boolean r = bitmap.at(x + (dirx - diry - 1) / 2, y + (diry + dirx - 1) / 2);
+            boolean l = bitmap.at(x + (dirX + dirY - 1 ) / 2, y + (dirY - dirX - 1) / 2);
+            boolean r = bitmap.at(x + (dirX - dirY - 1) / 2, y + (dirY + dirX - 1) / 2);
 
-            if (r && !l) {
-                if (settings.getTurnPolicy().equals(TurnPolicy.RIGHT) ||
-                        (settings.getTurnPolicy().equals(TurnPolicy.BLACK) && path.getSign().equals(Path.Sign.PLUS)) ||
-                        (settings.getTurnPolicy().equals(TurnPolicy.WHITE) && path.getSign().equals(Path.Sign.MINUS)) ||
-                        (settings.getTurnPolicy().equals(TurnPolicy.MAJORITY) && majority(x, y)) ||
-                        (settings.getTurnPolicy().equals(TurnPolicy.MINORITY) && !majority(x, y))) {
-                    int tmp = dirx;
-                    dirx = -diry;
-                    diry = tmp;
-                } else {
-                    int tmp = dirx;
-                    dirx = diry;
-                    diry = -tmp;
-                }
-            } else if (r) {
-                int tmp = dirx;
-                dirx = -diry;
-                diry = tmp;
-            } else if (!l) {
-                int tmp = dirx;
-                dirx = diry;
-                diry = -tmp;
-            }
+            direction =  chooseDirection(path, r, l, direction, new IntegerPoint(x, y));
         }
         path.setArea(area);
         path.setMaxPoint(new IntegerPoint(maxX, maxY));
@@ -144,7 +162,7 @@ public class BooleanBitmapToPathList {
             int y = path.getPoints().get(i).getY();
 
             if (y != y1) {
-                int minY = y1 < y ? y1 : y;
+                int minY = Math.min(y1, y);
                 int maxX = path.getMaxPoint().getX();
                 for (int j = x; j < maxX; j++) {
                     bitmap.flip(j, minY);

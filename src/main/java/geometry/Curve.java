@@ -8,10 +8,7 @@ public class Curve {
     private double[] beta;
     private boolean initializated;
 
-    private int n;
-
     public Curve(int n) {
-        this.n = n;
         vertex = new DoublePoint[n];
         tag = new Tag[n];
         c = new DoublePoint[n * 3];
@@ -83,11 +80,4 @@ public class Curve {
         this.initializated = initializated;
     }
 
-    public int getN() {
-        return n;
-    }
-
-    public void setN(int n) {
-        this.n = n;
-    }
 }

@@ -14,10 +14,6 @@ public class ProcessPath {
         this.pathlist = pathlist;
     }
 
-    private double xprod(DoublePoint p1, DoublePoint p2) {
-        return p1.getX() * p2.getY() - p1.getY() * p2.getX();
-    }
-
     private boolean cyclic(double a, double b, double c) {
         if (a <= c) {
             return (a <= b && b < c);
@@ -26,7 +22,7 @@ public class ProcessPath {
         }
     }
 
-    private DoublePoint dorthInfty(DoublePoint p0, DoublePoint p2) {
+    private DoublePoint nextDirection(DoublePoint p0, DoublePoint p2) {
         DoublePoint r = new DoublePoint();
 
         r.setY(MathUtils.sign(p2.getX() - p0.getX()));
@@ -36,7 +32,7 @@ public class ProcessPath {
     }
 
     private double ddenom(DoublePoint p0, DoublePoint p2) {
-        DoublePoint r = dorthInfty(p0, p2);
+        DoublePoint r = nextDirection(p0, p2);
 
         return r.getY() * (p2.getX() - p0.getX()) - r.getX() * (p2.getY() - p0.getY());
     }
@@ -111,20 +107,20 @@ public class ProcessPath {
                 cur.setX((double) pt.get(k).getX() - pt.get(i).getX());
                 cur.setY((double) pt.get(k).getY() - pt.get(i).getY());
 
-                if (xprod(constraint[0], cur) < 0 || xprod(constraint[1], cur) > 0) {
+                if (MathUtils.crossProduct(constraint[0], cur) < 0 || MathUtils.crossProduct(constraint[1], cur) > 0) {
                     break;
                 }
 
                 if (Math.abs(cur.getX()) > 1 || Math.abs(cur.getY()) > 1) {
                     off.setX(cur.getX() + ((cur.getY() >= 0 && (cur.getY() > 0 || cur.getX() < 0)) ? 1 : -1));
                     off.setY(cur.getY() + ((cur.getX() <= 0 && (cur.getX() < 0 || cur.getY() < 0)) ? 1 : -1));
-                    if (xprod(constraint[0], off) >= 0) {
+                    if (MathUtils.crossProduct(constraint[0], off) >= 0) {
                         constraint[0].setX(off.getX());
                         constraint[0].setY(off.getY());
                     }
                     off.setX(cur.getX() + ((cur.getY() <= 0 && (cur.getY() < 0 || cur.getX() < 0)) ? 1 : -1));
                     off.setY(cur.getY() + ((cur.getX() >= 0 && (cur.getX() > 0 || cur.getY() < 0)) ? 1 : -1));
-                    if (xprod(constraint[1], off) <= 0) {
+                    if (MathUtils.crossProduct(constraint[1], off) <= 0) {
                         constraint[1].setX(off.getX());
                         constraint[1].setY(off.getY());
                     }
@@ -141,10 +137,10 @@ public class ProcessPath {
                 cur.setX((double) pt.get(k1).getX() - pt.get(i).getX());
                 cur.setY((double) pt.get(k1).getY() - pt.get(i).getY());
 
-                a = xprod(constraint[0], cur);
-                b = xprod(constraint[0], dk);
-                c = xprod(constraint[1], cur);
-                d = xprod(constraint[1], dk);
+                a = MathUtils.crossProduct(constraint[0], cur);
+                b = MathUtils.crossProduct(constraint[0], dk);
+                c = MathUtils.crossProduct(constraint[1], cur);
+                d = MathUtils.crossProduct(constraint[1], dk);
 
                 j = 10000000;
                 if (b < 0) {
@@ -173,7 +169,7 @@ public class ProcessPath {
 
     private void reverse(Path path) {
         Curve curve = path.getCurve();
-        int m = curve.getN();
+        int m = curve.getVertex().length;
         DoublePoint[] v = curve.getVertex();
 
         for (int i=0, j=m-1; i<j; i++, j--) {
@@ -185,7 +181,7 @@ public class ProcessPath {
 
     private void smooth(Path path) {
         Curve curve = path.getCurve();
-        int m = curve.getN();
+        int m = curve.getVertex().length;
 
         double alpha;
         DoublePoint p2;
@@ -199,9 +195,9 @@ public class ProcessPath {
 
             double denom = ddenom(curve.getVertex()[i], curve.getVertex()[k]);
             if (denom != 0.0) {
-                double dd = MathUtils.dpara(curve.getVertex()[i], curve.getVertex()[j], curve.getVertex()[k]) / denom;
+                double dd = MathUtils.parallelogramArea(curve.getVertex()[i], curve.getVertex()[j], curve.getVertex()[k]) / denom;
                 dd = Math.abs(dd);
-                alpha = dd>1 ? (1 - 1.0/dd) : 0;
+                alpha = dd > 1 ? (1 - 1.0/dd) : 0;
                 alpha = alpha / 0.75;
             } else {
                 alpha = 4/3.0;

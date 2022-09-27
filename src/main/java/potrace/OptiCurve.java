@@ -19,7 +19,7 @@ public class OptiCurve {
         Curve curve = path.getCurve();
         DoublePoint[] c = curve.getC();
         DoublePoint[] vertex = curve.getVertex();
-        int m = curve.getN();
+        int m = vertex.length;
 
         if (i==j) {
             return 1;
@@ -55,14 +55,14 @@ public class OptiCurve {
         DoublePoint p3 = c[MathUtils.mod(j,m) * 3 + 2].copy();
 
         double area = areac[j] - areac[i];
-        area -= MathUtils.dpara(vertex[0], c[i * 3 + 2], c[j * 3 + 2])/2;
+        area -= MathUtils.parallelogramArea(vertex[0], c[i * 3 + 2], c[j * 3 + 2])/2;
         if (i>=j) {
             area += areac[m];
         }
 
-        double a1 = MathUtils.dpara(p0, p1, p2);
-        double a2 = MathUtils.dpara(p0, p1, p3);
-        double a3 = MathUtils.dpara(p0, p2, p3);
+        double a1 = MathUtils.parallelogramArea(p0, p1, p2);
+        double a2 = MathUtils.parallelogramArea(p0, p1, p3);
+        double a3 = MathUtils.parallelogramArea(p0, p2, p3);
 
         double a4 = a1+a3-a2;
 
@@ -103,7 +103,7 @@ public class OptiCurve {
             if (d == 0.0) {
                 return 1;
             }
-            double d1 = MathUtils.dpara(vertex[k], vertex[k1], pt) / d;
+            double d1 = MathUtils.parallelogramArea(vertex[k], vertex[k1], pt) / d;
             if (Math.abs(d1) > opttolerance) {
                 return 1;
             }
@@ -125,8 +125,8 @@ public class OptiCurve {
             if (d == 0.0) {
                 return 1;
             }
-            double d1 = MathUtils.dpara(c[k * 3 + 2], c[k1 * 3 + 2], pt) / d;
-            double d2 = MathUtils.dpara(c[k * 3 + 2], c[k1 * 3 + 2], vertex[k1]) / d;
+            double d1 = MathUtils.parallelogramArea(c[k * 3 + 2], c[k1 * 3 + 2], pt) / d;
+            double d2 = MathUtils.parallelogramArea(c[k * 3 + 2], c[k1 * 3 + 2], vertex[k1]) / d;
             d2 *= 0.75 * curve.getAlpha()[k1];
             if (d2 < 0) {
                 d1 = -d1;
@@ -146,7 +146,7 @@ public class OptiCurve {
     public void optiCurve() {
         Curve curve = path.getCurve();
         DoublePoint[] c = curve.getC();
-        int m = curve.getN();
+        int m = curve.getVertex().length;
         DoublePoint[] vert = curve.getVertex();
 
         int[] pt = new int[m + 1];
@@ -160,7 +160,7 @@ public class OptiCurve {
 
         for (int i=0; i<m; i++) {
             if (curve.getTag()[i] == Tag.CURVE) {
-                convc[i] = MathUtils.sign(MathUtils.dpara(vert[MathUtils.mod(i-1,m)], vert[i], vert[MathUtils.mod(i+1,m)]));
+                convc[i] = MathUtils.sign(MathUtils.parallelogramArea(vert[MathUtils.mod(i-1,m)], vert[i], vert[MathUtils.mod(i+1,m)]));
             } else {
                 convc[i] = 0;
             }
@@ -174,8 +174,8 @@ public class OptiCurve {
             if (curve.getTag()[i1] == Tag.CURVE) {
                 double alpha = curve.getAlpha()[i1];
                 area += 0.3 * alpha * (4-alpha) *
-                        MathUtils.dpara(c[i * 3 + 2], vert[i1], c[i1 * 3 + 2])/2;
-                area += MathUtils.dpara(p0, c[i * 3 + 2], c[i1 * 3 + 2])/2;
+                        MathUtils.parallelogramArea(c[i * 3 + 2], vert[i1], c[i1 * 3 + 2])/2;
+                area += MathUtils.parallelogramArea(p0, c[i * 3 + 2], c[i1 * 3 + 2])/2;
             }
             areac[i+1] = area;
         }
