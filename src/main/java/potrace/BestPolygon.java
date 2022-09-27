@@ -59,13 +59,31 @@ public class BestPolygon {
         this.path = path;
     }
 
+    private void shortestPath(Path path, int[] seg0, int[] seg1, int[] clip1, int m, int[] prev) {
+        int n = path.getLen();
+        double[] pen = new double[n + 1];
+        pen[0]=0;
+        for (int j=1; j<=m; j++) {
+            for (int i=seg1[j]; i<=seg0[j]; i++) {
+                double best = -1;
+                for (int k=seg0[j-1]; k>=clip1[i]; k--) {
+                    double thispen = penalty3(path, k, i) + pen[k];
+                    if (best < 0 || thispen < best) {
+                        prev[i] = k;
+                        best = thispen;
+                    }
+                }
+                pen[i] = best;
+            }
+        }
+    }
+
     public void bestPolygon() {
         int n = path.getLen();
         int[] clip0 = new int[n];
         int[] clip1 = new int[n + 1];
         int[] seg0 = new int[n + 1];
         int[] seg1 = new int[n + 1];
-        double[] pen = new double[n + 1];
 
         int[] prev = new int[n + 1];
 
@@ -104,20 +122,7 @@ public class BestPolygon {
         }
         seg1[0] = 0;
 
-        pen[0]=0;
-        for (j=1; j<=m; j++) {
-            for (i=seg1[j]; i<=seg0[j]; i++) {
-                double best = -1;
-                for (int k=seg0[j-1]; k>=clip1[i]; k--) {
-                    double thispen = penalty3(path, k, i) + pen[k];
-                    if (best < 0 || thispen < best) {
-                        prev[i] = k;
-                        best = thispen;
-                    }
-                }
-                pen[i] = best;
-            }
-        }
+        shortestPath(path, seg0, seg1, clip1, m, prev);
 
         int[] optimalPolygon = new int[m];
         for (i=n, j=m-1; i>0; j--) {

@@ -77,21 +77,7 @@ public class AdjustVertices {
         }
     }
 
-    public void adjustVertices() {
-        int m = path.getOptimalPolygon().length;
-        DoublePoint[] ctr = new DoublePoint[m];
-        DoublePoint[] dir = new DoublePoint[m];
-        double[] v = new double[3];
-        Quad[] q = new Quad[m];
-        DoublePoint s = new DoublePoint();
-        List<IntegerPoint> pt = path.getPoints();
-        int x0 = path.getFirstPoint().getX();
-        int y0 = path.getFirstPoint().getY();
-        int n = path.getLen();
-        int[] po = path.getOptimalPolygon();
-
-        Curve curve = new Curve(m);
-
+    public void generateOptimalSlopePoint(int[] po, int n, int m, DoublePoint[] ctr, DoublePoint[] dir) {
         for (int i=0; i<m; i++) {
             int j = po[MathUtils.mod(i+1,m)];
             j = MathUtils.mod(j-po[i],n)+po[i];
@@ -99,7 +85,10 @@ public class AdjustVertices {
             dir[i] = new DoublePoint();
             pointslope(path, po[i], j, ctr[i], dir[i]);
         }
+    }
 
+    public Quad[] generateQuads(int m, DoublePoint[] dir, double[] v, DoublePoint[] ctr) {
+        Quad[] q = new Quad[m];
         for (int i=0; i<m; i++) {
             q[i] = new Quad();
             double d = dir[i].getX() * dir[i].getX() + dir[i].getY() * dir[i].getY();
@@ -120,6 +109,34 @@ public class AdjustVertices {
                 }
             }
         }
+        return q;
+    }
+
+    private void addQuadraticForm(int j, int i, Quad[] q, Quad quad) {
+        for (int l=0; l<3; l++) {
+            for (int k=0; k<3; k++) {
+                quad.data[l * 3 + k] = q[j].at(l, k) + q[i].at(l, k);
+            }
+        }
+    }
+
+    public void adjustVertices() {
+        int m = path.getOptimalPolygon().length;
+        DoublePoint[] ctr = new DoublePoint[m];
+        DoublePoint[] dir = new DoublePoint[m];
+        double[] v = new double[3];
+        DoublePoint s = new DoublePoint();
+        List<IntegerPoint> pt = path.getPoints();
+        int x0 = path.getFirstPoint().getX();
+        int y0 = path.getFirstPoint().getY();
+        int n = path.getLen();
+        int[] po = path.getOptimalPolygon();
+
+        Curve curve = new Curve(m);
+
+        generateOptimalSlopePoint(po, n, m, ctr, dir);
+
+        Quad[] q = generateQuads(m, dir, v, ctr);
 
         for (int i=0; i<m; i++) {
             Quad quad = new Quad();
@@ -130,11 +147,7 @@ public class AdjustVertices {
 
             int j = MathUtils.mod(i-1,m);
 
-            for (int l=0; l<3; l++) {
-                for (int k=0; k<3; k++) {
-                    quad.data[l * 3 + k] = q[j].at(l, k) + q[i].at(l, k);
-                }
-            }
+            addQuadraticForm(j, i, q, quad);
 
             while(true) {
 
