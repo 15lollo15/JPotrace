@@ -7,11 +7,11 @@ import java.util.List;
 
 public class ProcessPath {
     private Settings settings;
-    private List<Path> pathlist;
+    private List<Path> pathList;
 
-    public ProcessPath(Settings settings, List<Path> pathlist) {
+    public ProcessPath(Settings settings, List<Path> pathList) {
         this.settings = settings;
-        this.pathlist = pathlist;
+        this.pathList = pathList;
     }
 
     private boolean cyclic(double a, double b, double c) {
@@ -50,110 +50,39 @@ public class ProcessPath {
         }
     }
 
-    private void  calcLon(Path path) {
-        int n = path.getLen();
+    private int[] initializeNextCorner(Path path) {
         List<IntegerPoint> pt = path.getPoints();
-        int[] nc = new int[n];
-        double[] ct = new double[4];
-        int dir;
-        int[] pivk = new int[n];
-        path.setLongestStraightLine(new int[n]);
-
-        DoublePoint[] constraint = {new DoublePoint(), new DoublePoint()};
-        DoublePoint cur = new DoublePoint();
-        DoublePoint off = new DoublePoint();
-        DoublePoint dk = new DoublePoint();
-        int foundk;
-        int j;
-
-        double a;
-        double b;
-        double c;
-        double d;
+        int n = path.getLen();
+        int[] nextCorner = new int[n];
         int k = 0;
-        int k1;
         for(int i = n - 1; i >= 0; i--){
             if (pt.get(i).getX() != pt.get(k).getX() && pt.get(i).getY() != pt.get(k).getY()) {
                 k = i + 1;
             }
-            nc[i] = k;
+            nextCorner[i] = k;
         }
+        return nextCorner;
+    }
 
-        for (int i = n - 1; i >= 0; i--) {
-            ct[0] = ct[1] = ct[2] = ct[3] = 0;
-            dir = (3 + 3 * (pt.get(MathUtils.mod(i + 1, n)).getX() - pt.get(i).getX()) +
-                    (pt.get(MathUtils.mod(i + 1, n)).getY() - pt.get(i).getY())) / 2;
-            ct[dir]++;
-
-            constraint[0].setX(0);
-            constraint[0].setY(0);
-            constraint[1].setX(0);
-            constraint[1].setY(0);
-
-            k = nc[i];
-            k1 = i;
-            while (true) {
-                foundk = 0;
-                dir =  (3 + 3 * MathUtils.sign((double) pt.get(k).getX() - pt.get(k1).getX()) +
-                        MathUtils.sign((double) pt.get(k).getY() - pt.get(k1).getY())) / 2;
-                ct[dir]++;
-
-                if (ct[0] != 0 && ct[1] != 0 && ct[2] != 0 && ct[3] != 0 ) {
-                    pivk[i] = k1;
-                    foundk = 1;
-                    break;
-                }
-
-                cur.setX((double) pt.get(k).getX() - pt.get(i).getX());
-                cur.setY((double) pt.get(k).getY() - pt.get(i).getY());
-
-                if (MathUtils.crossProduct(constraint[0], cur) < 0 || MathUtils.crossProduct(constraint[1], cur) > 0) {
-                    break;
-                }
-
-                if (Math.abs(cur.getX()) > 1 || Math.abs(cur.getY()) > 1) {
-                    off.setX(cur.getX() + ((cur.getY() >= 0 && (cur.getY() > 0 || cur.getX() < 0)) ? 1 : -1));
-                    off.setY(cur.getY() + ((cur.getX() <= 0 && (cur.getX() < 0 || cur.getY() < 0)) ? 1 : -1));
-                    if (MathUtils.crossProduct(constraint[0], off) >= 0) {
-                        constraint[0].setX(off.getX());
-                        constraint[0].setY(off.getY());
-                    }
-                    off.setX(cur.getX() + ((cur.getY() <= 0 && (cur.getY() < 0 || cur.getX() < 0)) ? 1 : -1));
-                    off.setY(cur.getY() + ((cur.getX() >= 0 && (cur.getX() > 0 || cur.getY() < 0)) ? 1 : -1));
-                    if (MathUtils.crossProduct(constraint[1], off) <= 0) {
-                        constraint[1].setX(off.getX());
-                        constraint[1].setY(off.getY());
-                    }
-                }
-                k1 = k;
-                k = nc[k1];
-                if (!cyclic(k, i, k1)) {
-                    break;
-                }
-            }
-            if (foundk == 0) {
-                dk.setX(MathUtils.sign((double) pt.get(k).getX()-pt.get(k1).getX()));
-                dk.setY(MathUtils.sign((double) pt.get(k).getY()-pt.get(k1).getY()));
-                cur.setX((double) pt.get(k1).getX() - pt.get(i).getX());
-                cur.setY((double) pt.get(k1).getY() - pt.get(i).getY());
-
-                a = MathUtils.crossProduct(constraint[0], cur);
-                b = MathUtils.crossProduct(constraint[0], dk);
-                c = MathUtils.crossProduct(constraint[1], cur);
-                d = MathUtils.crossProduct(constraint[1], dk);
-
-                j = 10000000;
-                if (b < 0) {
-                    j = (int)Math.floor(a / -b);
-                }
-                if (d > 0) {
-                    j = Math.min(j, (int)Math.floor(-c / d));
-                }
-                pivk[i] = MathUtils.mod(k1+j,n);
-            }
+    private void updateConstraint(DoublePoint cur, DoublePoint[] constraint) {
+        DoublePoint off = new DoublePoint();
+        off.setX(cur.getX() + ((cur.getY() >= 0 && (cur.getY() > 0 || cur.getX() < 0)) ? 1 : -1));
+        off.setY(cur.getY() + ((cur.getX() <= 0 && (cur.getX() < 0 || cur.getY() < 0)) ? 1 : -1));
+        if (MathUtils.crossProduct(constraint[0], off) >= 0) {
+            constraint[0].setX(off.getX());
+            constraint[0].setY(off.getY());
         }
+        off.setX(cur.getX() + ((cur.getY() <= 0 && (cur.getY() < 0 || cur.getX() < 0)) ? 1 : -1));
+        off.setY(cur.getY() + ((cur.getX() >= 0 && (cur.getX() > 0 || cur.getY() < 0)) ? 1 : -1));
+        if (MathUtils.crossProduct(constraint[1], off) <= 0) {
+            constraint[1].setX(off.getX());
+            constraint[1].setY(off.getY());
+        }
+    }
 
-        j=pivk[n-1];
+    private void cleanUp(Path path, int[] pivk) {
+        int n = path.getLen();
+        int j=pivk[n-1];
         path.getLongestStraightLine()[n-1]=j;
         for (int i=n-2; i>=0; i--) {
             if (cyclic(i+1d,pivk[i],j)) {
@@ -161,10 +90,105 @@ public class ProcessPath {
             }
             path.getLongestStraightLine()[i]=j;
         }
-
         for (int i = n-1; cyclic(MathUtils.mod(i+1,n),j,path.getLongestStraightLine()[i]); i--) {
             path.getLongestStraightLine()[i] = j;
         }
+    }
+
+    private int findLastAcceptablePoint(int k1, DoublePoint cur, DoublePoint dk, Path path, DoublePoint[] constraint) {
+        List<IntegerPoint> pt = path.getPoints();
+        int n = pt.size();
+
+        double a = MathUtils.crossProduct(constraint[0], cur);
+        double b = MathUtils.crossProduct(constraint[0], dk);
+        double c = MathUtils.crossProduct(constraint[1], cur);
+        double d = MathUtils.crossProduct(constraint[1], dk);
+
+        int j = 10000000;
+        if (b < 0) {
+            j = (int)Math.floor(a / -b);
+        }
+        if (d > 0) {
+            j = Math.min(j, (int)Math.floor(-c / d));
+        }
+        return  MathUtils.mod(k1+j,n);
+    }
+
+    private boolean isAcceptable(DoublePoint cur, DoublePoint[] constraint) {
+        return !(MathUtils.crossProduct(constraint[0], cur) < 0 || MathUtils.crossProduct(constraint[1], cur) > 0);
+    }
+
+    private boolean isAllDirectionOccurred(double[] ct) {
+        return ct[0] != 0 && ct[1] != 0 && ct[2] != 0 && ct[3] != 0;
+    }
+
+    private void generatePivotPoints(int i, Path path, int[] nextCorner, int[] pivk) {
+        DoublePoint[] constraint = {new DoublePoint(), new DoublePoint()};
+        DoublePoint cur = new DoublePoint();
+        List<IntegerPoint> pt = path.getPoints();
+        int n = pt.size();
+        double[] ct = new double[4];
+        ct[0] = ct[1] = ct[2] = ct[3] = 0;
+        int dir = (3 + 3 * (pt.get(MathUtils.mod(i + 1, n)).getX() - pt.get(i).getX()) +
+                (pt.get(MathUtils.mod(i + 1, n)).getY() - pt.get(i).getY())) / 2;
+        ct[dir]++;
+
+        constraint[0].setX(0);
+        constraint[0].setY(0);
+        constraint[1].setX(0);
+        constraint[1].setY(0);
+
+        int k = nextCorner[i];
+        int k1 = i;
+        boolean foundk;
+        while (true) {
+            foundk = false;
+            dir =  (3 + 3 * MathUtils.sign((double) pt.get(k).getX() - pt.get(k1).getX()) +
+                    MathUtils.sign((double) pt.get(k).getY() - pt.get(k1).getY())) / 2;
+            ct[dir]++;
+
+            if (isAllDirectionOccurred(ct)) {
+                pivk[i] = k1;
+                foundk = true;
+                break;
+            }
+
+            cur.setX((double) pt.get(k).getX() - pt.get(i).getX());
+            cur.setY((double) pt.get(k).getY() - pt.get(i).getY());
+
+            if (!isAcceptable(cur, constraint)) {
+                break;
+            }
+
+            if (Math.abs(cur.getX()) > 1 || Math.abs(cur.getY()) > 1) {
+                updateConstraint(cur, constraint);
+            }
+            k1 = k;
+            k = nextCorner[k1];
+            if (!cyclic(k, i, k1)) {
+                break;
+            }
+        }
+        if (!foundk) {
+            DoublePoint dk = new DoublePoint();
+            dk.setX(MathUtils.sign((double) pt.get(k).getX()-pt.get(k1).getX()));
+            dk.setY(MathUtils.sign((double) pt.get(k).getY()-pt.get(k1).getY()));
+            cur.setX((double) pt.get(k1).getX() - pt.get(i).getX());
+            cur.setY((double) pt.get(k1).getY() - pt.get(i).getY());
+            pivk[i] = findLastAcceptablePoint(k1, cur, dk, path, constraint);
+        }
+    }
+
+    private void findStraightPaths(Path path) {
+        int n = path.getLen();
+        int[] pivk = new int[n];
+        path.setLongestStraightLine(new int[n]);
+        int[] nextCorner = initializeNextCorner(path);
+
+        for (int i = n - 1; i >= 0; i--) {
+            generatePivotPoints(i, path, nextCorner, pivk);
+        }
+        cleanUp(path, pivk);
     }
 
     private void reverse(Path path) {
@@ -227,10 +251,10 @@ public class ProcessPath {
     }
 
     public void processPath() {
-        for (var i = 0; i < pathlist.size(); i++) {
-            Path path = pathlist.get(i);
+        for (var i = 0; i < pathList.size(); i++) {
+            Path path = pathList.get(i);
             calcSums(path);
-            calcLon(path);
+            findStraightPaths(path);
 
             BestPolygon bestPolygon = new BestPolygon(path);
             bestPolygon.bestPolygon();
