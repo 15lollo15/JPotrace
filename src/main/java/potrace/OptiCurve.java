@@ -143,29 +143,11 @@ public class OptiCurve {
         return 0;
     }
 
-    public void optiCurve() {
-        Curve curve = path.getCurve();
-        DoublePoint[] c = curve.getC();
+    private double[] computeAreas(Curve curve) {
         int m = curve.getVertex().length;
-        DoublePoint[] vert = curve.getVertex();
-
-        int[] pt = new int[m + 1];
-        double[] pen = new double[m + 1];
-        int[] len = new int[m + 1];
-        Opti[] opt = new Opti[m + 1];
-        Opti o = new Opti();
-
-        int[] convc = new int[m];
+        DoublePoint[] c = curve.getC();
         double[] areac = new double[m + 1];
-
-        for (int i=0; i<m; i++) {
-            if (curve.getTag()[i] == Tag.CURVE) {
-                convc[i] = MathUtils.sign(MathUtils.parallelogramArea(vert[MathUtils.mod(i-1,m)], vert[i], vert[MathUtils.mod(i+1,m)]));
-            } else {
-                convc[i] = 0;
-            }
-        }
-
+        DoublePoint[] vert = curve.getVertex();
         double area = 0.0;
         areac[0] = 0.0;
         DoublePoint p0 = curve.getVertex()[0];
@@ -179,6 +161,62 @@ public class OptiCurve {
             }
             areac[i+1] = area;
         }
+        return areac;
+    }
+
+    private int[] computeConvexity(Curve curve) {
+        int m = curve.getVertex().length;
+        DoublePoint[] vert = curve.getVertex();
+        int[] convc = new int[m];
+        for (int i=0; i<m; i++) {
+            if (curve.getTag()[i] == Tag.CURVE) {
+                convc[i] = MathUtils.sign(MathUtils.parallelogramArea(vert[MathUtils.mod(i-1,m)], vert[i], vert[MathUtils.mod(i+1,m)]));
+            } else {
+                convc[i] = 0;
+            }
+        }
+        return convc;
+    }
+
+    public Opti bestPath(int j, int[] pt, double[] pen, int[] len, int m, int[] convc, double[] areac) {
+
+        pt[j] = j-1;
+        pen[j] = pen[j-1];
+        len[j] = len[j-1]+1;
+
+        Opti o = new Opti();
+        Opti[] opt = new Opti[m + 1];
+        for (int i=j-2; i>=0; i--) {
+            int r = optiPenalty(path, i, MathUtils.mod(j,m), o, settings.getOptimalityTolerance(), convc,
+                    areac);
+            if (r != 0) {
+                break;
+            }
+            if (len[j] > len[i]+1 ||
+                    (len[j] == len[i]+1 && pen[j] > pen[i] + o.pen)) {
+                pt[j] = i;
+                pen[j] = pen[i] + o.pen;
+                len[j] = len[i] + 1;
+                opt[j] = o;
+                o = new Opti();
+            }
+        }
+        return opt[j];
+    }
+
+    public void optiCurve() {
+        Curve curve = path.getCurve();
+        DoublePoint[] c = curve.getC();
+        int m = curve.getVertex().length;
+        DoublePoint[] vert = curve.getVertex();
+
+        int[] pt = new int[m + 1];
+        double[] pen = new double[m + 1];
+        int[] len = new int[m + 1];
+        Opti[] opt = new Opti[m + 1];
+
+        int[] convc = computeConvexity(curve);
+        double[] areac = computeAreas(curve);
 
         pt[0] = -1;
         pen[0] = 0;
@@ -186,25 +224,7 @@ public class OptiCurve {
 
 
         for (int j=1; j<=m; j++) {
-            pt[j] = j-1;
-            pen[j] = pen[j-1];
-            len[j] = len[j-1]+1;
-
-            for (int i=j-2; i>=0; i--) {
-                int r = optiPenalty(path, i, MathUtils.mod(j,m), o, settings.getOptimalityTolerance(), convc,
-                        areac);
-                if (r != 0) {
-                    break;
-                }
-                if (len[j] > len[i]+1 ||
-                        (len[j] == len[i]+1 && pen[j] > pen[i] + o.pen)) {
-                    pt[j] = i;
-                    pen[j] = pen[i] + o.pen;
-                    len[j] = len[i] + 1;
-                    opt[j] = o;
-                    o = new Opti();
-                }
-            }
+            opt[j] = bestPath(j, pt, pen, len, m, convc, areac);
         }
         int om = len[m];
         Curve ocurve = new Curve(om);
