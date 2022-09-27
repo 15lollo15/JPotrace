@@ -73,7 +73,7 @@ public class BooleanBitmapToPathList {
 
     private Path findPath(IntegerPoint integerPoint) {
         Path path = new Path();
-        path.sign = bitmap.at(integerPoint.getX(), integerPoint.getY()) ? Path.Sign.PLUS : Path.Sign.MINUS;
+        path.setSign(bitmap.at(integerPoint.getX(), integerPoint.getY()) ? Path.Sign.PLUS : Path.Sign.MINUS);
 
         int x = integerPoint.getX();
         int y = integerPoint.getY();
@@ -84,8 +84,9 @@ public class BooleanBitmapToPathList {
         int maxY = y;
         int minX = x;
         int minY = y;
+        double area = path.getArea();
         while (true) {
-            path.points.add(new IntegerPoint(x, y));
+            path.getPoints().add(new IntegerPoint(x, y));
             if (x > maxX)
                 maxX = x;
             if (x < minX)
@@ -94,11 +95,11 @@ public class BooleanBitmapToPathList {
                 maxY = y;
             if (y < minY)
                 minY = y;
-            path.len++;
+            //path.len++;
 
             x += dirx;
             y += diry;
-            path.area -= x * diry;
+            area -= x * diry;
 
             if (x == integerPoint.getX() && y == integerPoint.getY())
                 break;
@@ -108,8 +109,8 @@ public class BooleanBitmapToPathList {
 
             if (r && !l) {
                 if (info.turnpolicy.equals(TurnPolicy.RIGHT) ||
-                        (info.turnpolicy.equals(TurnPolicy.BLACK) && path.sign.equals(Path.Sign.PLUS)) ||
-                        (info.turnpolicy.equals(TurnPolicy.WHITE) && path.sign.equals(Path.Sign.MINUS)) ||
+                        (info.turnpolicy.equals(TurnPolicy.BLACK) && path.getSign().equals(Path.Sign.PLUS)) ||
+                        (info.turnpolicy.equals(TurnPolicy.WHITE) && path.getSign().equals(Path.Sign.MINUS)) ||
                         (info.turnpolicy.equals(TurnPolicy.MAJORITY) && majority(x, y)) ||
                         (info.turnpolicy.equals(TurnPolicy.MINORITY) && !majority(x, y))) {
                     int tmp = dirx;
@@ -130,21 +131,22 @@ public class BooleanBitmapToPathList {
                 diry = -tmp;
             }
         }
-        path.maxPoint = new IntegerPoint(maxX, maxY);
-        path.minPoint = new IntegerPoint(minX, minY);
+        path.setArea(area);
+        path.setMaxPoint(new IntegerPoint(maxX, maxY));
+        path.setMinPoint(new IntegerPoint(minX, minY));
         return path;
     }
 
     private void xorPath(Path path) {
-        int y1 = path.points.get(0).getY();
-        int len = path.len;
+        int y1 = path.getPoints().get(0).getY();
+        int len = path.getLen();
         for (int i = 1; i < len; i++) {
-            int x = path.points.get(i).getX();
-            int y = path.points.get(i).getY();
+            int x = path.getPoints().get(i).getX();
+            int y = path.getPoints().get(i).getY();
 
             if (y != y1) {
                 int minY = y1 < y ? y1 : y;
-                int maxX = path.maxPoint.getX();
+                int maxX = path.getMaxPoint().getX();
                 for (int j = x; j < maxX; j++) {
                     bitmap.flip(j, minY);
                 }
@@ -162,7 +164,7 @@ public class BooleanBitmapToPathList {
 
             xorPath(path);
 
-            if (path.area > info.turdsize) {
+            if (path.getArea() > info.turdsize) {
                 pathList.add(path);
             }
         }

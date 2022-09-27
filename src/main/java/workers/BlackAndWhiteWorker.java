@@ -39,35 +39,38 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
-        Controller.getInstance().disableAll(true);
+    protected Void doInBackground() {
+        try {
+            Controller.getInstance().disableAll(true);
 
-        long start = System.currentTimeMillis();
-        publish("Image loading...");
-        BooleanGrayScaleLoader loader = new BooleanGrayScaleLoader(threshold);
-        BooleanBitmap bm = loader.load(img);
+            long start = System.currentTimeMillis();
+            publish("Image loading...");
+            BooleanGrayScaleLoader loader = new BooleanGrayScaleLoader(threshold);
+            BooleanBitmap bm = loader.load(img);
 
-        publish("Paths extractions...");
-        BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, info);
-        List<Path> pathList = booleanBitmapToPathlist.toPathList();
+            publish("Paths extractions...");
+            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, info);
+            List<Path> pathList = booleanBitmapToPathlist.toPathList();
 
-        publish("Paths processing...");
-        ProcessPath processPath = new ProcessPath(info, pathList);
-        processPath.processPath();
+            publish("Paths processing...");
+            ProcessPath processPath = new ProcessPath(info, pathList);
+            processPath.processPath();
 
-        publish("Svg generation...");
-        String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), scale, pathList, "");
+            publish("Svg generation...");
+            String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), scale, pathList, "");
 
-        try (FileWriter fileWriter = new FileWriter(svgFile)){
-            fileWriter.append(svg);
-        }catch (IOException e) {
-            throw new SVGCreationException();
+            try (FileWriter fileWriter = new FileWriter(svgFile)) {
+                fileWriter.append(svg);
+            } catch (IOException e) {
+                throw new SVGCreationException();
+            }
+            long end = System.currentTimeMillis();
+
+            double time = (end - start) / 1000d;
+            publish("COMPLETED in " + time + " seconds");
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-        long end = System.currentTimeMillis();
-
-        double time = (end - start) / 1000d;
-        publish("COMPLETED in " + time + " seconds");
-
         return null;
     }
 

@@ -15,7 +15,7 @@ public class OptiCurve {
     }
 
     public int optiPenalty(Path path, int i, int j, Opti res, double opttolerance, int[] convc, double[] areac) {
-        Curve curve = path.curve;
+        Curve curve = path.getCurve();
         DoublePoint[] c = curve.getC();
         DoublePoint[] vertex = curve.getVertex();
         int m = curve.getN();
@@ -143,7 +143,7 @@ public class OptiCurve {
     }
 
     public void optiCurve() {
-        Curve curve = path.curve;
+        Curve curve = path.getCurve();
         DoublePoint[] c = curve.getC();
         int m = curve.getN();
         DoublePoint[] vert = curve.getVertex();
@@ -241,6 +241,6 @@ public class OptiCurve {
             ocurve.getBeta()[i] = s[i] / (s[i] + t[i1]);
         }
         ocurve.setIsInitializated(true);
-        path.curve = ocurve;
+        path.setCurve(ocurve);
     }
 }

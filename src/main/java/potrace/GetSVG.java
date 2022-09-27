@@ -75,7 +75,7 @@ public class GetSVG {
         sb.append("\" xmlns=\"http://www.w3.org/2000/svg\">");
         sb.append("<path d=\"");
         for (Path path : pathlist) {
-            Curve c = path.curve;
+            Curve c = path.getCurve();
             sb.append(path(c, size));
         }
         if (optType.equals("curve")) {
@@ -163,7 +163,7 @@ public class GetSVG {
         int b = color.getBlue();
 
         for (Path path : pathlist) {
-            Curve c = path.curve;
+            Curve c = path.getCurve();
             sb.append(path(c, size));
         }
         if (optType.equals("curve")) {

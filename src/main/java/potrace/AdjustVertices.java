@@ -15,9 +15,9 @@ public class AdjustVertices {
     }
 
     public void pointslope(Path path, int i, int j, DoublePoint ctr, DoublePoint dir) {
-        List<Sum> sums = path.sums;
+        List<Sum> sums = path.getSums();
 
-        int n = path.len;
+        int n = path.getLen();
         int r = 0;
         double l;
 
@@ -77,19 +77,19 @@ public class AdjustVertices {
     }
 
     public void adjustVertices() {
-        int m = path.optimalPolygonLenght;
+        int m = path.getOptimalPolygon().length;
         DoublePoint[] ctr = new DoublePoint[m];
         DoublePoint[] dir = new DoublePoint[m];
         double[] v = new double[3];
         Quad[] q = new Quad[m];
         DoublePoint s = new DoublePoint();
-        List<IntegerPoint> pt = path.points;
-        int x0 = path.firstPoint.getX();
-        int y0 = path.firstPoint.getY();
-        int n = path.len;
-        int[] po = path.optimalPolygon;
+        List<IntegerPoint> pt = path.getPoints();
+        int x0 = path.getFirstPoint().getX();
+        int y0 = path.getFirstPoint().getY();
+        int n = path.getLen();
+        int[] po = path.getOptimalPolygon();
 
-        path.curve = new Curve(m);
+        Curve curve = new Curve(m);
 
         for (int i=0; i<m; i++) {
             int j = po[ProcessPath.mod(i+1,m)];
@@ -165,7 +165,7 @@ public class AdjustVertices {
             double dx = Math.abs(w.getX()-s.getX());
             double dy = Math.abs(w.getY()-s.getY());
             if (dx <= 0.5 && dy <= 0.5) {
-                path.curve.getVertex()[i] = new DoublePoint(w.getX()+x0, w.getY()+y0);
+                curve.getVertex()[i] = new DoublePoint(w.getX()+x0, w.getY()+y0);
                 continue;
             }
 
@@ -214,8 +214,9 @@ public class AdjustVertices {
                 }
             }
 
-            path.curve.getVertex()[i] = new DoublePoint(xmin + x0, ymin + y0);
+            curve.getVertex()[i] = new DoublePoint(xmin + x0, ymin + y0);
         }
+        path.setCurve(curve);
     }
 
 }

@@ -9,9 +9,9 @@ public class BestPolygon {
     private Path path;
 
     public double penalty3(Path path, int i, int j) {
-        int n = path.len;
-        List<IntegerPoint> pt = path.points;
-        List<Sum> sums = path.sums;
+        int n = path.getLen();
+        List<IntegerPoint> pt = path.getPoints();
+        List<Sum> sums = path.getSums();
         double x;
         double y;
         double xy;
@@ -59,7 +59,7 @@ public class BestPolygon {
     }
 
     public void bestPolygon() {
-        int n = path.len;
+        int n = path.getLen();
         int[] clip0 = new int[n];
         int[] clip1 = new int[n + 1];
         int[] seg0 = new int[n + 1];
@@ -69,7 +69,7 @@ public class BestPolygon {
         int[] prev = new int[n + 1];
 
         for (int i=0; i<n; i++) {
-            int c = ProcessPath.mod(path.longestStraightLine[ProcessPath.mod(i-1,n)]-1,n);
+            int c = ProcessPath.mod(path.getLongestStraightLine()[ProcessPath.mod(i-1,n)]-1,n);
             if (c == i) {
                 c = ProcessPath.mod(i+1,n);
             }
@@ -117,12 +117,12 @@ public class BestPolygon {
                 pen[i] = best;
             }
         }
-        path.optimalPolygonLenght = m;
-        path.optimalPolygon = new int[m];
 
+        int[] optimalPolygon = new int[m];
         for (i=n, j=m-1; i>0; j--) {
             i = prev[i];
-            path.optimalPolygon[j] = i;
+            optimalPolygon[j] = i;
         }
+        path.setOptimalPolygon(optimalPolygon);
     }
 }

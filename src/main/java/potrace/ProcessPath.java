@@ -171,27 +171,26 @@ public class ProcessPath {
     }
 
     public void calcSums(Path path) {
-        path.firstPoint = path.points.get(0);
+        IntegerPoint firstPoint = path.getFirstPoint();
 
-        path.sums = new ArrayList<>();
-        List<Sum> s = path.sums;
+        List<Sum> s = path.getSums();
         s.add(new Sum(0, 0, 0, 0, 0));
-        for(int i = 0; i < path.len; i++){
-            int x = path.points.get(i).getX() - path.firstPoint.getX();
-            int y = path.points.get(i).getY() - path.firstPoint.getY();
+        for(int i = 0; i < path.getLen(); i++){
+            int x = path.getPoints().get(i).getX() - firstPoint.getX();
+            int y = path.getPoints().get(i).getY() - firstPoint.getY();
             s.add(new Sum(s.get(i).x + x, s.get(i).y + y, s.get(i).xy + x * y,
                     s.get(i).x2 + x * x, s.get(i).y2 + y * y));
         }
     }
 
     public void  calcLon(Path path) {
-        int n = path.len;
-        List<IntegerPoint> pt = path.points;
+        int n = path.getLen();
+        List<IntegerPoint> pt = path.getPoints();
         int[] nc = new int[n];
         double[] ct = new double[4];
         int dir;
         int[] pivk = new int[n];
-        path.longestStraightLine = new int[n];
+        path.setLongestStraightLine(new int[n]);
 
         DoublePoint[] constraint = {new DoublePoint(), new DoublePoint()};
         DoublePoint cur = new DoublePoint();
@@ -285,21 +284,21 @@ public class ProcessPath {
         }
 
         j=pivk[n-1];
-        path.longestStraightLine[n-1]=j;
+        path.getLongestStraightLine()[n-1]=j;
         for (int i=n-2; i>=0; i--) {
             if (cyclic(i+1,pivk[i],j)) {
                 j=pivk[i];
             }
-            path.longestStraightLine[i]=j;
+            path.getLongestStraightLine()[i]=j;
         }
 
-        for (int i = n-1; cyclic(mod(i+1,n),j,path.longestStraightLine[i]); i--) {
-            path.longestStraightLine[i] = j;
+        for (int i = n-1; cyclic(mod(i+1,n),j,path.getLongestStraightLine()[i]); i--) {
+            path.getLongestStraightLine()[i] = j;
         }
     }
 
     public void reverse(Path path) {
-        Curve curve = path.curve;
+        Curve curve = path.getCurve();
         int m = curve.getN();
         DoublePoint[] v = curve.getVertex();
 
@@ -311,8 +310,8 @@ public class ProcessPath {
     }
 
     public void smooth(Path path) {
-        Curve curve = path.curve;
-        var m = path.curve.getN();
+        Curve curve = path.getCurve();
+        int m = curve.getN();
 
         double alpha;
         DoublePoint p2, p3, p4;
@@ -367,7 +366,7 @@ public class ProcessPath {
             AdjustVertices adjustVertices = new AdjustVertices(path);
             adjustVertices.adjustVertices();
 
-            if (path.sign.equals(Path.Sign.MINUS)) {
+            if (path.getSign().equals(Path.Sign.MINUS)) {
                 reverse(path);
             }
 
