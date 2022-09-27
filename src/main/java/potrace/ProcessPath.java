@@ -352,7 +352,7 @@ public class ProcessPath {
             curve.getAlpha()[j] = alpha;
             curve.getBeta()[j] = 0.5;
         }
-        curve.setAlphaCurve(1);
+        curve.setIsInitializated(true);
     }
 
     public void processPath() {

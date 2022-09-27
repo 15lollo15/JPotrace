@@ -240,7 +240,7 @@ public class OptiCurve {
             int i1 = ProcessPath.mod(i+1,om);
             ocurve.getBeta()[i] = s[i] / (s[i] + t[i1]);
         }
-        ocurve.setAlphaCurve(1);
+        ocurve.setIsInitializated(true);
         path.curve = ocurve;
     }
 }

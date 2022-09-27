@@ -6,7 +6,7 @@ public class Curve {
     private DoublePoint[] vertex;
     private double[] alpha;
     private double[] beta;
-    private int alphaCurve;
+    private boolean initializated;
 
     private int n;
 
@@ -17,7 +17,7 @@ public class Curve {
         c = new DoublePoint[n * 3];
         alpha = new double[n];
         beta = new double[n];
-        alphaCurve = 0;
+        initializated = false;
     }
 
     @Override
@@ -75,12 +75,12 @@ public class Curve {
         return beta;
     }
 
-    public int getAlphaCurve() {
-        return alphaCurve;
+    public boolean isInitializated() {
+        return initializated;
     }
 
-    public void setAlphaCurve(int alphaCurve) {
-        this.alphaCurve = alphaCurve;
+    public void setIsInitializated(boolean initializated) {
+        this.initializated = initializated;
     }
 
     public int getN() {
