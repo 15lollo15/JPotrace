@@ -331,7 +331,6 @@ public class ProcessPath {
             } else {
                 alpha = 4/3.0;
             }
-            curve.getAlpha0()[j] = alpha;
 
             if (alpha >= info.alphamax) {
                 curve.getTag()[j] = Tag.CORNER;

@@ -4,7 +4,6 @@ public class Curve {
     private DoublePoint[] c;
     private Tag[] tag;
     private DoublePoint[] vertex;
-    private double[] alpha0;
     private double[] alpha;
     private double[] beta;
     private int alphaCurve;
@@ -14,7 +13,6 @@ public class Curve {
     public Curve(int n) {
         this.n = n;
         vertex = new DoublePoint[n];
-        alpha0 = new double[n];
         tag = new Tag[n];
         c = new DoublePoint[n * 3];
         alpha = new double[n];
@@ -28,11 +26,6 @@ public class Curve {
 
         sb.append("Alpha[");
         for (double d : alpha)
-            sb.append(d + ", ");
-        sb.append("]");
-
-        sb.append("\n Alpha0[");
-        for (double d : alpha0)
             sb.append(d + ", ");
         sb.append("]");
 
@@ -72,10 +65,6 @@ public class Curve {
 
     public DoublePoint[] getVertex() {
         return vertex;
-    }
-
-    public double[] getAlpha0() {
-        return alpha0;
     }
 
     public double[] getAlpha() {

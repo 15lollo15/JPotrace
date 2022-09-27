@@ -220,7 +220,6 @@ public class OptiCurve {
                 oc[i * 3 + 2]    = c[ProcessPath.mod(j,m) * 3 + 2];
                 ocurve.getVertex()[i]  = curve.getVertex()[ProcessPath.mod(j,m)];
                 ocurve.getAlpha()[i]   = curve.getAlpha()[ProcessPath.mod(j,m)];
-                ocurve.getAlpha0()[i]  = curve.getAlpha0()[ProcessPath.mod(j,m)];
                 ocurve.getBeta()[i]    = curve.getBeta()[ProcessPath.mod(j,m)];
                 s[i] = t[i] = 1.0;
             } else {
@@ -231,7 +230,6 @@ public class OptiCurve {
                 ocurve.getVertex()[i] = ProcessPath.interval(opt[j].s, c[ProcessPath.mod(j,m) * 3 + 2],
                         vert[ProcessPath.mod(j,m)]);
                 ocurve.getAlpha()[i] = opt[j].alpha;
-                ocurve.getAlpha0()[i] = opt[j].alpha;
                 s[i] = opt[j].s;
                 t[i] = opt[j].t;
             }
