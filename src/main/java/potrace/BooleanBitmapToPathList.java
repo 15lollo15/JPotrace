@@ -95,7 +95,6 @@ public class BooleanBitmapToPathList {
                 maxY = y;
             if (y < minY)
                 minY = y;
-            //path.len++;
 
             x += dirx;
             y += diry;
