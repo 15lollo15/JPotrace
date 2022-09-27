@@ -2,6 +2,7 @@ package potrace;
 
 import geometry.Path;
 import geometry.IntegerPoint;
+import utils.MathUtils;
 
 import java.util.List;
 
@@ -69,9 +70,9 @@ public class BestPolygon {
         int[] prev = new int[n + 1];
 
         for (int i=0; i<n; i++) {
-            int c = ProcessPath.mod(path.getLongestStraightLine()[ProcessPath.mod(i-1,n)]-1,n);
+            int c = MathUtils.mod(path.getLongestStraightLine()[MathUtils.mod(i-1,n)]-1,n);
             if (c == i) {
-                c = ProcessPath.mod(i+1,n);
+                c = MathUtils.mod(i+1,n);
             }
             if (c < i) {
                 clip0[i] = n;

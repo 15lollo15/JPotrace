@@ -4,6 +4,7 @@ import geometry.Curve;
 import geometry.DoublePoint;
 import geometry.Path;
 import geometry.IntegerPoint;
+import utils.MathUtils;
 
 import java.util.List;
 
@@ -92,8 +93,8 @@ public class AdjustVertices {
         Curve curve = new Curve(m);
 
         for (int i=0; i<m; i++) {
-            int j = po[ProcessPath.mod(i+1,m)];
-            j = ProcessPath.mod(j-po[i],n)+po[i];
+            int j = po[MathUtils.mod(i+1,m)];
+            j = MathUtils.mod(j-po[i],n)+po[i];
             ctr[i] = new DoublePoint();
             dir[i] = new DoublePoint();
             pointslope(path, po[i], j, ctr[i], dir[i]);
@@ -127,7 +128,7 @@ public class AdjustVertices {
             s.setX(pt.get(po[i]).getX()-(double)x0);
             s.setY(pt.get(po[i]).getY()-(double)y0);
 
-            int j = ProcessPath.mod(i-1,m);
+            int j = MathUtils.mod(i-1,m);
 
             for (int l=0; l<3; l++) {
                 for (int k=0; k<3; k++) {
@@ -169,7 +170,7 @@ public class AdjustVertices {
                 continue;
             }
 
-            double min = ProcessPath.quadform(quad, s);
+            double min = MathUtils.quadform(quad, s);
             double xmin = s.getX();
             double ymin = s.getY();
 
@@ -178,7 +179,7 @@ public class AdjustVertices {
                     w.setY(s.getY()-0.5+z);
                     w.setX(- (quad.at(0, 1) * w.getY() + quad.at(0, 2)) / quad.at(0, 0));
                     dx = Math.abs(w.getX()-s.getX());
-                    double cand = ProcessPath.quadform(quad, w);
+                    double cand = MathUtils.quadform(quad, w);
                     if (dx <= 0.5 && cand < min) {
                         min = cand;
                         xmin = w.getX();
@@ -192,7 +193,7 @@ public class AdjustVertices {
                     w.setX(s.getX()-0.5+z);
                     w.setY(- (quad.at(1, 0) * w.getX() + quad.at(1, 2)) / quad.at(1, 1));
                     dy = Math.abs(w.getY()-s.getY());
-                    double cand = ProcessPath.quadform(quad, w);
+                    double cand = MathUtils.quadform(quad, w);
                     if (dy <= 0.5 && cand < min) {
                         min = cand;
                         xmin = w.getX();
@@ -205,7 +206,7 @@ public class AdjustVertices {
                 for (int k=0; k<2; k++) {
                     w.setX(s.getX()-0.5+l);
                     w.setY(s.getY()-0.5+k);
-                    double cand = ProcessPath.quadform(quad, w);
+                    double cand = MathUtils.quadform(quad, w);
                     if (cand < min) {
                         min = cand;
                         xmin = w.getX();
