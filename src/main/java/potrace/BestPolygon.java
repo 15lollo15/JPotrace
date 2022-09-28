@@ -9,7 +9,11 @@ import java.util.List;
 public class BestPolygon {
     private Path path;
 
-    public double penalty3(Path path, int i, int j) {
+    public BestPolygon(Path path) {
+        this.path = path;
+    }
+
+    private double penalty3(Path path, int i, int j) {
         int n = path.getLen();
         List<IntegerPoint> pt = path.getPoints();
         List<Sum> sums = path.getSums();
@@ -53,10 +57,6 @@ public class BestPolygon {
         double s = ex*ex*a + 2*ex*ey*b + ey*ey*c;
 
         return Math.sqrt(s);
-    }
-
-    public BestPolygon(Path path) {
-        this.path = path;
     }
 
     private void shortestPath(Path path, int[] seg0, int[] seg1, int[] clip1, int m, int[] prev) {
