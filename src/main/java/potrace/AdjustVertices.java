@@ -15,7 +15,7 @@ public class AdjustVertices {
         this.path = path;
     }
 
-    public void pointslope(Path path, int i, int j, DoublePoint ctr, DoublePoint dir) {
+    private void pointslope(Path path, int i, int j, DoublePoint ctr, DoublePoint dir) {
         List<Sum> sums = path.getSums();
 
         int n = path.getLen();
@@ -77,7 +77,7 @@ public class AdjustVertices {
         }
     }
 
-    public void generateOptimalSlopePoint(int[] po, int n, int m, DoublePoint[] ctr, DoublePoint[] dir) {
+    private void generateOptimalSlopePoint(int[] po, int n, int m, DoublePoint[] ctr, DoublePoint[] dir) {
         for (int i=0; i<m; i++) {
             int j = po[MathUtils.mod(i+1,m)];
             j = MathUtils.mod(j-po[i],n)+po[i];
@@ -87,7 +87,7 @@ public class AdjustVertices {
         }
     }
 
-    public Quad[] generateQuads(int m, DoublePoint[] dir, double[] v, DoublePoint[] ctr) {
+    private Quad[] generateQuads(int m, DoublePoint[] dir, double[] v, DoublePoint[] ctr) {
         Quad[] q = new Quad[m];
         for (int i=0; i<m; i++) {
             q[i] = new Quad();
