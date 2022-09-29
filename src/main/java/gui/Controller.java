@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Controller {
-    public static final String MAIN_FRAME_TITLE = "JPotrace";
+    public static final String MAIN_FRAME_TITLE = "JTracing";
     private static Controller controller;
 
     private final MainFrame mainFrame;
