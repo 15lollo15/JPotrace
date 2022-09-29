@@ -1,6 +1,6 @@
 package gui;
 
-import potrace.TurnPolicy;
+import tracing.TurnPolicy;
 
 import javax.swing.*;
 

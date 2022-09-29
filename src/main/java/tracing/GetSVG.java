@@ -1,4 +1,4 @@
-package potrace;
+package tracing;
 
 import geometry.Curve;
 import geometry.DoublePoint;

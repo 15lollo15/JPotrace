@@ -4,10 +4,10 @@ import geometry.Path;
 import gui.Controller;
 import image.BooleanBitmap;
 import image.bitmap.loaders.BooleanGrayScaleLoader;
-import potrace.BooleanBitmapToPathList;
-import potrace.GetSVG;
-import potrace.Settings;
-import potrace.ProcessPath;
+import tracing.BooleanBitmapToPathList;
+import tracing.GetSVG;
+import tracing.Settings;
+import tracing.ProcessPath;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;

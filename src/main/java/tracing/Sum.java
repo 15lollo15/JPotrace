@@ -1,4 +1,4 @@
-package potrace;
+package tracing;
 
 public class Sum {
     public double x;

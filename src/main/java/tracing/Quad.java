@@ -1,4 +1,4 @@
-package potrace;
+package tracing;
 
 public class Quad {
     public double[] data = {0,0,0,0,0,0,0,0,0};

@@ -7,10 +7,10 @@ import image.bitmap.loaders.BooleanColorPickerLoader;
 import image.bitmap.loaders.ColorBitmapLoader;
 import image.palette.KMeansExtractor;
 import image.palette.PaletteExtractor;
-import potrace.BooleanBitmapToPathList;
-import potrace.GetSVG;
-import potrace.Settings;
-import potrace.ProcessPath;
+import tracing.BooleanBitmapToPathList;
+import tracing.GetSVG;
+import tracing.Settings;
+import tracing.ProcessPath;
 import utils.ColorsUtils;
 
 import javax.swing.*;

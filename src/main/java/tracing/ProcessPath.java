@@ -1,4 +1,4 @@
-package potrace;
+package tracing;
 
 import geometry.*;
 import utils.MathUtils;

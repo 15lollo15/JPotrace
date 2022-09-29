@@ -1,7 +1,7 @@
 package gui;
 
-import potrace.Settings;
-import potrace.TurnPolicy;
+import tracing.Settings;
+import tracing.TurnPolicy;
 import workers.BlackAndWhiteWorker;
 import workers.ColorWorker;
 
