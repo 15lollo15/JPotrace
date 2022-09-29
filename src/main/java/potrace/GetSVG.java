@@ -9,7 +9,6 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Map;
 
 public class GetSVG {
     public static final String RGB_STRING_FORMAT = "rgb(%d,%d,%d)";
@@ -21,7 +20,7 @@ public class GetSVG {
     }
 
     private static String  bezier(Curve curve, int i, int size) {
-        DoublePoint[] c = curve.getC();
+        DoublePoint[] c = curve.getControlPoints();
         var b = "C " + format(c[i * 3].getX() * size) + " " +
                 format(c[i * 3].getY() * size) + ",";
         b += format(c[i * 3 + 1].getX() * size) + ' ' +
@@ -32,7 +31,7 @@ public class GetSVG {
     }
 
     private static String  segment(Curve curve, int i, int size) {
-        DoublePoint[] c = curve.getC();
+        DoublePoint[] c = curve.getControlPoints();
         var s = "L " + format(c[i * 3 + 1].getX() * size) + ' ' +
                 format(c[i * 3 + 1].getY() * size) + ' ';
         s += format(c[i * 3 + 2].getX() * size) + ' ' +
@@ -43,7 +42,7 @@ public class GetSVG {
     private static String path(Curve curve, int size) {
         StringBuilder sb = new StringBuilder();
         int n = curve.getVertex().length;
-        DoublePoint[] c = curve.getC();
+        DoublePoint[] c = curve.getControlPoints();
         sb.append("M").append(format(c[(n - 1) * 3 + 2].getX() * size));
         sb.append(" ").append(format(c[(n - 1) * 3 + 2].getY() * size)).append(" ");
         for (int i = 0; i < n; i++) {
@@ -60,7 +59,7 @@ public class GetSVG {
         return getSVG(width, height, size, pathlist, optType, Color.BLACK);
     }
 
-    public static String getSVG(int width, int height, int size, List<Path> pathlist, String optType, Color color) {
+    private static String getSVG(int width, int height, int size, List<Path> pathlist, String optType, Color color) {
         int w = width * size;
         int h = height * size;
         String strokec;
@@ -90,47 +89,6 @@ public class GetSVG {
         sb.append("\" stroke=\"").append(strokec);
         sb.append("\" fill=\"").append(fillc).append("\"").append(fillrule).append("/></svg>");
         return sb.toString();
-    }
-
-    public static String getSVG(int width, int height, int size, String optType, Map<Color, List<Path>> coloredPaths) {
-        int w = width * size;
-        int h = height * size;
-
-        String svg = "<svg id=\"svg\" version=\"1.1\" width=\"" + w + "\" height=\"" + h +
-                "\" xmlns=\"http://www.w3.org/2000/svg\">";
-
-        for (Map.Entry<Color, List<Path>> entry : coloredPaths.entrySet()) {
-            Color color = entry.getKey();
-            List<Path> pathlist = entry.getValue();
-
-            svg += getPath(pathlist, size, optType, color);
-        }
-
-        svg += "</svg>";
-        return svg;
-    }
-
-    public static String getSVG(int width, int height, int size, String optType, Map<Color, List<Path>> coloredPaths, Color bgColor) {
-        int w = width * size;
-        int h = height * size;
-
-        String svg = "<svg id=\"svg\" version=\"1.1\" width=\"" + w + "\" height=\"" + h +
-                "\" xmlns=\"http://www.w3.org/2000/svg\">";
-
-        int r = bgColor.getRed();
-        int g = bgColor.getGreen();
-        int b = bgColor.getBlue();
-        svg += "<rect width=\""+w+"\" height=\""+h+"\" style=\"fill:"+String.format(RGB_STRING_FORMAT, r, g, b)+";stroke-width:3;stroke:rgb(0,0,0)\" />";
-
-        for (Map.Entry<Color, List<Path>> entry : coloredPaths.entrySet()) {
-            Color color = entry.getKey();
-            List<Path> pathlist = entry.getValue();
-
-            svg += getPath(pathlist, size, optType, color);
-        }
-
-        svg += "</svg>";
-        return svg;
     }
 
     public static String getSVG(int width, int height, int size, String optType, Color[] colors, List<Path>[] paths) {

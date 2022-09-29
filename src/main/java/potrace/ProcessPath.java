@@ -6,8 +6,8 @@ import utils.MathUtils;
 import java.util.List;
 
 public class ProcessPath {
-    private Settings settings;
-    private List<Path> pathList;
+    private final Settings settings;
+    private final List<Path> pathList;
 
     public ProcessPath(Settings settings, List<Path> pathList) {
         this.settings = settings;
@@ -229,8 +229,8 @@ public class ProcessPath {
 
             if (alpha >= settings.getAlphaMax()) {
                 curve.getTag()[j] = Tag.CORNER;
-                curve.getC()[3 * j + 1] = curve.getVertex()[j];
-                curve.getC()[3 * j + 2] = p4;
+                curve.getControlPoints()[3 * j + 1] = curve.getVertex()[j];
+                curve.getControlPoints()[3 * j + 2] = p4;
             } else {
                 if (alpha < 0.55) {
                     alpha = 0.55;
@@ -240,9 +240,9 @@ public class ProcessPath {
                 p2 = MathUtils.interval(0.5+0.5*alpha, curve.getVertex()[i], curve.getVertex()[j]);
                 p3 = MathUtils.interval(0.5+0.5*alpha, curve.getVertex()[k], curve.getVertex()[j]);
                 curve.getTag()[j] = Tag.CURVE;
-                curve.getC()[3 * j + 0] = p2;
-                curve.getC()[3 * j + 1] = p3;
-                curve.getC()[3 * j + 2] = p4;
+                curve.getControlPoints()[3 * j] = p2;
+                curve.getControlPoints()[3 * j + 1] = p3;
+                curve.getControlPoints()[3 * j + 2] = p4;
             }
             curve.getAlpha()[j] = alpha;
             curve.getBeta()[j] = 0.5;
@@ -251,8 +251,7 @@ public class ProcessPath {
     }
 
     public void processPath() {
-        for (var i = 0; i < pathList.size(); i++) {
-            Path path = pathList.get(i);
+        for (Path path : pathList) {
             calcSums(path);
             findStraightPaths(path);
 

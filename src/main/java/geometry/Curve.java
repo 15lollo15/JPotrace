@@ -1,20 +1,20 @@
 package geometry;
 
 public class Curve {
-    private DoublePoint[] c;
-    private Tag[] tag;
-    private DoublePoint[] vertex;
-    private double[] alpha;
-    private double[] beta;
-    private boolean initializated;
+    private final DoublePoint[] controlPoints;
+    private final Tag[] tag;
+    private final DoublePoint[] vertex;
+    private final double[] alpha;
+    private final double[] beta;
+    private boolean initialized;
 
     public Curve(int n) {
         vertex = new DoublePoint[n];
         tag = new Tag[n];
-        c = new DoublePoint[n * 3];
+        controlPoints = new DoublePoint[n * 3];
         alpha = new double[n];
         beta = new double[n];
-        initializated = false;
+        initialized = false;
     }
 
     @Override
@@ -45,15 +45,15 @@ public class Curve {
 
         sb.append("\n c");
         sb.append("[");
-        for (DoublePoint t : c)
+        for (DoublePoint t : controlPoints)
             sb.append(t + ", ");
         sb.append("]");
 
         return sb.toString();
     }
 
-    public DoublePoint[] getC() {
-        return c;
+    public DoublePoint[] getControlPoints() {
+        return controlPoints;
     }
 
     public Tag[] getTag() {
@@ -72,12 +72,12 @@ public class Curve {
         return beta;
     }
 
-    public boolean isInitializated() {
-        return initializated;
+    public boolean isInitialized() {
+        return initialized;
     }
 
     public void setIsInitializated(boolean initializated) {
-        this.initializated = initializated;
+        this.initialized = initializated;
     }
 
 }

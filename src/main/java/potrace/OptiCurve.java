@@ -7,17 +7,17 @@ import geometry.Tag;
 import utils.MathUtils;
 
 public class OptiCurve {
-    private Path path;
-    private Settings settings;
+    private final Path path;
+    private final Settings settings;
 
     public OptiCurve(Path path, Settings settings) {
         this.path = path;
         this.settings = settings;
     }
 
-    public int optiPenalty(Path path, int i, int j, Opti res, double opttolerance, int[] convc, double[] areac) {
+    private int optiPenalty(Path path, int i, int j, Opti res, double opttolerance, int[] convc, double[] areac) {
         Curve curve = path.getCurve();
-        DoublePoint[] c = curve.getC();
+        DoublePoint[] c = curve.getControlPoints();
         DoublePoint[] vertex = curve.getVertex();
         int m = vertex.length;
 
@@ -145,7 +145,7 @@ public class OptiCurve {
 
     private double[] computeAreas(Curve curve) {
         int m = curve.getVertex().length;
-        DoublePoint[] c = curve.getC();
+        DoublePoint[] c = curve.getControlPoints();
         double[] areac = new double[m + 1];
         DoublePoint[] vert = curve.getVertex();
         double area = 0.0;
@@ -206,7 +206,7 @@ public class OptiCurve {
 
     public void optiCurve() {
         Curve curve = path.getCurve();
-        DoublePoint[] c = curve.getC();
+        DoublePoint[] c = curve.getControlPoints();
         int m = curve.getVertex().length;
         DoublePoint[] vert = curve.getVertex();
 
@@ -232,11 +232,11 @@ public class OptiCurve {
         double[] t = new double[om];
 
         int j = m;
-        DoublePoint[] oc = ocurve.getC();
+        DoublePoint[] oc = ocurve.getControlPoints();
         for (int i=om-1; i>=0; i--) {
             if (pt[j]==j-1) {
                 ocurve.getTag()[i]     = curve.getTag()[MathUtils.mod(j,m)];
-                oc[i * 3 + 0]    = c[MathUtils.mod(j,m) * 3 + 0];
+                oc[i * 3]    = c[MathUtils.mod(j,m) * 3];
                 oc[i * 3 + 1]    = c[MathUtils.mod(j,m) * 3 + 1];
                 oc[i * 3 + 2]    = c[MathUtils.mod(j,m) * 3 + 2];
                 ocurve.getVertex()[i]  = curve.getVertex()[MathUtils.mod(j,m)];
@@ -245,7 +245,7 @@ public class OptiCurve {
                 s[i] = t[i] = 1.0;
             } else {
                 ocurve.getTag()[i] = Tag.CURVE;
-                oc[i * 3 + 0] = opt[j].c[0];
+                oc[i * 3] = opt[j].c[0];
                 oc[i * 3 + 1] = opt[j].c[1];
                 oc[i * 3 + 2] = c[MathUtils.mod(j,m) * 3 + 2];
                 ocurve.getVertex()[i] = MathUtils.interval(opt[j].s, c[MathUtils.mod(j,m) * 3 + 2],
