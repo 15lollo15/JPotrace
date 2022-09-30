@@ -1,13 +1,14 @@
 package image.bitmap.loaders;
 
 import image.BooleanBitmap;
+import utils.ColorsUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class BooleanGrayScaleLoader implements BitmapLoader<BooleanBitmap>{
     public static final int DEFAULT_THRESHOLD = 128;
-    private int threshold;
+    private final int threshold;
 
     public BooleanGrayScaleLoader() {
         threshold = DEFAULT_THRESHOLD;
@@ -26,10 +27,9 @@ public class BooleanGrayScaleLoader implements BitmapLoader<BooleanBitmap>{
             for (int j = 0; j < img.getWidth(); j++) {
                 int rgb = img.getRGB(j, i);
                 Color c = new Color(rgb);
-                double color = 0.2126 * c.getRed() + 0.7153 * c.getGreen() +
-                        0.0721 * c.getBlue();
+                double normalizedColor = ColorsUtils.normalizedGrayScale(c);
 
-                bm.set(k++, color < threshold);
+                bm.set(k++, normalizedColor < (threshold/255d));
             }
         }
         return bm;
