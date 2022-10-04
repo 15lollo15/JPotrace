@@ -1,15 +1,18 @@
 package utils;
 
+import com.github.brankale.jcolorspace.colorspace.ColorSpaceUtils;
+import com.github.brankale.jcolorspace.colorspaces.ColorSpaces;
+import com.github.brankale.jcolorspace.utils.FloatArray;
+
 import java.awt.*;
 
 public class ColorsUtils {
     private ColorsUtils() {}
 
     public static double distance(Color c1, Color c2) {
-        double rQuad = MathUtils.square((double) c1.getRed() - c2.getRed());
-        double gQuad = MathUtils.square((double) c1.getGreen() - c2.getGreen());
-        double bQuad = MathUtils.square((double) c1.getBlue() - c2.getBlue());
-        return Math.sqrt(rQuad + gQuad + bQuad);
+        FloatArray color1 = new FloatArray(c1.getRed() / 255f, c1.getGreen() / 255f, c1.getBlue() / 255f);
+        FloatArray color2 = new FloatArray(c2.getRed() / 255f, c2.getGreen() / 255f, c2.getBlue() / 255f);
+        return ColorSpaceUtils.deltaE(ColorSpaces.SRGB, color1, color2);
     }
 
     public static double[] normalize(Color c) {

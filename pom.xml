@@ -35,6 +35,13 @@
             <artifactId>json</artifactId>
             <version>20220320</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.brankale</groupId>
+            <artifactId>jcolorspace</artifactId>
+            <version>0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jcolorspace_0.1.jar</systemPath>
+        </dependency>
     </dependencies>
 
 </project>
