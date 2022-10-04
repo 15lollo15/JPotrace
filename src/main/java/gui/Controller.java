@@ -98,6 +98,17 @@ public class Controller {
 
         mainFrame.getStartConversionButton().addActionListener(e -> startConversion());
         mainFrame.getBlurSpinner().addChangeListener(e -> checkIfOdd());
+
+        mainFrame.getPixelArtCheckBox().addChangeListener(e -> pixelArtListener());
+    }
+
+    private void pixelArtListener() {
+        boolean selected = mainFrame.getPixelArtCheckBox().isSelected();
+        if (selected) {
+            //TODO: Turn off other settings
+        } else {
+            //TODO: Turn on other settings
+        }
     }
 
     private void checkIfOdd(){
@@ -169,6 +180,14 @@ public class Controller {
 
         int scale = (Integer)mainFrame.getScaleSpinner().getValue();
 
+        if (mainFrame.getPixelArtCheckBox().isSelected()) {
+            ColorWorker colorWorker = new ColorWorker(input,
+                    new File(destPath),
+                    scale,
+                    mainFrame.getLogTextArea());
+            colorWorker.execute();
+            return;
+        }
 
         Settings settings = new Settings();
         if (mainFrame.getAdvancePanel().isVisible()) {

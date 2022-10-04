@@ -5,6 +5,7 @@ import gui.Controller;
 import image.*;
 import image.bitmap.loaders.BooleanColorPickerLoader;
 import image.bitmap.loaders.ColorBitmapLoader;
+import image.palette.AllColorsExtractor;
 import image.palette.KMeansExtractor;
 import image.palette.PaletteExtractor;
 import tracing.BooleanBitmapToPathList;
@@ -12,6 +13,7 @@ import tracing.GetSVG;
 import tracing.Settings;
 import tracing.ProcessPath;
 import utils.ColorsUtils;
+import utils.ImageUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +32,7 @@ public class ColorWorker extends SwingWorker<Void, String> {
     private final JTextArea logArea;
     private final int blur;
     private final Settings settings;
+    private boolean pixelArt;
 
     public ColorWorker(BufferedImage img, File svgFile, int scale,
                        int numberOfColors, JTextArea logArea, int blur, Settings settings) {
@@ -40,6 +43,17 @@ public class ColorWorker extends SwingWorker<Void, String> {
         this.logArea = logArea;
         this.blur = blur;
         this.settings = settings;
+    }
+
+    public ColorWorker(BufferedImage img, File svgFile, int scale, JTextArea logArea) {
+        this.img = ImageUtils.upscale(img, 10);
+        this.svgFile = svgFile;
+        this.scale = scale;
+        this.numberOfColors = -1;
+        this.logArea = logArea;
+        this.blur = 1;
+        this.settings = new Settings();
+        this.settings.setTurdSize(0);
     }
 
     @Override
@@ -54,15 +68,21 @@ public class ColorWorker extends SwingWorker<Void, String> {
         publish("Extract pixels...");
         Color[] pixels = bitmap.getData();
 
-        publish("Palette extractions...");
-        PaletteExtractor pe = new KMeansExtractor(numberOfColors);
-        Set<Color> palette = pe.extract(pixels);
-        pixels = simplify(pixels, palette);
+        Set<Color> palette = null;
+        if (numberOfColors != -1) {
+            publish("Palette extractions...");
+            PaletteExtractor pe = new KMeansExtractor(numberOfColors);
+            palette = pe.extract(pixels);
+            pixels = simplify(pixels, palette);
 
-        cleanPalette(palette, pixels, 17);
+            cleanPalette(palette, pixels, 17);
 
-        publish("Pixels simplification...");
-        pixels = simplify(pixels, palette);
+            publish("Pixels simplification...");
+            pixels = simplify(pixels, palette);
+        }else{
+            PaletteExtractor pe = new AllColorsExtractor();
+            palette = pe.extract(pixels);
+        }
 
         publish("Polygons extraction...");
         Color[] colors = new Color[palette.size()];

@@ -24,6 +24,7 @@ public class MainFrame extends JFrame{
     private JPanel advancePanel;
     private JScrollPane logAreaScrollPane;
     private JSpinner blurSpinner;
+    private JCheckBox pixelArtCheckBox;
     private static MainFrame mainFrame;
 
     private MainFrame() {
@@ -111,6 +112,10 @@ public class MainFrame extends JFrame{
     }
 
     public JSpinner getBlurSpinner() { return blurSpinner; }
+
+    public JCheckBox getPixelArtCheckBox() {
+        return pixelArtCheckBox;
+    }
 
     private void createUIComponents() {
         // Do nothing
