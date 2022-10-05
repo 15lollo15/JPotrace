@@ -79,6 +79,8 @@ public class Controller {
         mainFrame.getColorNumberSpinner().setEnabled(!yes);
 
         mainFrame.getStartConversionButton().setEnabled(!yes);
+        mainFrame.getBlurSpinner().setEnabled(!yes);
+        mainFrame.getPixelArtCheckBox().setEnabled(!yes);
     }
 
     private void setupListeners() {
