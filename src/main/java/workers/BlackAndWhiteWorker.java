@@ -1,13 +1,8 @@
 package workers;
 
-import geometry.Path;
 import gui.Controller;
-import image.BooleanBitmap;
-import image.bitmap.loaders.BooleanGrayScaleLoader;
-import tracing.BooleanBitmapToPathList;
-import tracing.GetSVG;
-import tracing.Settings;
-import tracing.ProcessPath;
+import tracing.base.Settings;
+import tracing.conversions.BinaryConversion;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -40,36 +35,15 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
 
     @Override
     protected Void doInBackground() {
-        try {
-            Controller.getInstance().disableAll(true);
+        Controller.getInstance().disableAll(true);
+        BinaryConversion conversion = new BinaryConversion(threshold);
+        conversion.setStatusCallback(this::publish);
+        String svg = conversion.convert(img, scale);
 
-            long start = System.currentTimeMillis();
-            publish("Image loading...");
-            BooleanGrayScaleLoader loader = new BooleanGrayScaleLoader(threshold);
-            BooleanBitmap bm = loader.load(img);
-
-            publish("Paths extractions...");
-            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, settings);
-            List<Path> pathList = booleanBitmapToPathlist.toPathList();
-
-            publish("Paths processing...");
-            ProcessPath processPath = new ProcessPath(settings, pathList);
-            processPath.processPath();
-
-            publish("Svg generation...");
-            String svg = GetSVG.getSVG(img.getWidth(), img.getHeight(), scale, pathList, "");
-
-            try (FileWriter fileWriter = new FileWriter(svgFile)) {
-                fileWriter.append(svg);
-            } catch (IOException e) {
-                throw new SVGCreationException();
-            }
-            long end = System.currentTimeMillis();
-
-            double time = (end - start) / 1000d;
-            publish("COMPLETED in " + time + " seconds");
-        }catch (Exception e) {
-            e.printStackTrace();
+        try (FileWriter fileWriter = new FileWriter(svgFile);){
+            fileWriter.write(svg);
+        } catch (IOException e) {
+            throw new SVGCreationException();
         }
         return null;
     }

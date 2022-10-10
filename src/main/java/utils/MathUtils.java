@@ -1,7 +1,7 @@
 package utils;
 
 import geometry.DoublePoint;
-import tracing.Quad;
+import tracing.base.Quad;
 
 public class MathUtils {
     private MathUtils() {}

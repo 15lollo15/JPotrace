@@ -11,7 +11,7 @@ public class KMeansExtractor implements PaletteExtractor{
     private int k;
     private final Random random;
     private Color[] uniquePixels;
-    private int[] numPixels;
+    private long[] numPixels;
     private double inertia;
 
     public KMeansExtractor (int k) {
@@ -53,7 +53,7 @@ public class KMeansExtractor implements PaletteExtractor{
             pixelAndColor.put(color, prevValue + 1);
         }
         uniquePixels = pixelAndColor.keySet().toArray(new Color[0]);
-        numPixels = new int[uniquePixels.length];
+        numPixels = new long[uniquePixels.length];
         for (int i = 0; i < uniquePixels.length; i++)
             numPixels[i] = pixelAndColor.get(uniquePixels[i]);
     }
@@ -62,11 +62,11 @@ public class KMeansExtractor implements PaletteExtractor{
         return inertia;
     }
 
-    private void recenter(Color[] centroids, Color[] pixels, int[] clusters, int[] numPixels) {
-        int[] sumsR = new int[k];
-        int[] sumsG = new int[k];
-        int[] sumsB = new int[k];
-        int[] counts = new int[k];
+    private void recenter(Color[] centroids, Color[] pixels, int[] clusters, long[] numPixels) {
+        long[] sumsR = new long[k];
+        long[] sumsG = new long[k];
+        long[] sumsB = new long[k];
+        long[] counts = new long[k];
 
         for (int i = 0; i < clusters.length; i++) {
             int cluster = clusters[i];
@@ -82,9 +82,9 @@ public class KMeansExtractor implements PaletteExtractor{
                 continue;
             }
 
-            int r = sumsR[i] / counts[i];
-            int g = sumsG[i] / counts[i];
-            int b = sumsB[i] / counts[i];
+            int r = (int)(sumsR[i] / counts[i]);
+            int g =  (int)(sumsG[i] / counts[i]);
+            int b =  (int)(sumsB[i] / counts[i]);
             centroids[i] =  new Color(r, g, b);
         }
     }

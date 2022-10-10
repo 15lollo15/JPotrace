@@ -1,7 +1,7 @@
 package gui;
 
-import tracing.Settings;
-import tracing.TurnPolicy;
+import tracing.base.Settings;
+import tracing.base.TurnPolicy;
 import workers.BlackAndWhiteWorker;
 import workers.ColorWorker;
 
@@ -67,6 +67,7 @@ public class Controller {
 
         mainFrame.getLogTextArea().setEnabled(false);
         mainFrame.getLogAreaScrollPane().setEnabled(false);
+        mainFrame.getNumberOfColorsCheckBox().setSelected(true);
     }
 
     public void disableAll(boolean yes) {
@@ -76,11 +77,13 @@ public class Controller {
         mainFrame.getConversionModePane().setEnabled(!yes);
 
         mainFrame.getThresholdSlider().setEnabled(!yes);
-        mainFrame.getColorNumberSpinner().setEnabled(!yes);
+        if ((mainFrame.getNumberOfColorsCheckBox().isSelected() && yes) || (!mainFrame.getNumberOfColorsCheckBox().isSelected() && !yes))
+            mainFrame.getColorNumberSpinner().setEnabled(!yes);
 
         mainFrame.getStartConversionButton().setEnabled(!yes);
         mainFrame.getBlurSpinner().setEnabled(!yes);
         mainFrame.getPixelArtCheckBox().setEnabled(!yes);
+        mainFrame.getNumberOfColorsCheckBox().setEnabled(!yes);
     }
 
     private void setupListeners() {
@@ -102,6 +105,12 @@ public class Controller {
         mainFrame.getBlurSpinner().addChangeListener(e -> checkIfOdd());
 
         mainFrame.getPixelArtCheckBox().addChangeListener(e -> pixelArtListener());
+        mainFrame.getNumberOfColorsCheckBox().addChangeListener(e -> enableDisableNumbersOfColor());
+    }
+
+    private void enableDisableNumbersOfColor() {
+        boolean selected = mainFrame.getNumberOfColorsCheckBox().isSelected();
+        mainFrame.getColorNumberSpinner().setEnabled(selected);
     }
 
     private void pixelArtListener() {

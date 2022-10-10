@@ -1,9 +1,10 @@
-package tracing;
+package tracing.base;
 
 import geometry.Curve;
 import geometry.DoublePoint;
 import geometry.Path;
 import geometry.Tag;
+import tracing.conversions.ColorPaths;
 
 import java.awt.*;
 import java.math.BigDecimal;
@@ -102,6 +103,25 @@ public class GetSVG {
         for (int i = paths.length - 1; i >= 0; i--) {
             Color color = colors[i];
             List<Path> pathlist = paths[i];
+
+            svg += getPath(pathlist, size, optType, color);
+        }
+
+        svg += "</svg>";
+        return svg;
+    }
+
+    public static String getSVG(int width, int height, int size, String optType, List<ColorPaths> colorPaths) {
+        int w = width * size;
+        int h = height * size;
+
+        String svg = "<svg id=\"svg\" version=\"1.1\" width=\"" + w + "\" height=\"" + h +
+                "\" xmlns=\"http://www.w3.org/2000/svg\">";
+
+
+        for (int i = colorPaths.size() - 1; i >= 0; i--) {
+            Color color = colorPaths.get(i).color();
+            List<Path> pathlist = colorPaths.get(i).paths();
 
             svg += getPath(pathlist, size, optType, color);
         }

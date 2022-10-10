@@ -1,6 +1,6 @@
 package geometry;
 
-import tracing.Sum;
+import tracing.base.Sum;
 
 import java.util.ArrayList;
 import java.util.List;

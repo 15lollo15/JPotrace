@@ -1,4 +1,4 @@
-package tracing;
+package tracing.base;
 
 public class Settings {
     private TurnPolicy turnPolicy = TurnPolicy.MINORITY;

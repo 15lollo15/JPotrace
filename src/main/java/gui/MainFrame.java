@@ -1,6 +1,6 @@
 package gui;
 
-import tracing.TurnPolicy;
+import tracing.base.TurnPolicy;
 
 import javax.swing.*;
 
@@ -25,6 +25,7 @@ public class MainFrame extends JFrame{
     private JScrollPane logAreaScrollPane;
     private JSpinner blurSpinner;
     private JCheckBox pixelArtCheckBox;
+    private JCheckBox numberOfColorsCheckBox;
     private static MainFrame mainFrame;
 
     private MainFrame() {
@@ -115,6 +116,10 @@ public class MainFrame extends JFrame{
 
     public JCheckBox getPixelArtCheckBox() {
         return pixelArtCheckBox;
+    }
+
+    public JCheckBox getNumberOfColorsCheckBox() {
+        return numberOfColorsCheckBox;
     }
 
     private void createUIComponents() {

@@ -1,4 +1,4 @@
-package tracing;
+package tracing.base;
 
 import geometry.Path;
 import geometry.IntegerPoint;
