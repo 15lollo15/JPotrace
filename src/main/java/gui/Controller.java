@@ -110,7 +110,7 @@ public class Controller {
 
     private void enableDisableNumbersOfColor() {
         boolean selected = mainFrame.getNumberOfColorsCheckBox().isSelected();
-        mainFrame.getColorNumberSpinner().setEnabled(selected);
+        mainFrame.getColorNumberSpinner().setEnabled(selected && mainFrame.getNumberOfColorsCheckBox().isEnabled());
     }
 
     private void pixelArtListener() {
