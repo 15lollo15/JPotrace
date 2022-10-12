@@ -14,12 +14,15 @@ import java.util.function.Consumer;
 
 public class PixelArtConversion implements ColorConversion{
     public static final int SCALE_FACTOR = 10;
+    public static final int MIN_SIZE = 128;
     private Consumer<String> statusCallback;
 
     @Override
     public String convert(BufferedImage img, int scale) {
-        log("Upscaling");
-        img = ImageUtils.upscale(img, SCALE_FACTOR);
+        if (img.getHeight() < MIN_SIZE && img.getWidth() < MIN_SIZE) {
+            log("Upscaling");
+            img = ImageUtils.upscale(img, SCALE_FACTOR);
+        }
         ColorBitmap bitmap = new ColorBitmapLoader().load(img);
         Color[] pixels = bitmap.getData();
 

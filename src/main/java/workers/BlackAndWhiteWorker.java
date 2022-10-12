@@ -36,6 +36,7 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
     @Override
     protected Void doInBackground() {
         Controller.getInstance().disableAll(true);
+        logArea.setText("");
         BinaryConversion conversion = new BinaryConversion(threshold);
         conversion.setStatusCallback(this::publish);
         String svg = conversion.convert(img, scale);

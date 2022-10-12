@@ -116,9 +116,14 @@ public class Controller {
     private void pixelArtListener() {
         boolean selected = mainFrame.getPixelArtCheckBox().isSelected();
         if (selected) {
-            //TODO: Turn off other settings
+            mainFrame.getConversionModePane().setVisible(false);
+            mainFrame.getAdvancePanel().setVisible(false);
+            mainFrame.getJMenuBar().getMenu(0).getItem(1).setVisible(false);
+            mainFrame.pack();
         } else {
-            //TODO: Turn on other settings
+            mainFrame.getConversionModePane().setVisible(true);
+            mainFrame.getJMenuBar().getMenu(0).getItem(1).setVisible(true);
+            mainFrame.pack();
         }
     }
 
@@ -195,7 +200,7 @@ public class Controller {
             ColorWorker colorWorker = new ColorWorker(input,
                     new File(destPath),
                     scale,
-                    mainFrame.getLogTextArea());
+                    mainFrame.getLogTextArea(), true);
             colorWorker.execute();
             return;
         }

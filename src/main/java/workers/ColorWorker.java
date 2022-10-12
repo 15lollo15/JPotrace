@@ -2,7 +2,9 @@ package workers;
 
 import gui.Controller;
 import tracing.base.Settings;
+import tracing.conversions.Conversion;
 import tracing.conversions.KMeansColorConversion;
+import tracing.conversions.PixelArtConversion;
 import utils.ImageUtils;
 
 import javax.swing.*;
@@ -44,12 +46,30 @@ public class ColorWorker extends SwingWorker<Void, String> {
         this.settings.setTurdSize(0);
     }
 
+    public ColorWorker(BufferedImage img, File svgFile, int scale, JTextArea logArea, boolean pixelArt) {
+        this.img = ImageUtils.upscale(img, 10);
+        this.svgFile = svgFile;
+        this.scale = scale;
+        this.numberOfColors = -1;
+        this.logArea = logArea;
+        this.blur = 1;
+        this.settings = new Settings();
+        this.settings.setTurdSize(0);
+        this.pixelArt = pixelArt;
+    }
+
     @Override
     protected Void doInBackground() {
         Controller.getInstance().disableAll(true);
-        KMeansColorConversion kMeansColorConversion = new KMeansColorConversion(numberOfColors, blur);
-        kMeansColorConversion.setStatusCallback(this::publish);
-        String svg = kMeansColorConversion.convert(img);
+        logArea.setText("");
+        Conversion conversion = null;
+        if (pixelArt)
+            conversion = new PixelArtConversion();
+        else
+            conversion = new KMeansColorConversion(numberOfColors, blur);
+
+        conversion.setStatusCallback(this::publish);
+        String svg = conversion.convert(img);
 
         try (FileWriter fileWriter = new FileWriter(svgFile)){
             fileWriter.write(svg);
