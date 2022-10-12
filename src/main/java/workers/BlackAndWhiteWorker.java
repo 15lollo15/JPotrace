@@ -37,11 +37,11 @@ public class BlackAndWhiteWorker extends SwingWorker<Void, String> {
     protected Void doInBackground() {
         Controller.getInstance().disableAll(true);
         logArea.setText("");
-        BinaryConversion conversion = new BinaryConversion(threshold);
+        BinaryConversion conversion = new BinaryConversion(threshold, settings);
         conversion.setStatusCallback(this::publish);
         String svg = conversion.convert(img, scale);
 
-        try (FileWriter fileWriter = new FileWriter(svgFile);){
+        try (FileWriter fileWriter = new FileWriter(svgFile)){
             fileWriter.write(svg);
         } catch (IOException e) {
             throw new SVGCreationException();

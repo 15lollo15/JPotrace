@@ -6,10 +6,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class BooleanBitmap implements Bitmap<Boolean>{
-    private int w;
-    private int h;
-    private int size;
-    private boolean[] data;
+    private final int w;
+    private final int h;
+    private final int size;
+    private final boolean[] data;
 
     public BooleanBitmap(int w, int h) {
         this.w = w;
