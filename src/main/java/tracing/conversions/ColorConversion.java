@@ -34,21 +34,32 @@ public interface ColorConversion extends Conversion{
     }
 
     static void simplify(ColorBitmap img, Set<Color> palette) {
-
+        Map<Color, Color> cache = new HashMap<>();
         Color[] colors = img.getData();
         for (int i = 0; i < colors.length; i++) {
             Color color = colors[i];
-            Color similar = null;
-            for (Color paletteColor : palette) {
-                if (similar == null) {
-                    similar = paletteColor;
-                    continue;
-                }
-                if (ColorsUtils.distance(color, paletteColor) < ColorsUtils.distance(color, similar))
-                    similar = paletteColor;
+            Color similar;
+            if (!cache.containsKey(color)) {
+                similar = findSimilar(color, palette);
+                cache.put(color, similar);
+            }else {
+                similar = cache.get(color);
             }
             img.set(i,similar);
         }
+    }
+
+    static Color findSimilar(Color color, Set<Color> palette) {
+        Color similar = null;
+        for (Color paletteColor : palette) {
+            if (similar == null) {
+                similar = paletteColor;
+                continue;
+            }
+            if (ColorsUtils.distance(color, paletteColor) < ColorsUtils.distance(color, similar))
+                similar = paletteColor;
+        }
+        return similar;
     }
 
     static void cleanPalette(Set<Color> palette, Color[] pixels, double threshold) {
@@ -56,7 +67,6 @@ public interface ColorConversion extends Conversion{
         List<Color> colors = palette.stream().toList();
         for (int i = 0; i < colors.size(); i++) {
             Color c1 = colors.get(i);
-            if (!palette.contains(c1)) continue;
             for (int j = i + 1; j < colors.size(); j++) {
                 Color c2 = colors.get(j);
                 if (palette.contains(c2)) {
@@ -81,7 +91,7 @@ public interface ColorConversion extends Conversion{
         Map<Color, Integer> pixelsForColor = new HashMap<>();
 
         for (Color pixel : pixels) {
-            pixelsForColor.computeIfAbsent(pixel, p -> 0);
+            pixelsForColor.putIfAbsent(pixel, 0);
             int oldValue = pixelsForColor.get(pixel);
             pixelsForColor.put(pixel, oldValue + 1);
         }

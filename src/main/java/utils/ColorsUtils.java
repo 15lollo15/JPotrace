@@ -10,13 +10,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ColorsUtils {
-    private static Map<Color, FloatArray> cache = new HashMap<>();
+    private static final Map<Color, FloatArray> cache = new HashMap<>();
     private ColorsUtils() {}
 
     public static double distance(Color c1, Color c2) {
-        FloatArray color1 = new FloatArray(c1.getRed() / 255f, c1.getGreen() / 255f, c1.getBlue() / 255f);
-        FloatArray color2 = new FloatArray(c2.getRed() / 255f, c2.getGreen() / 255f, c2.getBlue() / 255f);
-        return ColorSpaceUtils.deltaE(ColorSpaces.SRGB, color1, color2);
+        cache.computeIfAbsent(c1, ColorsUtils::toCieLab);
+        cache.computeIfAbsent(c2, ColorsUtils::toCieLab);
+
+        FloatArray color1 = cache.get(c1);
+        FloatArray color2 = cache.get(c2);
+        return ColorSpaceUtils.deltaE(ColorSpaces.CIE_LAB, color1, color2);
     }
 
     public static FloatArray toCieLab(Color c) {
