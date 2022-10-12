@@ -26,8 +26,9 @@ public class MainFrame extends JFrame{
     private JSpinner blurSpinner;
     private JCheckBox pixelArtCheckBox;
     private JCheckBox numberOfColorsCheckBox;
+    private JCheckBox paletteSimplificationCheckBox;
+    private ButtonGroup curveOptimizationButtonGroup;
     private static MainFrame mainFrame;
-
     private MainFrame() {
         super();
         createUIComponents();
@@ -37,9 +38,9 @@ public class MainFrame extends JFrame{
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(enableCurveOptimization);
-        buttonGroup.add(disableCurveOptimization);
+        curveOptimizationButtonGroup = new ButtonGroup();
+        curveOptimizationButtonGroup.add(enableCurveOptimization);
+        curveOptimizationButtonGroup.add(disableCurveOptimization);
     }
 
     public static MainFrame getInstance() {
@@ -120,6 +121,14 @@ public class MainFrame extends JFrame{
 
     public JCheckBox getNumberOfColorsCheckBox() {
         return numberOfColorsCheckBox;
+    }
+
+    public JCheckBox getPaletteSimplificationCheckBox() {
+        return paletteSimplificationCheckBox;
+    }
+
+    public JRadioButton getDisableCurveOptimization() {
+        return disableCurveOptimization;
     }
 
     private void createUIComponents() {

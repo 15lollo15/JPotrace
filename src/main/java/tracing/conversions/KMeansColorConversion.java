@@ -51,9 +51,11 @@ public class KMeansColorConversion implements ColorConversion{
         } else {
             palette = new KMeansExtractor(numColors).extract(pixels);
         }
-        log("Palette simplification");
-        ColorConversion.simplify(bitmap, palette);
-        ColorConversion.cleanPalette(palette, bitmap.getData(), PALETTE_CLEAN_THRESHOLD);
+        if (settings.isPaletteSimplification()) {
+            log("Palette simplification");
+            ColorConversion.simplify(bitmap, palette);
+            ColorConversion.cleanPalette(palette, bitmap.getData(), PALETTE_CLEAN_THRESHOLD);
+        }
         log("Image simplification");
         ColorConversion.simplify(bitmap, palette);
 

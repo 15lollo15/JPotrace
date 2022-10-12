@@ -6,6 +6,7 @@ public class Settings {
     private boolean optimizeCurve = true;
     private int alphaMax = 1;
     private double optimalityTolerance = 0.2;
+    private boolean paletteSimplification = true;
 
     public TurnPolicy getTurnPolicy() {
         return turnPolicy;
@@ -45,5 +46,13 @@ public class Settings {
 
     public void setOptimalityTolerance(double optimalityTolerance) {
         this.optimalityTolerance = optimalityTolerance;
+    }
+
+    public boolean isPaletteSimplification() {
+        return paletteSimplification;
+    }
+
+    public void setPaletteSimplification(boolean paletteSimplification) {
+        this.paletteSimplification = paletteSimplification;
     }
 }

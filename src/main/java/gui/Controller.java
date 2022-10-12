@@ -68,6 +68,8 @@ public class Controller {
         mainFrame.getLogTextArea().setEnabled(false);
         mainFrame.getLogAreaScrollPane().setEnabled(false);
         mainFrame.getNumberOfColorsCheckBox().setSelected(true);
+
+        mainFrame.getPaletteSimplificationCheckBox().setSelected(true);
     }
 
     public void disableAll(boolean yes) {
@@ -84,6 +86,12 @@ public class Controller {
         mainFrame.getBlurSpinner().setEnabled(!yes);
         mainFrame.getPixelArtCheckBox().setEnabled(!yes);
         mainFrame.getNumberOfColorsCheckBox().setEnabled(!yes);
+
+        mainFrame.getPaletteSimplificationCheckBox().setEnabled(!yes);
+        mainFrame.getTurnPolicyComboBox().setEnabled(!yes);
+        mainFrame.getMinAreaSpinner().setEnabled(!yes);
+        mainFrame.getEnableCurveOptimization().setEnabled(!yes);
+        mainFrame.getDisableCurveOptimization().setEnabled(!yes);
     }
 
     private void setupListeners() {
@@ -210,6 +218,7 @@ public class Controller {
             settings.setTurnPolicy((TurnPolicy) mainFrame.getTurnPolicyComboBox().getSelectedItem());
             settings.setTurdSize((Integer) mainFrame.getMinAreaSpinner().getValue());
             settings.setOptimizeCurve(mainFrame.getEnableCurveOptimization().isSelected());
+            settings.setPaletteSimplification(mainFrame.getPaletteSimplificationCheckBox().isSelected());
         }
 
         mainFrame.getLogTextArea().setVisible(true);
