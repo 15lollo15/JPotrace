@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.List;
 
 public interface ColorConversion extends Conversion{
-    static List<ColorPaths> extractFigures(ColorBitmap img, Set<Color> palette) {
+    static List<ColorPaths> extractFigures(ColorBitmap img, Set<Color> palette, Settings settings) {
         List<ColorPaths> colorPaths = new ArrayList<>();
         List<Color> colorsToPick = new ArrayList<>();
         for (Color c : palette) {
@@ -22,15 +22,19 @@ public interface ColorConversion extends Conversion{
             BooleanColorPickerLoader loader = new BooleanColorPickerLoader(colorsToPick);
             BooleanBitmap bm = loader.load(img.getWidth(), img.getHeight(), img.getData());
 
-            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, new Settings());
+            BooleanBitmapToPathList booleanBitmapToPathlist = new BooleanBitmapToPathList(bm, settings);
             List<Path> pathList = booleanBitmapToPathlist.toPathList();
 
-            ProcessPath processPath = new ProcessPath(new Settings(), pathList);
+            ProcessPath processPath = new ProcessPath(settings, pathList);
             processPath.processPath();
 
             colorPaths.add(new ColorPaths(c, pathList));
         }
         return colorPaths;
+    }
+
+    static List<ColorPaths> extractFigures(ColorBitmap img, Set<Color> palette) {
+        return extractFigures(img, palette, new Settings());
     }
 
     static void simplify(ColorBitmap img, Set<Color> palette) {

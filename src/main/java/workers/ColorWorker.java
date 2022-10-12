@@ -62,14 +62,14 @@ public class ColorWorker extends SwingWorker<Void, String> {
     protected Void doInBackground() {
         Controller.getInstance().disableAll(true);
         logArea.setText("");
-        Conversion conversion = null;
+        Conversion conversion;
         if (pixelArt)
             conversion = new PixelArtConversion();
         else
-            conversion = new KMeansColorConversion(numberOfColors, blur);
+            conversion = new KMeansColorConversion(numberOfColors, blur, settings);
 
         conversion.setStatusCallback(this::publish);
-        String svg = conversion.convert(img);
+        String svg = conversion.convert(img, scale);
 
         try (FileWriter fileWriter = new FileWriter(svgFile)){
             fileWriter.write(svg);
