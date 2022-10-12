@@ -7,6 +7,7 @@ https://github.com/kilobtye/potrace
 - 🦓 Black and white conversion
 - 🎨 Colored images conversion
 - 🌫 Blur preprocessing
+- 🎮 Pixel art conversion
 
 ## Dependencies
 **JColorSpace** by *Brankale*: https://github.com/Brankale/JColorSpace
