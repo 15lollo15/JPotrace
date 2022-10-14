@@ -47,11 +47,11 @@ public class BooleanBitmap implements Bitmap<Boolean>{
     }
 
     public void flip(int x, int y) {
-        if (this.at(x, y)) {
+        Boolean pixel = at(x,y);
+        if (pixel != null && pixel)
             this.data[this.w * y + x] = false;
-        } else {
+        else
             this.data[this.w * y + x] = true;
-        }
     }
 
     public BooleanBitmap copy() {
@@ -82,7 +82,8 @@ public class BooleanBitmap implements Bitmap<Boolean>{
 
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
-                if (at(x, y))
+                Boolean pixel = at(x,y);
+                if (pixel != null && pixel)
                     img.setRGB(x, y, Color.BLACK.getRGB());
                 else
                     img.setRGB(x, y, Color.WHITE.getRGB());
@@ -97,7 +98,8 @@ public class BooleanBitmap implements Bitmap<Boolean>{
         StringBuilder builder = new StringBuilder();
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                if (at(x, y))
+                Boolean pixel = at(x,y);
+                if (pixel != null && pixel)
                     builder.append("##");
                 else
                     builder.append("  ");
