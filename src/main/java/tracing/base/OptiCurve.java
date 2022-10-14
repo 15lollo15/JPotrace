@@ -81,16 +81,16 @@ public class OptiCurve {
         double r = area / a;
         double alpha = 2 - Math.sqrt(4 - r / 0.3);
 
-        res.c[0] = MathUtils.interval(t * alpha, p0, p1);
-        res.c[1] = MathUtils.interval(s * alpha, p3, p2);
-        res.alpha = alpha;
-        res.t = t;
-        res.s = s;
+        res.getC()[0] = MathUtils.interval(t * alpha, p0, p1);
+        res.getC()[1] = MathUtils.interval(s * alpha, p3, p2);
+        res.setAlpha(alpha);
+        res.setT(t);
+        res.setS(s);
 
-        p1 = res.c[0].copy();
-        p2 = res.c[1].copy();
+        p1 = res.getC()[0].copy();
+        p2 = res.getC()[1].copy();
 
-        res.pen = 0;
+        double pen = 0;
 
         for (k=MathUtils.mod(i+1,m); k!=j; k=k1) {
             k1 = MathUtils.mod(k+1,m);
@@ -111,7 +111,7 @@ public class OptiCurve {
                     MathUtils.iprod(vertex[k1], vertex[k], pt) < 0) {
                 return 1;
             }
-            res.pen += d1 * d1;
+            pen += d1*d1;
         }
 
         for (k=i; k!=j; k=k1) {
@@ -136,10 +136,10 @@ public class OptiCurve {
                 return 1;
             }
             if (d1 < d2) {
-                res.pen += (d1 - d2) * (d1 - d2);
+                pen += (d1 - d2) * (d1 - d2);
             }
         }
-
+        res.setPen(pen);
         return 0;
     }
 
@@ -193,9 +193,9 @@ public class OptiCurve {
                 break;
             }
             if (len[j] > len[i]+1 ||
-                    (len[j] == len[i]+1 && pen[j] > pen[i] + o.pen)) {
+                    (len[j] == len[i]+1 && pen[j] > pen[i] + o.getPen())) {
                 pt[j] = i;
-                pen[j] = pen[i] + o.pen;
+                pen[j] = pen[i] + o.getPen();
                 len[j] = len[i] + 1;
                 opt[j] = o;
                 o = new Opti();
@@ -245,14 +245,14 @@ public class OptiCurve {
                 s[i] = t[i] = 1.0;
             } else {
                 ocurve.getTag()[i] = Tag.CURVE;
-                oc[i * 3] = opt[j].c[0];
-                oc[i * 3 + 1] = opt[j].c[1];
+                oc[i * 3] = opt[j].getC()[0];
+                oc[i * 3 + 1] = opt[j].getC()[1];
                 oc[i * 3 + 2] = c[MathUtils.mod(j,m) * 3 + 2];
-                ocurve.getVertex()[i] = MathUtils.interval(opt[j].s, c[MathUtils.mod(j,m) * 3 + 2],
+                ocurve.getVertex()[i] = MathUtils.interval(opt[j].getS(), c[MathUtils.mod(j,m) * 3 + 2],
                         vert[MathUtils.mod(j,m)]);
-                ocurve.getAlpha()[i] = opt[j].alpha;
-                s[i] = opt[j].s;
-                t[i] = opt[j].t;
+                ocurve.getAlpha()[i] = opt[j].getAlpha();
+                s[i] = opt[j].getS();
+                t[i] = opt[j].getT();
             }
             j = pt[j];
         }
