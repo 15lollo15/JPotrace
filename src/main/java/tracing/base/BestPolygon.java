@@ -30,18 +30,18 @@ public class BestPolygon {
         }
 
         if (r == 0) {
-            x = sums.get(j+1).x - sums.get(i).x;
-            y = sums.get(j+1).y - sums.get(i).y;
-            x2 = sums.get(j+1).x2 - sums.get(i).x2;
-            xy = sums.get(j+1).xy - sums.get(i).xy;
-            y2 = sums.get(j+1).y2 - sums.get(i).y2;
+            x = sums.get(j+1).x() - sums.get(i).x();
+            y = sums.get(j+1).y() - sums.get(i).y();
+            x2 = sums.get(j+1).x2() - sums.get(i).x2();
+            xy = sums.get(j+1).xy() - sums.get(i).xy();
+            y2 = sums.get(j+1).y2() - sums.get(i).y2();
             k = j+1.0 - i;
         } else {
-            x = sums.get(j+1).x - sums.get(i).x + sums.get(n).x;
-            y = sums.get(j+1).y - sums.get(i).y + sums.get(n).y;
-            x2 = sums.get(j+1).x2 - sums.get(i).x2 + sums.get(n).x2;
-            xy = sums.get(j+1).xy - sums.get(i).xy + sums.get(n).xy;
-            y2 = sums.get(j+1).y2 - sums.get(i).y2 + sums.get(n).y2;
+            x = sums.get(j+1).x() - sums.get(i).x() + sums.get(n).x();
+            y = sums.get(j+1).y() - sums.get(i).y() + sums.get(n).y();
+            x2 = sums.get(j+1).x2() - sums.get(i).x2() + sums.get(n).x2();
+            xy = sums.get(j+1).xy() - sums.get(i).xy() + sums.get(n).xy();
+            y2 = sums.get(j+1).y2() - sums.get(i).y2() + sums.get(n).y2();
             k = j+1.0 - i + n;
         }
 

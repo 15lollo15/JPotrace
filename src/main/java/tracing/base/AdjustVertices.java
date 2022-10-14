@@ -39,11 +39,11 @@ public class AdjustVertices {
             r+=1;
         }
 
-        double x = sums.get(j+1).x-sums.get(i).x+r*sums.get(n).x;
-        double y = sums.get(j+1).y-sums.get(i).y+r*sums.get(n).y;
-        double x2 = sums.get(j+1).x2-sums.get(i).x2+r*sums.get(n).x2;
-        double xy = sums.get(j+1).xy-sums.get(i).xy+r*sums.get(n).xy;
-        double y2 = sums.get(j+1).y2-sums.get(i).y2+r*sums.get(n).y2;
+        double x = sums.get(j+1).x() - sums.get(i).x() + r*sums.get(n).x();
+        double y = sums.get(j+1).y() - sums.get(i).y() + r*sums.get(n).y();
+        double x2 = sums.get(j+1).x2() -sums.get(i).x2() + r*sums.get(n).x2();
+        double xy = sums.get(j+1).xy() - sums.get(i).xy() + r*sums.get(n).xy();
+        double y2 = sums.get(j+1).y2() - sums.get(i).y2() + r*sums.get(n).y2();
         double k = j+1.0-i+r*n;
 
         ctr.setX(x/k);
@@ -95,7 +95,7 @@ public class AdjustVertices {
             if (d == 0.0) {
                 for (int j=0; j<3; j++) {
                     for (int k=0; k<3; k++) {
-                        q[i].data[j * 3 + k] = 0;
+                        q[i].getData()[j * 3 + k] = 0;
                     }
                 }
             } else {
@@ -104,7 +104,7 @@ public class AdjustVertices {
                 v[2] = - v[1] * ctr[i].getY() - v[0] * ctr[i].getX();
                 for (int l=0; l<3; l++) {
                     for (int k=0; k<3; k++) {
-                        q[i].data[l * 3 + k] = v[l] * v[k] / d;
+                        q[i].getData()[l * 3 + k] = v[l] * v[k] / d;
                     }
                 }
             }
@@ -115,7 +115,7 @@ public class AdjustVertices {
     private void addQuadraticForm(int j, int i, Quad[] q, Quad quad) {
         for (int l=0; l<3; l++) {
             for (int k=0; k<3; k++) {
-                quad.data[l * 3 + k] = q[j].at(l, k) + q[i].at(l, k);
+                quad.getData()[l * 3 + k] = q[j].at(l, k) + q[i].at(l, k);
             }
         }
     }
@@ -172,7 +172,7 @@ public class AdjustVertices {
                 v[2] = - v[1] * s.getY() - v[0] * s.getX();
                 for (int l=0; l<3; l++) {
                     for (int k=0; k<3; k++) {
-                        quad.data[l * 3 + k] += v[l] * v[k] / d;
+                        quad.getData()[l * 3 + k] += v[l] * v[k] / d;
                     }
                 }
             }

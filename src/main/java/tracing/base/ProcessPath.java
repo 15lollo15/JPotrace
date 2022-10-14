@@ -45,8 +45,8 @@ public class ProcessPath {
         for(int i = 0; i < path.getLen(); i++){
             int x = path.getPoints().get(i).getX() - firstPoint.getX();
             int y = path.getPoints().get(i).getY() - firstPoint.getY();
-            s.add(new Sum(s.get(i).x + x, s.get(i).y + y, s.get(i).xy + x * y,
-                    s.get(i).x2 + x * x, s.get(i).y2 + y * y));
+            s.add(new Sum(s.get(i).x() + x, s.get(i).y() + y, s.get(i).xy() + x * y,
+                    s.get(i).x2() + x * x, s.get(i).y2() + y * y));
         }
     }
 
