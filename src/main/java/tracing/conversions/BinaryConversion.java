@@ -7,6 +7,7 @@ import tracing.base.BooleanBitmapToPathList;
 import tracing.base.GetSVG;
 import tracing.base.ProcessPath;
 import tracing.base.Settings;
+import utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -14,6 +15,8 @@ import java.util.function.Consumer;
 
 public class BinaryConversion implements Conversion{
     public static final int DEFAULT_THRESHOLD = 128;
+    public static final int SCALE_FACTOR = 10;
+    public static final int MIN_SIZE = 128;
 
     private final int threshold;
     private final Settings settings;
@@ -34,6 +37,10 @@ public class BinaryConversion implements Conversion{
 
     @Override
     public String convert(BufferedImage img, int scale) {
+        if (img.getHeight() < MIN_SIZE && img.getWidth() < MIN_SIZE) {
+            log("Upscaling");
+            img = ImageUtils.upscale(img, SCALE_FACTOR);
+        }
         log("Grayscale and binarize image");
         BooleanGrayScaleLoader loader = new BooleanGrayScaleLoader(threshold);
         BooleanBitmap bm = loader.load(img);
