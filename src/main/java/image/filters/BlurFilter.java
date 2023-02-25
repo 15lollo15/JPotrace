@@ -1,41 +1,32 @@
-package image;
+package image.filters;
 
+import image.ColorBitmap;
 import utils.MathUtils;
 
 import java.awt.*;
 
-public class Filters {
-    private Filters() {}
+public class BlurFilter implements Filter{
+    private int kernelSize;
 
-    public static ColorBitmap increaseContrast(ColorBitmap img, double contrastK, double brightK) {
-        ColorBitmap newImage = new ColorBitmap(img.getWidth(), img.getHeight());
-        for (int x = 0; x < img.getWidth(); x++) {
-            for (int y = 0; y < img.getHeight(); y++) {
-                Color originalColor = img.at(x, y);
-                int r = Math.min((int)(originalColor.getRed() * contrastK + brightK), 255);
-                int g = Math.min((int)(originalColor.getGreen() * contrastK + brightK), 255);
-                int b = Math.min((int)(originalColor.getBlue() * contrastK + brightK), 255);
-                newImage.set(x, y, new Color(r, g, b));
-            }
-        }
-        return newImage;
+    public BlurFilter(int kernelSize) {
+        this.kernelSize = kernelSize;
     }
 
-    public static ColorBitmap blur(ColorBitmap img, int kernelSize) {
+    @Override
+    public ColorBitmap applyTo(ColorBitmap srcImg) {
         if (kernelSize % 2 == 0) return null;
-        if (kernelSize == 1) return img.copy();
-        ColorBitmap blurredImg = new ColorBitmap(img.getWidth(), img.getHeight());
+        if (kernelSize == 1) return srcImg.copy();
+        ColorBitmap blurredImg = new ColorBitmap(srcImg.getWidth(), srcImg.getHeight());
         double[][] gauss = gaussMatrix(kernelSize);
-        for (int x = 0; x < img.getWidth(); x++) {
-            for (int y = 0; y < img.getHeight(); y++) {
-                computeBlurAt(x, y, gauss, img, blurredImg);
+        for (int x = 0; x < srcImg.getWidth(); x++) {
+            for (int y = 0; y < srcImg.getHeight(); y++) {
+                computeBlurAt(x, y, gauss, srcImg, blurredImg);
             }
         }
         return blurredImg;
     }
 
-    private static void computeBlurAt(int x, int y, double[][] gauss, ColorBitmap img, ColorBitmap blurredImg) {
-        int kernelSize = gauss.length;
+    private void computeBlurAt(int x, int y, double[][] gauss, ColorBitmap img, ColorBitmap blurredImg) {
         double sumR = 0;
         double sumG = 0;
         double sumB = 0;
@@ -61,7 +52,7 @@ public class Filters {
         blurredImg.set(x, y, new Color(r, g, b));
     }
 
-    public static double[][] gaussMatrix(int size) {
+    private double[][] gaussMatrix(int size) {
         double[][] matrix = new double[size][size];
         int range = size / 2;
         for (int x = -range; x <= range; x++) {
@@ -73,14 +64,13 @@ public class Filters {
         return matrix;
     }
 
-    public static double computeSigma(int size) {
+    private double computeSigma(int size) {
         return Math.pow(2, size) / (size * Math.sqrt(2 * Math.PI) + (size/2d) * Math.sqrt(2 * Math.PI));
     }
 
-    public static double gauss(int x, int y, double sigma) {
+    private double gauss(int x, int y, double sigma) {
         double partial = 1 / (2 * Math.PI * MathUtils.square(sigma));
         double exp = (MathUtils.square(x) + MathUtils.square(y)) / (2 * MathUtils.square(sigma));
         return partial * (1 / Math.pow(Math.E, exp));
     }
-
 }

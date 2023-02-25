@@ -1,8 +1,8 @@
 package tracing.conversions;
 
 import image.ColorBitmap;
-import image.Filters;
 import image.bitmap.loaders.ColorBitmapLoader;
+import image.filters.BlurFilter;
 import image.palette.ElbowKMeansExtractor;
 import image.palette.KMeansExtractor;
 import tracing.base.GetSVG;
@@ -41,7 +41,8 @@ public class KMeansColorConversion implements ColorConversion{
     public String convert(BufferedImage img, int scale) {
         ColorBitmap bitmap = new ColorBitmapLoader().load(img);
         log("Blurring");
-        bitmap = Filters.blur(bitmap, blur);
+        BlurFilter blurFilter = new BlurFilter(blur);
+        bitmap = blurFilter.applyTo(bitmap);
         Color[] pixels = bitmap.getData();
 
         log("Palette extraction");
