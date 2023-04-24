@@ -232,7 +232,9 @@ public class Controller {
                     mainFrame.getLogTextArea(), settings);
             blackAndWhiteWorker.execute();
         }else {
-            int numberOfColors = (Integer)mainFrame.getColorNumberSpinner().getValue();
+            int numberOfColors = -1;
+            if (mainFrame.getNumberOfColorsCheckBox().isSelected())
+                numberOfColors = (Integer)mainFrame.getColorNumberSpinner().getValue();
             int blur = (Integer)mainFrame.getBlurSpinner().getValue();
             ColorWorker colorWorker = new ColorWorker(input,
                     new File(destPath),

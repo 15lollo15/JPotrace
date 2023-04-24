@@ -122,6 +122,10 @@ public class GetSVG {
         for (int i = colorPaths.size() - 1; i >= 0; i--) {
             Color color = colorPaths.get(i).color();
             List<Path> pathlist = colorPaths.get(i).paths();
+            if (pathlist.size() == 0) {
+                System.out.println("empty");
+                continue;
+            }
 
             svg += getPath(pathlist, size, optType, color);
         }
