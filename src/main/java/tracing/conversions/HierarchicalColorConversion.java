@@ -149,7 +149,5 @@ public class HierarchicalColorConversion implements ColorConversion{
     }
 
     @Override
-    public void setStatusCallback(Consumer<String> callback) {
-        this.callback = callback;
-    }
+    public void setStatusCallback(Consumer<String> callback) {}
 }
